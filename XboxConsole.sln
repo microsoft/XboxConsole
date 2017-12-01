@@ -1,0 +1,98 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XboxConsole", "XboxConsole\XboxConsole.csproj", "{E6950E01-B6D1-42F7-99FE-271581AEA388}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XboxConsole.Adapter.Tests", "XboxConsole.Adapter.Tests\XboxConsole.Adapter.Tests.csproj", "{E1CE8AAD-E965-47D1-92BC-EC6857C85303}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XboxConsole.Tests", "XboxConsole.Tests\XboxConsole.Tests.csproj", "{38E9AFB7-1C21-43E8-85C1-03C4A0D21D16}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XboxConsole.Infrastructure", "XboxConsole.Infrastructure\XboxConsole.Infrastructure.csproj", "{E0785338-9F71-4D35-95A8-6388BC7F5518}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XboxConsole.Infrastructure.Tests", "XboxConsole.Infrastructure.Tests\XboxConsole.Infrastructure.Tests.csproj", "{0B717E8D-B80C-4100-BF92-0C9307FEBF79}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A72A349A-4BDB-4595-A8D9-E81F12419058}"
+	ProjectSection(SolutionItems) = preProject
+		XboxConsole.runsettings = XboxConsole.runsettings
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XboxConsole.Adapter.April2014", "XboxConsole.Adapter.April2014\XboxConsole.Adapter.April2014.csproj", "{5E7A10C7-20E2-4C7D-91B8-F744207EDDCC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XboxConsole.Adapter.May2014", "XboxConsole.Adapter.May2014\XboxConsole.Adapter.May2014.csproj", "{7C44371F-E7EE-4A48-BDC8-54E69A4F7C0C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{BBFC58FA-BC44-4760-8F48-85A4C24F6EAA}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 8
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = http://vstfpg03:8080/tfs/cts
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = XboxConsole\\XboxConsole.csproj
+		SccProjectName1 = XboxConsole
+		SccLocalPath1 = XboxConsole
+		SccProjectUniqueName2 = XboxConsole.Adapter.Tests\\XboxConsole.Adapter.Tests.csproj
+		SccProjectName2 = XboxConsole.Adapter.Tests
+		SccLocalPath2 = XboxConsole.Adapter.Tests
+		SccProjectUniqueName3 = XboxConsole.Tests\\XboxConsole.Tests.csproj
+		SccProjectName3 = XboxConsole.Tests
+		SccLocalPath3 = XboxConsole.Tests
+		SccProjectUniqueName4 = XboxConsole.Infrastructure\\XboxConsole.Infrastructure.csproj
+		SccProjectName4 = XboxConsole.Infrastructure
+		SccLocalPath4 = XboxConsole.Infrastructure
+		SccProjectUniqueName5 = XboxConsole.Infrastructure.Tests\\XboxConsole.Infrastructure.Tests.csproj
+		SccProjectName5 = XboxConsole.Infrastructure.Tests
+		SccLocalPath5 = XboxConsole.Infrastructure.Tests
+		SccProjectUniqueName6 = XboxConsole.Adapter.April2014\\XboxConsole.Adapter.April2014.csproj
+		SccProjectName6 = XboxConsole.Adapter.April2014
+		SccLocalPath6 = XboxConsole.Adapter.April2014
+		SccProjectUniqueName7 = XboxConsole.Adapter.May2014\\XboxConsole.Adapter.May2014.csproj
+		SccProjectName7 = XboxConsole.Adapter.May2014
+		SccLocalPath7 = XboxConsole.Adapter.May2014
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E6950E01-B6D1-42F7-99FE-271581AEA388}.Debug|x64.ActiveCfg = Debug|x64
+		{E6950E01-B6D1-42F7-99FE-271581AEA388}.Debug|x64.Build.0 = Debug|x64
+		{E6950E01-B6D1-42F7-99FE-271581AEA388}.Release|x64.ActiveCfg = Release|x64
+		{E6950E01-B6D1-42F7-99FE-271581AEA388}.Release|x64.Build.0 = Release|x64
+		{E1CE8AAD-E965-47D1-92BC-EC6857C85303}.Debug|x64.ActiveCfg = Debug|x64
+		{E1CE8AAD-E965-47D1-92BC-EC6857C85303}.Debug|x64.Build.0 = Debug|x64
+		{E1CE8AAD-E965-47D1-92BC-EC6857C85303}.Release|x64.ActiveCfg = Release|x64
+		{E1CE8AAD-E965-47D1-92BC-EC6857C85303}.Release|x64.Build.0 = Release|x64
+		{38E9AFB7-1C21-43E8-85C1-03C4A0D21D16}.Debug|x64.ActiveCfg = Debug|x64
+		{38E9AFB7-1C21-43E8-85C1-03C4A0D21D16}.Debug|x64.Build.0 = Debug|x64
+		{38E9AFB7-1C21-43E8-85C1-03C4A0D21D16}.Release|x64.ActiveCfg = Release|x64
+		{38E9AFB7-1C21-43E8-85C1-03C4A0D21D16}.Release|x64.Build.0 = Release|x64
+		{E0785338-9F71-4D35-95A8-6388BC7F5518}.Debug|x64.ActiveCfg = Debug|x64
+		{E0785338-9F71-4D35-95A8-6388BC7F5518}.Debug|x64.Build.0 = Debug|x64
+		{E0785338-9F71-4D35-95A8-6388BC7F5518}.Release|x64.ActiveCfg = Release|x64
+		{E0785338-9F71-4D35-95A8-6388BC7F5518}.Release|x64.Build.0 = Release|x64
+		{0B717E8D-B80C-4100-BF92-0C9307FEBF79}.Debug|x64.ActiveCfg = Debug|x64
+		{0B717E8D-B80C-4100-BF92-0C9307FEBF79}.Debug|x64.Build.0 = Debug|x64
+		{0B717E8D-B80C-4100-BF92-0C9307FEBF79}.Release|x64.ActiveCfg = Release|x64
+		{0B717E8D-B80C-4100-BF92-0C9307FEBF79}.Release|x64.Build.0 = Release|x64
+		{5E7A10C7-20E2-4C7D-91B8-F744207EDDCC}.Debug|x64.ActiveCfg = Debug|x64
+		{5E7A10C7-20E2-4C7D-91B8-F744207EDDCC}.Debug|x64.Build.0 = Debug|x64
+		{5E7A10C7-20E2-4C7D-91B8-F744207EDDCC}.Release|x64.ActiveCfg = Release|x64
+		{5E7A10C7-20E2-4C7D-91B8-F744207EDDCC}.Release|x64.Build.0 = Release|x64
+		{7C44371F-E7EE-4A48-BDC8-54E69A4F7C0C}.Debug|x64.ActiveCfg = Debug|x64
+		{7C44371F-E7EE-4A48-BDC8-54E69A4F7C0C}.Debug|x64.Build.0 = Debug|x64
+		{7C44371F-E7EE-4A48-BDC8-54E69A4F7C0C}.Release|x64.ActiveCfg = Release|x64
+		{7C44371F-E7EE-4A48-BDC8-54E69A4F7C0C}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.TransientFaultHandling.6.0.1304.0\lib\portable-net45+win+wp8;packages\EnterpriseLibrary.TransientFaultHandling.Data.6.0.1304.1\lib\NET45
+	EndGlobalSection
+EndGlobal

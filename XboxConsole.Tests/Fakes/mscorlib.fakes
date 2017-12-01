@@ -1,0 +1,10 @@
+﻿<Fakes xmlns="http://schemas.microsoft.com/fakes/2011/">
+  <Assembly Name="mscorlib" />
+  <!-- user code -->
+  <StubGeneration>
+    <Clear />
+    <Add TypeName="System.IO.Directory"/>
+    <Add TypeName="System.IO.FileInfo"/>
+  </StubGeneration>
+  <!-- /user code -->
+</Fakes>

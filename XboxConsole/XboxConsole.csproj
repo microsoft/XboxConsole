@@ -1,0 +1,104 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
+    <ProjectGuid>{E6950E01-B6D1-42F7-99FE-271581AEA388}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Microsoft.Internal.GamesTest.Xbox</RootNamespace>
+    <AssemblyName>GamesTest.XboxConsole</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\dependencies\CodeAnalysis\Level3.ruleset</CodeAnalysisRuleSet>
+    <DocumentationFile>bin\x64\Debug\GamesTest.XboxConsole.XML</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\dependencies\CodeAnalysis\Level3.ruleset</CodeAnalysisRuleSet>
+    <DocumentationFile>bin\x64\Release\GamesTest.XboxConsole.XML</DocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\AssemblyInfoCore.cs">
+      <Link>Properties\AssemblyInfoCore.cs</Link>
+    </Compile>
+    <Compile Include="Configuration\ReadOnlyXboxConfiguration.cs" />
+    <Compile Include="Configuration\XboxConfiguration.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Input\XboxGamepad.cs" />
+    <Compile Include="IO\DirectoryInfoExtensions.cs" />
+    <Compile Include="IO\FileInfoExtensions.cs" />
+    <Compile Include="PackageExecutionStateChangedEventArgs.cs" />
+    <Compile Include="IO\XboxDirectory.cs" />
+    <Compile Include="IO\XboxDirectoryInfo.cs" />
+    <Compile Include="IO\XboxFile.cs" />
+    <Compile Include="IO\XboxFileInfo.cs" />
+    <Compile Include="IO\XboxFileSystemInfo.cs" />
+    <Compile Include="XboxApplication.cs" />
+    <Compile Include="XboxConsole.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="XboxConsoleAdapterFactory.cs" />
+    <Compile Include="XboxItem.cs" />
+    <Compile Include="XboxPackage.cs" />
+    <Compile Include="XboxProcess.cs" />
+    <Compile Include="XboxUser.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <CodeAnalysisDictionary Include="..\dependencies\CodeAnalysis\CustomDictionary.xml">
+      <Link>CustomDictionary.xml</Link>
+    </CodeAnalysisDictionary>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\XboxConsole.Adapter.April2014\XboxConsole.Adapter.April2014.csproj">
+      <Project>{5e7a10c7-20e2-4c7d-91b8-f744207eddcc}</Project>
+      <Name>XboxConsole.Adapter.April2014</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\XboxConsole.Adapter.May2014\XboxConsole.Adapter.May2014.csproj">
+      <Project>{7c44371f-e7ee-4a48-bdc8-54e69a4f7c0c}</Project>
+      <Name>XboxConsole.Adapter.May2014</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\XboxConsole.Infrastructure\XboxConsole.Infrastructure.csproj">
+      <Project>{e0785338-9f71-4d35-95a8-6388bc7f5518}</Project>
+      <Name>XboxConsole.Infrastructure</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

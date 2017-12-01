@@ -1,0 +1,171 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
+    <ProjectGuid>{E0785338-9F71-4D35-95A8-6388BC7F5518}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Microsoft.Internal.GamesTest.Xbox</RootNamespace>
+    <AssemblyName>GamesTest.XboxConsole.Infrastructure</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\dependencies\CodeAnalysis\Level3.ruleset</CodeAnalysisRuleSet>
+    <DocumentationFile>bin\x64\Debug\GamesTest.XboxConsole.Infrastructure.XML</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\dependencies\CodeAnalysis\Level3.ruleset</CodeAnalysisRuleSet>
+    <DocumentationFile>bin\x64\Release\GamesTest.XboxConsole.Infrastructure.XML</DocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.SemanticLogging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\EnterpriseLibrary.SemanticLogging.1.1.1403.1\lib\net45\Microsoft.Practices.EnterpriseLibrary.SemanticLogging.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.SemanticLogging.Database, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\EnterpriseLibrary.SemanticLogging.Database.1.1.1403.1\lib\net45\Microsoft.Practices.EnterpriseLibrary.SemanticLogging.Database.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\EnterpriseLibrary.TransientFaultHandling.6.0.1304.0\lib\portable-net45+win+wp8\Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling.Data, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\EnterpriseLibrary.TransientFaultHandling.Data.6.0.1304.1\lib\NET45\Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.5.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="sysglobl" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\AssemblyInfoCore.cs">
+      <Link>Properties\AssemblyInfoCore.cs</Link>
+    </Compile>
+    <Compile Include="AdapterBase\XboxConsoleAdapterBase.User.cs" />
+    <Compile Include="AdapterBase\XboxConsoleAdapterBase.ConsoleControl.cs" />
+    <Compile Include="AdapterBase\XboxConsoleAdapterBase.cs" />
+    <Compile Include="AdapterBase\XboxConsoleAdapterBase.Debug.cs" />
+    <Compile Include="AdapterBase\XboxConsoleAdapterBase.FileIO.cs" />
+    <Compile Include="AdapterBase\XboxConsoleAdapterBase.Input.cs" />
+    <Compile Include="AdapterBase\XboxConsoleAdapterBase.PackageManagement.cs" />
+    <Compile Include="AdapterBase\XboxConsoleAdapterBase.ExecutableManagement.cs" />
+    <Compile Include="Configuration\BaseXboxConfiguration.cs" />
+    <Compile Include="Configuration\ColorSpaceType.cs" />
+    <Compile Include="Configuration\AudioBitstreamFormatType.cs" />
+    <Compile Include="Configuration\XboxIdleShutdownTimeoutConfigurationSetting.cs" />
+    <Compile Include="Configuration\OpticalAudioOutput.cs" />
+    <Compile Include="Configuration\XboxHdmiAudioConfigurationSetting.cs" />
+    <Compile Include="Configuration\HdmiAudioOutput.cs" />
+    <Compile Include="Configuration\WirelessRadioSettingsType.cs" />
+    <Compile Include="Configuration\XboxDefaultUserConfigurationSetting.cs" />
+    <Compile Include="Configuration\UserPairingType.cs" />
+    <Compile Include="Configuration\NetworkAddressModeType.cs" />
+    <Compile Include="Configuration\NetworkTypeType.cs" />
+    <Compile Include="Configuration\XboxColorDepthConfigurationSetting.cs" />
+    <Compile Include="Configuration\XboxDisplayResolutionConfigurationSetting.cs" />
+    <Compile Include="Configuration\DisplayResolutionType.cs" />
+    <Compile Include="Configuration\IdleShutdownTimeoutType.cs" />
+    <Compile Include="Configuration\PowerModeType.cs" />
+    <Compile Include="Configuration\XboxDimTimeoutConfigurationSetting.cs" />
+    <Compile Include="Configuration\XboxHttpProxyHostConfigurationSetting.cs" />
+    <Compile Include="Configuration\XboxHostNameConfigurationSetting.cs" />
+    <Compile Include="Configuration\XboxNonEmptyStringConfigurationSetting.cs" />
+    <Compile Include="Configuration\IXboxConfiguration.cs" />
+    <Compile Include="Configuration\XboxConfigurationSetting.cs" />
+    <Compile Include="Configuration\XboxGeographicRegionConfigurationSetting.cs" />
+    <Compile Include="Configuration\XboxPreferredLanguagesConfigurationSetting.cs" />
+    <Compile Include="Configuration\XboxProfilingModeConfigurationSetting.cs" />
+    <Compile Include="Configuration\XboxSessionKeyConfigurationSetting.cs" />
+    <Compile Include="Configuration\XboxTimeZoneConfigurationSetting.cs" />
+    <Compile Include="Deployment\XboxDeploymentError.cs" />
+    <Compile Include="Deployment\XboxDeploymentMetric.cs" />
+    <Compile Include="Deployment\XboxDeploymentInfo.cs" />
+    <Compile Include="Deployment\XtfDeployCallbackActions.cs" />
+    <Compile Include="DisposableObject.cs" />
+    <Compile Include="Exceptions\XboxAggregateException.cs" />
+    <Compile Include="Exceptions\XboxConsoleFeatureNotSupportedException.cs" />
+    <Compile Include="Exceptions\XboxDeployException.cs" />
+    <Compile Include="Exceptions\XboxInputException.cs" />
+    <Compile Include="Exceptions\XboxSessionKeyException.cs" />
+    <Compile Include="Exceptions\XboxSignInException.cs" />
+    <Compile Include="Exceptions\XboxSnapException.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Input\XboxGamepadButtons.cs" />
+    <Compile Include="Input\XboxGamepadReading.cs" />
+    <Compile Include="Input\XboxGamepadState.cs" />
+    <Compile Include="Input\IVirtualGamepad.cs" />
+    <Compile Include="Deployment\XboxDeploymentExtraFile.cs" />
+    <Compile Include="IO\XboxFileTransferMetric.cs" />
+    <Compile Include="Tasks\TaskExtensions.cs" />
+    <Compile Include="Telemetry\TelemetrySink.cs" />
+    <Compile Include="Telemetry\XboxConsoleEventSource.cs" />
+    <Compile Include="XboxApplicationDefinition.cs" />
+    <Compile Include="XboxProcessDefinition.cs" />
+    <Compile Include="IXboxDebugMonitorClient.cs" />
+    <Compile Include="EventArgs\TextEventArgs.cs" />
+    <Compile Include="Exceptions\CannotConnectException.cs" />
+    <Compile Include="Exceptions\ExceptionFactory.cs" />
+    <Compile Include="Exceptions\InitializationFailedException.cs" />
+    <Compile Include="Exceptions\XboxConsoleException.cs" />
+    <Compile Include="Exceptions\XboxException.cs" />
+    <Compile Include="Exceptions\XdkNotFoundException.cs" />
+    <Compile Include="IO\XboxPath.cs" />
+    <Compile Include="IO\XboxFileSystemInfoDefinition.cs" />
+    <Compile Include="XboxOperatingSystem.cs" />
+    <Compile Include="XboxUserDefinition.cs" />
+    <Compile Include="XboxXdkBase.cs" />
+    <Compile Include="NativeMethods.cs" />
+    <Compile Include="PackageExecutionState.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="XboxPackageDefinition.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <CodeAnalysisDictionary Include="..\dependencies\CodeAnalysis\CustomDictionary.xml">
+      <Link>CustomDictionary.xml</Link>
+    </CodeAnalysisDictionary>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
