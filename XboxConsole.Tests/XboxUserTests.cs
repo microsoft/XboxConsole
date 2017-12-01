@@ -166,6 +166,45 @@ namespace Microsoft.Internal.GamesTest.Xbox.Tests
         }
 
         /// <summary>
+        /// Verifies that the PairWithVirtualControllerExclusive method throws an ArgumentNullException when a null gamepad is passed in.
+        /// </summary>
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        [TestCategory(XboxUserTestCategory)]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void TestPairWithVirtualControllerExclusiveThrowsArgumentNullExceptions()
+        {
+            XboxUser user = this.CreateTestUser();
+
+            ShimXboxConsoleAdapterBase.AllInstances.PairGamepadToUserExclusiveStringUInt64UInt32 = (adapter, systemIpAddress, gamepadId, userId) =>
+            {
+                Assert.Fail("Test should never have gotten to the adapters method.");
+            };
+
+            user.PairWithVirtualControllerExclusive(null);
+        }
+
+        /// <summary>
+        /// Verifies that the PairWithVirtualControllerExclusive method throws an ArgumentException when a gamepad with a null id is passed in.
+        /// </summary>
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        [TestCategory(XboxUserTestCategory)]
+        [ExpectedException(typeof(ArgumentException))]
+        public void TestPairWithVirtualControllerExclusiveThrowsArgumentExceptions()
+        {
+            XboxGamepad gamepad = new XboxGamepad(this.xboxConsole);
+            XboxUser user = this.CreateTestUser();
+
+            ShimXboxConsoleAdapterBase.AllInstances.PairGamepadToUserExclusiveStringUInt64UInt32 = (adapter, systemIpAddress, gamepadId, userId) =>
+            {
+                Assert.Fail("Test should never have gotten to the adapters method.");
+            };
+
+            user.PairWithVirtualControllerExclusive(gamepad);
+        }
+
+        /// <summary>
         /// Verifies that the constructors of the XboxUser class correctly set the properties.
         /// </summary>
         [TestMethod]

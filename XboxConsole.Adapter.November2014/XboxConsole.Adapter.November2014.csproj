@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
-    <ProjectGuid>{D97088C5-4BFB-4DFB-ADDE-4624D52FE670}</ProjectGuid>
+    <ProjectGuid>{14889CB2-40C7-4F4F-A200-0A432D773A44}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Microsoft.Internal.GamesTest.Xbox.Adapter.October2014</RootNamespace>
-    <AssemblyName>GamesTest.XboxConsole.Adapter.October2014</AssemblyName>
+    <RootNamespace>Microsoft.Internal.GamesTest.Xbox.Adapter.November2014</RootNamespace>
+    <AssemblyName>GamesTest.XboxConsole.Adapter.November2014</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>
@@ -40,25 +40,25 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Xbox.Xtf">
-      <HintPath>..\dependencies\GamesTest.ManagedXtf.2014.11.1.0.41104.0\lib\net45\Microsoft.Xbox.Xtf.dll</HintPath>
+      <HintPath>..\dependencies\GamesTest.ManagedXtf.2014.11.1.0.41124.0\lib\net45\Microsoft.Xbox.Xtf.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Xbox.Xtf.Application">
-      <HintPath>..\dependencies\GamesTest.ManagedXtf.2014.11.1.0.41104.0\lib\net45\Microsoft.Xbox.Xtf.Application.dll</HintPath>
+      <HintPath>..\dependencies\GamesTest.ManagedXtf.2014.11.1.0.41124.0\lib\net45\Microsoft.Xbox.Xtf.Application.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Xbox.Xtf.ConsoleControl">
-      <HintPath>..\dependencies\GamesTest.ManagedXtf.2014.11.1.0.41104.0\lib\net45\Microsoft.Xbox.Xtf.ConsoleControl.dll</HintPath>
+      <HintPath>..\dependencies\GamesTest.ManagedXtf.2014.11.1.0.41124.0\lib\net45\Microsoft.Xbox.Xtf.ConsoleControl.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Xbox.Xtf.ConsoleManager">
-      <HintPath>..\dependencies\GamesTest.ManagedXtf.2014.11.1.0.41104.0\lib\net45\Microsoft.Xbox.Xtf.ConsoleManager.dll</HintPath>
+      <HintPath>..\dependencies\GamesTest.ManagedXtf.2014.11.1.0.41124.0\lib\net45\Microsoft.Xbox.Xtf.ConsoleManager.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Xbox.Xtf.DebugMonitor">
-      <HintPath>..\dependencies\GamesTest.ManagedXtf.2014.11.1.0.41104.0\lib\net45\Microsoft.Xbox.Xtf.DebugMonitor.dll</HintPath>
+      <HintPath>..\dependencies\GamesTest.ManagedXtf.2014.11.1.0.41124.0\lib\net45\Microsoft.Xbox.Xtf.DebugMonitor.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Xbox.Xtf.FileIO">
-      <HintPath>..\dependencies\GamesTest.ManagedXtf.2014.11.1.0.41104.0\lib\net45\Microsoft.Xbox.Xtf.FileIO.dll</HintPath>
+      <HintPath>..\dependencies\GamesTest.ManagedXtf.2014.11.1.0.41124.0\lib\net45\Microsoft.Xbox.Xtf.FileIO.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Xbox.Xtf.Input">
-      <HintPath>..\dependencies\GamesTest.ManagedXtf.2014.11.1.0.41104.0\lib\net45\Microsoft.Xbox.Xtf.Input.dll</HintPath>
+      <HintPath>..\dependencies\GamesTest.ManagedXtf.2014.11.1.0.41124.0\lib\net45\Microsoft.Xbox.Xtf.Input.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Xbox.Xtf.Interop">
       <HintPath>$(DurangoXDK)\bin\Microsoft.Xbox.Xtf.Interop.dll</HintPath>
@@ -66,10 +66,10 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.Xbox.Xtf.RemoteRun">
-      <HintPath>..\dependencies\GamesTest.ManagedXtf.2014.11.1.0.41104.0\lib\net45\Microsoft.Xbox.Xtf.RemoteRun.dll</HintPath>
+      <HintPath>..\dependencies\GamesTest.ManagedXtf.2014.11.1.0.41124.0\lib\net45\Microsoft.Xbox.Xtf.RemoteRun.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Xbox.Xtf.User">
-      <HintPath>..\dependencies\GamesTest.ManagedXtf.2014.11.1.0.41104.0\lib\net45\Microsoft.Xbox.Xtf.User.dll</HintPath>
+      <HintPath>..\dependencies\GamesTest.ManagedXtf.2014.11.1.0.41124.0\lib\net45\Microsoft.Xbox.Xtf.User.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -100,35 +100,6 @@
     <Compile Include="XboxXdk.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="..\dependencies\GamesTest.ManagedXtf.2014.11.1.0.41104.0\lib\net45\Microsoft.Xbox.Xtf.Application.dll">
-      <Link>Microsoft.Xbox.Xtf.Application.dll</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\dependencies\GamesTest.ManagedXtf.2014.11.1.0.41104.0\lib\net45\Microsoft.Xbox.Xtf.ConsoleControl.dll">
-      <Link>Microsoft.Xbox.Xtf.ConsoleControl.dll</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\dependencies\GamesTest.ManagedXtf.2014.11.1.0.41104.0\lib\net45\Microsoft.Xbox.Xtf.ConsoleManager.dll">
-      <Link>Microsoft.Xbox.Xtf.ConsoleManager.dll</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\dependencies\GamesTest.ManagedXtf.2014.11.1.0.41104.0\lib\net45\Microsoft.Xbox.Xtf.DebugMonitor.dll">
-      <Link>Microsoft.Xbox.Xtf.DebugMonitor.dll</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\dependencies\GamesTest.ManagedXtf.2014.11.1.0.41104.0\lib\net45\Microsoft.Xbox.Xtf.dll">
-      <Link>Microsoft.Xbox.Xtf.dll</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\dependencies\GamesTest.ManagedXtf.2014.11.1.0.41104.0\lib\net45\Microsoft.Xbox.Xtf.FileIO.dll">
-      <Link>Microsoft.Xbox.Xtf.FileIO.dll</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\dependencies\GamesTest.ManagedXtf.2014.11.1.0.41104.0\lib\net45\Microsoft.Xbox.Xtf.Input.dll">
-      <Link>Microsoft.Xbox.Xtf.Input.dll</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\dependencies\GamesTest.ManagedXtf.2014.11.1.0.41104.0\lib\net45\Microsoft.Xbox.Xtf.RemoteRun.dll">
-      <Link>Microsoft.Xbox.Xtf.RemoteRun.dll</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\dependencies\GamesTest.ManagedXtf.2014.11.1.0.41104.0\lib\net45\Microsoft.Xbox.Xtf.User.dll">
-      <Link>Microsoft.Xbox.Xtf.User.dll</Link>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\XboxConsole.Infrastructure\XboxConsole.Infrastructure.csproj">
       <Project>{e0785338-9f71-4d35-95a8-6388bc7f5518}</Project>
       <Name>XboxConsole.Infrastructure</Name>
@@ -144,6 +115,35 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\dependencies\GamesTest.ManagedXtf.2014.11.1.0.41124.0\lib\net45\\Microsoft.Xbox.Xtf.Application.dll">
+      <Link>Microsoft.Xbox.Xtf.Application.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\dependencies\GamesTest.ManagedXtf.2014.11.1.0.41124.0\lib\net45\Microsoft.Xbox.Xtf.ConsoleControl.dll">
+      <Link>Microsoft.Xbox.Xtf.ConsoleControl.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\dependencies\GamesTest.ManagedXtf.2014.11.1.0.41124.0\lib\net45\Microsoft.Xbox.Xtf.ConsoleManager.dll">
+      <Link>Microsoft.Xbox.Xtf.ConsoleManager.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\dependencies\GamesTest.ManagedXtf.2014.11.1.0.41124.0\lib\net45\Microsoft.Xbox.Xtf.DebugMonitor.dll">
+      <Link>Microsoft.Xbox.Xtf.DebugMonitor.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\dependencies\GamesTest.ManagedXtf.2014.11.1.0.41124.0\lib\net45\Microsoft.Xbox.Xtf.dll">
+      <Link>Microsoft.Xbox.Xtf.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\dependencies\GamesTest.ManagedXtf.2014.11.1.0.41124.0\lib\net45\Microsoft.Xbox.Xtf.FileIO.dll">
+      <Link>Microsoft.Xbox.Xtf.FileIO.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\dependencies\GamesTest.ManagedXtf.2014.11.1.0.41124.0\lib\net45\Microsoft.Xbox.Xtf.Input.dll">
+      <Link>Microsoft.Xbox.Xtf.Input.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\dependencies\GamesTest.ManagedXtf.2014.11.1.0.41124.0\lib\net45\Microsoft.Xbox.Xtf.RemoteRun.dll">
+      <Link>Microsoft.Xbox.Xtf.RemoteRun.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\dependencies\GamesTest.ManagedXtf.2014.11.1.0.41124.0\lib\net45\Microsoft.Xbox.Xtf.User.dll">
+      <Link>Microsoft.Xbox.Xtf.User.dll</Link>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

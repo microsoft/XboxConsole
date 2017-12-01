@@ -153,6 +153,23 @@ namespace Microsoft.Internal.GamesTest.Xbox
         }
 
         /// <summary>
+        /// Pairs the XboxGamepad to the XboxUser.
+        /// </summary>
+        /// <param name="systemIpAddress">The system IP address of the console.</param>
+        /// <param name="gamepadId">The Id of the XboxGamepad to set the state of.</param>
+        /// <param name="userId">The Id of the XboxUser to pair to.</param>
+        public void PairGamepadToUserExclusive(string systemIpAddress, ulong gamepadId, uint userId)
+        {
+            this.ThrowIfDisposed();
+            this.ThrowIfInvalidSystemIpAddress(systemIpAddress);
+
+            this.PerformXdkAction(
+                systemIpAddress,
+                () => this.PairGamepadToUserExclusiveImpl(systemIpAddress, gamepadId, userId),
+                "Failed to pair a gamepad to a user.");
+        }
+
+        /// <summary>
         /// Creates a party for the given title ID (if one does not exist) and adds the given local users to it.
         /// </summary>
         /// <param name="systemIpAddress">The system IP address of the console.</param>
@@ -356,6 +373,17 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// <param name="gamepadId">The Id of the XboxGamepad to set the state of.</param>
         /// <param name="userId">The Id of the XboxUser to pair to.</param>
         protected virtual void PairGamepadToUserImpl(string systemIpAddress, ulong gamepadId, uint userId)
+        {
+            throw new XboxConsoleFeatureNotSupportedException(NotSupportedMessage);
+        }
+
+        /// <summary>
+        /// Pairs the XboxGamepad to the XboxUser.
+        /// </summary>
+        /// <param name="systemIpAddress">The system IP address of the console.</param>
+        /// <param name="gamepadId">The Id of the XboxGamepad to set the state of.</param>
+        /// <param name="userId">The Id of the XboxUser to pair to.</param>
+        protected virtual void PairGamepadToUserExclusiveImpl(string systemIpAddress, ulong gamepadId, uint userId)
         {
             throw new XboxConsoleFeatureNotSupportedException(NotSupportedMessage);
         }

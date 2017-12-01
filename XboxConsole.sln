@@ -33,43 +33,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{BBFC58
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XboxConsole.Adapter.November2014", "XboxConsole.Adapter.November2014\XboxConsole.Adapter.November2014.csproj", "{14889CB2-40C7-4F4F-A200-0A432D773A44}"
+EndProject
 Global
-	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 11
-		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = http://vstfpg03:8080/tfs/cts
-		SccLocalPath0 = .
-		SccProjectUniqueName1 = XboxConsole\\XboxConsole.csproj
-		SccProjectName1 = XboxConsole
-		SccLocalPath1 = XboxConsole
-		SccProjectUniqueName2 = XboxConsole.Adapter.Tests\\XboxConsole.Adapter.Tests.csproj
-		SccProjectName2 = XboxConsole.Adapter.Tests
-		SccLocalPath2 = XboxConsole.Adapter.Tests
-		SccProjectUniqueName3 = XboxConsole.Tests\\XboxConsole.Tests.csproj
-		SccProjectName3 = XboxConsole.Tests
-		SccLocalPath3 = XboxConsole.Tests
-		SccProjectUniqueName4 = XboxConsole.Infrastructure\\XboxConsole.Infrastructure.csproj
-		SccProjectName4 = XboxConsole.Infrastructure
-		SccLocalPath4 = XboxConsole.Infrastructure
-		SccProjectUniqueName5 = XboxConsole.Infrastructure.Tests\\XboxConsole.Infrastructure.Tests.csproj
-		SccProjectName5 = XboxConsole.Infrastructure.Tests
-		SccLocalPath5 = XboxConsole.Infrastructure.Tests
-		SccProjectUniqueName6 = XboxConsole.Adapter.April2014\\XboxConsole.Adapter.April2014.csproj
-		SccProjectName6 = XboxConsole.Adapter.April2014
-		SccLocalPath6 = XboxConsole.Adapter.April2014
-		SccProjectUniqueName7 = XboxConsole.Adapter.May2014\\XboxConsole.Adapter.May2014.csproj
-		SccProjectName7 = XboxConsole.Adapter.May2014
-		SccLocalPath7 = XboxConsole.Adapter.May2014
-		SccProjectUniqueName8 = XboxConsole.Adapter.July2014\\XboxConsole.Adapter.July2014.csproj
-		SccProjectName8 = XboxConsole.Adapter.July2014
-		SccLocalPath8 = XboxConsole.Adapter.July2014
-		SccProjectUniqueName9 = XboxConsole.Adapter.August2014\\XboxConsole.Adapter.August2014.csproj
-		SccProjectName9 = XboxConsole.Adapter.August2014
-		SccLocalPath9 = XboxConsole.Adapter.August2014
-		SccProjectUniqueName10 = XboxConsole.Adapter.October2014\\XboxConsole.Adapter.October2014.csproj
-		SccProjectName10 = XboxConsole.Adapter.October2014
-		SccLocalPath10 = XboxConsole.Adapter.October2014
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
 		Release|x64 = Release|x64
@@ -115,6 +81,10 @@ Global
 		{D97088C5-4BFB-4DFB-ADDE-4624D52FE670}.Debug|x64.Build.0 = Debug|x64
 		{D97088C5-4BFB-4DFB-ADDE-4624D52FE670}.Release|x64.ActiveCfg = Release|x64
 		{D97088C5-4BFB-4DFB-ADDE-4624D52FE670}.Release|x64.Build.0 = Release|x64
+		{14889CB2-40C7-4F4F-A200-0A432D773A44}.Debug|x64.ActiveCfg = Debug|x64
+		{14889CB2-40C7-4F4F-A200-0A432D773A44}.Debug|x64.Build.0 = Debug|x64
+		{14889CB2-40C7-4F4F-A200-0A432D773A44}.Release|x64.ActiveCfg = Release|x64
+		{14889CB2-40C7-4F4F-A200-0A432D773A44}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

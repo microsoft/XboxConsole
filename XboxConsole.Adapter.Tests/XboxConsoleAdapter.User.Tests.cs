@@ -207,6 +207,89 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.Tests
         }
 
         /// <summary>
+        /// Verifies that if the XDK's PairControllerToUserExclusive method throws a COMException, then the
+        /// XboxConsoleAdapter will wrap that into an XboxConsoleException with the COMException as its inner exception.
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2201:DoNotRaiseReservedExceptionTypes", Justification = "Need to simulate XDK")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Need to catch all exception types so that I can verify we capture the correct exception type.")]
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        [TestCategory(AdapterUserTestCategory)]
+        public void TestPairGamepadToUserExclusiveTurnsComExceptionIntoXboxConsoleException()
+        {
+            this.fakeXboxXdk.PairControllerToUserExclusiveFunc = (ipAddress, userId, controllerId) =>
+            {
+                throw new COMException();
+            };
+
+            try
+            {
+                this.adapter.PairGamepadToUserExclusive(ConsoleAddress, 0, 0);
+            }
+            catch (Exception ex)
+            {
+                Assert.IsInstanceOfType(ex, typeof(XboxConsoleException), "The adapter PairGamepadToUserExclusive method did not convert a COMException into an XboxConsoleException.");
+                Assert.IsInstanceOfType(ex.InnerException, typeof(COMException), "The adapter PairGamepadToUserExclusive method did not include the COMException as the inner exception of the XboxConsoleException that it threw.");
+            }
+        }
+
+        /// <summary>
+        /// Verifies that an ObjectDisposedException is thrown if the PairGamepadToUserExclusive()
+        /// method is called after the object has been disposed.
+        /// </summary>
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        [TestCategory(AdapterUserTestCategory)]
+        [ExpectedException(typeof(ObjectDisposedException))]
+        public void TestPairGamepadToUserExclusiveThrowsObjectDisposedException()
+        {
+            this.adapter.Dispose();
+            this.adapter.PairGamepadToUserExclusive(ConsoleAddress, 0, 0);
+        }
+
+        /// <summary>
+        /// Verifies that the adapter's PairGamepadToUserExclusive() method
+        /// calls the XboxXdk's PairControllerToUserExclusive method.
+        /// </summary>
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        [TestCategory(AdapterUserTestCategory)]
+        public void TestPairGamepadToUserExclusiveCallsXdkPairControllerToUser()
+        {
+            bool isCorrectFunctionCalled = false;
+            this.fakeXboxXdk.PairControllerToUserExclusiveFunc = (ipAddress, userId, controllerId) =>
+            {
+                isCorrectFunctionCalled = true;
+            };
+
+            this.adapter.PairGamepadToUserExclusive(ConsoleAddress, 0, 0);
+
+            Assert.IsTrue(isCorrectFunctionCalled, "The adapter's PairGamepadToUserExclusive function failed to call the XboxXdk's PairControllerToUserExclusive function.");
+        }
+
+        /// <summary>
+        /// Verifies that the adapter's PairGamepadToUserExclusive method correctly handles passing on arguments.
+        /// </summary>
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        [TestCategory(AdapterUserTestCategory)]
+        public void TestPairGamepadToUserExclusiveArguments()
+        {
+            const uint ExpectedUserId = 12345;
+            const ulong ExpectedControllerId = 9876543210;
+
+            this.VerifyThrows<ArgumentNullException>(() => this.adapter.PairGamepadToUserExclusive(null, ExpectedControllerId, ExpectedUserId));
+
+            this.fakeXboxXdk.PairControllerToUserExclusiveFunc = (ipAddress, userId, controllerId) =>
+            {
+                Assert.AreEqual(ExpectedUserId, userId, "Adapter did not pass on the expected user id.");
+                Assert.AreEqual(ExpectedControllerId, controllerId, "Adapter did not pass on the expected controller id.");
+            };
+
+            this.adapter.PairGamepadToUserExclusive(ConsoleAddress, ExpectedControllerId, ExpectedUserId);
+        }
+
+        /// <summary>
         /// Verifies that if the XDK's AddGuestUser method throws a COMException, then the
         /// XboxConsoleAdapter will wrap that into an XboxConsoleException with the COMException as its inner exception.
         /// </summary>

@@ -16,10 +16,14 @@
     <ReferencePath>$(ProgramFiles)\Common Files\microsoft shared\VSTT\$(VisualStudioVersion)\UITestExtensionPackages</ReferencePath>
     <IsCodedUITest>False</IsCodedUITest>
     <TestProjectType>UnitTest</TestProjectType>
-    <SccProjectName>SAK</SccProjectName>
-    <SccLocalPath>SAK</SccLocalPath>
-    <SccAuxPath>SAK</SccAuxPath>
-    <SccProvider>SAK</SccProvider>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <PlatformTarget>x64</PlatformTarget>
@@ -92,9 +96,9 @@
     <Fakes Include="Fakes\mscorlib.fakes" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\XboxConsole.Adapter.October2014\XboxConsole.Adapter.October2014.csproj">
-      <Project>{d97088c5-4bfb-4dfb-adde-4624d52fe670}</Project>
-      <Name>XboxConsole.Adapter.October2014</Name>
+    <ProjectReference Include="..\XboxConsole.Adapter.November2014\XboxConsole.Adapter.November2014.csproj">
+      <Project>{14889cb2-40c7-4f4f-a200-0a432d773a44}</Project>
+      <Name>XboxConsole.Adapter.November2014</Name>
     </ProjectReference>
     <ProjectReference Include="..\XboxConsole.Infrastructure\XboxConsole.Infrastructure.csproj">
       <Project>{e0785338-9f71-4d35-95a8-6388bc7f5518}</Project>

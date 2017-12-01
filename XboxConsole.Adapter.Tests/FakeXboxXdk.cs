@@ -195,9 +195,14 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.Tests
         public Func<string, XboxUserDefinition, XboxUserDefinition> SignOutUserFunc { get; set; }
 
         /// <summary>
-        /// Gets or sets the function to shim the "GetInstalledPackages" method.
+        /// Gets or sets the function to shim the "PairControllerToUser" method.
         /// </summary>
         public Action<string, uint, ulong> PairControllerToUserFunc { get; set; }
+
+        /// <summary>
+        /// Gets or sets the function to shim the "PairControllerToUserExclusive" method.
+        /// </summary>
+        public Action<string, uint, ulong> PairControllerToUserExclusiveFunc { get; set; }
 
         /// <summary>
         /// Gets or sets the function to shim the "AddLocalUsersToParty" method.
@@ -1034,7 +1039,25 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.Tests
             }
             else
             {
-                throw new NotImplementedException("PairControllerToUserFunc is not set.");
+                throw new NotImplementedException("PairControllerToUserAction is not set.");
+            }
+        }
+
+        /// <summary>
+        /// Pairs a controller to a user on a console.
+        /// </summary>
+        /// <param name="ipAddress">The IP address of console.</param>
+        /// <param name="userId">The user id of the user to pair.</param>
+        /// <param name="controllerId">The controller of the id to pair.</param>
+        public override void PairControllerToUserExclusive(string ipAddress, uint userId, ulong controllerId)
+        {
+            if (this.PairControllerToUserExclusiveFunc != null)
+            {
+                this.PairControllerToUserExclusiveFunc(ipAddress, userId, controllerId);
+            }
+            else
+            {
+                throw new NotImplementedException("PairControllerToUserExclusiveAction is not set.");
             }
         }
 

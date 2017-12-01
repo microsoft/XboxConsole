@@ -44,7 +44,31 @@ namespace Microsoft.Internal.GamesTest.Xbox
                 TelemetrySink.StopTelemetry();
             };
 
-            XboxConsoleEventSource.Logger.ModuleLoaded(Process.GetCurrentProcess().ProcessName, WindowsIdentity.GetCurrent().Name, Dns.GetHostEntry("localhost").HostName, FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion.ToString());
+            try
+            {
+                var assemblyVersion = "0.0.0.0";
+
+                var assemblyLocation = typeof(XboxConsole).Assembly.Location;
+                if (!string.IsNullOrWhiteSpace(assemblyLocation))
+                {
+                    var assemblyVersionInfo = FileVersionInfo.GetVersionInfo(assemblyLocation);
+                    if (assemblyVersionInfo != null)
+                    {
+                        assemblyVersion = assemblyVersionInfo.FileVersion;
+                    }
+                }
+
+                XboxConsoleEventSource.Logger.ModuleLoaded(
+                    Process.GetCurrentProcess().ProcessName,
+                    WindowsIdentity.GetCurrent().Name,
+                    Dns.GetHostEntry("localhost").HostName,
+                    assemblyVersion);
+            }
+            catch
+            {
+                // This try-catch block is for logging telemetry. As such, we don't want any exceptions to affect customers.
+                // We are catching any exception and tossing it.
+            }
         }
 
         /// <summary>

@@ -372,6 +372,17 @@ namespace Microsoft.Internal.GamesTest.Xbox
         }
 
         /// <summary>
+        /// Pairs a controller to a user on a console.
+        /// </summary>
+        /// <param name="ipAddress">The IP address of console.</param>
+        /// <param name="userId">The user id of the user to pair.</param>
+        /// <param name="controllerId">The controller of the id to pair.</param>
+        public virtual void PairControllerToUserExclusive(string ipAddress, uint userId, ulong controllerId)
+        {
+            throw new XboxConsoleFeatureNotSupportedException(NotSupportedMessage);
+        }
+
+        /// <summary>
         /// Captures a screenshot from the frame buffer of the specified console.
         /// </summary>
         /// <param name="ipAddress">The IP address of the console.</param>

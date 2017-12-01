@@ -162,6 +162,27 @@ namespace Microsoft.Internal.GamesTest.Xbox
         }
 
         /// <summary>
+        /// Pairs a user with a virtual controller exclusivly.
+        /// </summary>
+        /// <param name="gamepad">The virtual gamepad with which the user will be paired.</param>
+        public void PairWithVirtualControllerExclusive(XboxGamepad gamepad)
+        {
+            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
+
+            if (gamepad == null)
+            {
+                throw new ArgumentNullException("gamepad", "gamepad cannot be null.");
+            }
+
+            if (!gamepad.Id.HasValue)
+            {
+                throw new ArgumentException("gamepad must have a non-null id value.", "gamepad");
+            }
+
+            this.Console.Adapter.PairGamepadToUserExclusive(this.Console.SystemIpAddressAndSessionKeyCombined, gamepad.Id.Value, this.UserId);
+        }
+
+        /// <summary>
         /// Pairs a user with a physical controller.
         /// </summary>
         /// <param name="controllerId">The physical controller with which the user will be paired.</param>
