@@ -155,6 +155,11 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.Tests
         public Func<string, IVirtualGamepad> CreateGamepadFunc { get; set; }
 
         /// <summary>
+        /// Gets or sets a custom action to shim the DisconnectAllXboxGamepads method.
+        /// </summary>
+        public Action<string> DisconnectAllXboxGamepadsAction { get; set; }
+
+        /// <summary>
         /// Gets or sets a custom func to shim the "DeployPushAsync" method.
         /// </summary>
         public Func<string, string, bool, CancellationToken, IProgress<XboxDeploymentMetric>, IProgress<XboxDeploymentError>, IProgress<XboxDeploymentExtraFile>, Task<string>> DeployPushAsyncFunc { get; set; }
@@ -746,6 +751,22 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.Tests
             else
             {
                 throw new NotImplementedException("CreateGamepadFunc is not set.");
+            }
+        }
+
+        /// <summary>
+        /// Disconnects all connected XboxGamepads.
+        /// </summary>
+        /// <param name="ipAddress">The IP address of the console.</param>
+        public override void DisconnectAllXboxGamepads(string ipAddress)
+        {
+            if (this.DisconnectAllXboxGamepadsAction != null)
+            {
+                this.DisconnectAllXboxGamepadsAction(ipAddress);
+            }
+            else
+            {
+                throw new NotImplementedException("DisconnectAllXboxGamepadsAction is not set.");
             }
         }
 

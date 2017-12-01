@@ -35,6 +35,21 @@ namespace Microsoft.Internal.GamesTest.Xbox.Tests
     }
 
     /// <summary>
+    /// Verifies that the ReadOnlyXboxConfiguration Load method throws InvalidOperationException.
+    /// </summary>
+    [TestMethod]
+    [TestCategory("UnitTest")]
+    [TestCategory(XboxConfigurationTestCategory)]
+    [ExpectedException(typeof(InvalidOperationException), "ReadOnlyXboxConfiguration constructor did not throw an InvalidOperationException as expected.")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults", MessageId = "Microsoft.Internal.GamesTest.Xbox.Configuration.ReadOnlyXboxConfiguration", Justification = "This is to test that the constructor throws an exception when passed a null parameter. The instance is never created as the constructor should throw an exception.")]
+    public void TestReadOnlyXboxConfigurationLoadMethodThrows()
+    {
+        ReadOnlyXboxConfiguration notUsedConfig = new ReadOnlyXboxConfiguration((configKey) => null);
+
+        notUsedConfig.Load("DoesntMatter");
+    }
+
+    /// <summary>
     /// Verifies that the SandboxId property get functions correctly and the constructor calls the getSettingValue Func (parameter) to set the SandboxId.
     /// </summary>
     [TestMethod]

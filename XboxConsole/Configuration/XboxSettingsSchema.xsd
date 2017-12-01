@@ -1,0 +1,202 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="XboxSettingsSchema" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="Environment" fixed="prod">
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:minLength value="1" />
+        <xs:whiteSpace value="collapse" />
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="SandboxId">
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:minLength value="1" />
+        <xs:whiteSpace value="collapse" />
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="OOBECompleted" type="xs:boolean"/>
+  <xs:element name="ProfilingMode">
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:enumeration value="On" />
+        <xs:enumeration value="Off" />
+        <xs:enumeration value="Legacy" />
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="PreferredLanguages" type="xs:string" />
+  <xs:element name="GeographicRegion" type="xs:string" />
+  <xs:element name="TimeZone" type="xs:string" />
+  <xs:element name="SimulateVersionSwitch" type="xs:boolean" />
+  <xs:element name="EnableKernelDebugging" type="xs:boolean" />
+  <xs:element name="SessionKey">
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:pattern value="[a-zA-Z0-9]{0,31}" />
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="AccessoryFlags" type="xs:unsignedInt" />
+  <xs:element name="PowerMode">
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:enumeration value="EnergySaving" />
+        <xs:enumeration value="InstantOn" />
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="IdleShutdownTimeout">
+    <xs:simpleType>
+      <xs:restriction base="xs:integer">
+        <xs:enumeration value="0" />
+        <xs:enumeration value="60" />
+        <xs:enumeration value="360" />
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="DimTimeout" type="xs:unsignedByte" />
+  <xs:element name="HttpProxyHost" type="xs:string" />
+  <xs:element name="DisplayResolution">
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:enumeration value="720p" />
+        <xs:enumeration value="1080p" />
+        <xs:enumeration value="640x480" />
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="ColorSpace">
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:enumeration value="RgbLimited" />
+        <xs:enumeration value="RgbFull" />
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="ColorDepth">
+    <xs:simpleType>
+      <xs:restriction base="xs:integer">
+        <xs:enumeration value="24" />
+        <xs:enumeration value="30" />
+        <xs:enumeration value="36" />
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="DefaultUser" type="xs:string" />
+  <xs:element name="DefaultUserPairing">
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:enumeration value="Gamepad" />
+        <xs:enumeration value="Virtual" />
+        <xs:enumeration value="AnyPhysical" />
+        <xs:enumeration value="None" />
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="WirelessRadioSettings">
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:enumeration value="On" />
+        <xs:enumeration value="Off" />
+        <xs:enumeration value="WLanOff" />
+        <xs:enumeration value="AccessoriesOff" />
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="HDMIAudio">
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:enumeration value="off" />
+        <xs:enumeration value="stereo" />
+        <xs:enumeration value="5.1" />
+        <xs:enumeration value="7.1" />
+        <xs:enumeration value="bitstream" />
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="OpticalAudio">
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:enumeration value="Off" />
+        <xs:enumeration value="Stereo" />
+        <xs:enumeration value="Bitstream" />
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="AudioBitstreamFormat">
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:enumeration value="DolbyDigital" />
+        <xs:enumeration value="Dts" />
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="DebugMemoryMode">
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:enumeration value="Pix" />
+        <xs:enumeration value="Pix_Tool" />
+        <xs:enumeration value="Pix_Title" />
+        <xs:enumeration value="PGI" />
+        <xs:enumeration value="PGI_Title" />
+        <xs:enumeration value="PGI_Tool" />
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="DisableSelectiveSuspend" type="xs:boolean"/>
+  <xs:element name="DevkitAllowACG">
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:enumeration value="On" />
+        <xs:enumeration value="Off" />
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="AutoBoot" type="xs:boolean"/>
+  <xs:element name="HostName">
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:pattern value="[-a-zA-Z0-9]*[a-zA-Z][-a-zA-Z0-9]*" />
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+  
+  <xs:element name="XboxSettings">
+    <xs:complexType>
+      <xs:all>
+        <xs:element ref="Environment" minOccurs="0"/>
+        <xs:element ref="SandboxId" minOccurs="0"/>
+        <xs:element ref="OOBECompleted" minOccurs="0"/>
+        <xs:element ref="ProfilingMode" minOccurs="0"/>
+        <xs:element ref="PreferredLanguages" minOccurs="0"/>
+        <xs:element ref="GeographicRegion" minOccurs="0"/>
+        <xs:element ref="TimeZone" minOccurs="0"/>
+        <xs:element ref="SimulateVersionSwitch" minOccurs="0"/>
+        <xs:element ref="EnableKernelDebugging" minOccurs="0"/>
+        <xs:element ref="SessionKey" minOccurs="0"/>
+        <xs:element ref="AccessoryFlags" minOccurs="0"/>
+        <xs:element ref="PowerMode" minOccurs="0"/>
+        <xs:element ref="IdleShutdownTimeout" minOccurs="0"/>
+        <xs:element ref="DimTimeout" minOccurs="0"/>
+        <xs:element ref="HttpProxyHost" minOccurs="0"/>
+        <xs:element ref="DisplayResolution" minOccurs="0"/>
+        <xs:element ref="ColorSpace" minOccurs="0"/>
+        <xs:element ref="ColorDepth" minOccurs="0"/>
+        <xs:element ref="DefaultUser" minOccurs="0"/>
+        <xs:element ref="DefaultUserPairing" minOccurs="0"/>
+        <xs:element ref="WirelessRadioSettings" minOccurs="0"/>
+        <xs:element ref="HDMIAudio" minOccurs="0"/>
+        <xs:element ref="OpticalAudio" minOccurs="0"/>
+        <xs:element ref="AudioBitstreamFormat" minOccurs="0"/>
+        <xs:element ref="DebugMemoryMode" minOccurs="0"/>
+        <xs:element ref="DisableSelectiveSuspend" minOccurs="0"/>
+        <xs:element ref="DevkitAllowACG" minOccurs="0"/>
+        <xs:element ref="AutoBoot" minOccurs="0"/>
+        <xs:element ref="HostName" minOccurs="0"/>
+      </xs:all>
+      <xs:attribute name="xdk" type="xs:string" />
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

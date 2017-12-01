@@ -27,6 +27,8 @@ namespace Microsoft.Internal.GamesTest.Xbox
         private const int May2014XdkBuild = 10951;
         private const int April2014XdkBuild = 10812;
 
+        private static FileVersionInfo currentXdkVersion = null;
+
         // The adapter lookup table puts a relationship between adapters and versions of XDK they support.
         // The adapters must be listed in the latest-to-oldest order. Please add new adapters at the beginning of the list.
         private static Tuple<int, Func<XboxConsoleAdapterBase>>[] adapterLookup = 
@@ -53,24 +55,42 @@ namespace Microsoft.Internal.GamesTest.Xbox
             };
 
         /// <summary>
+        /// Gets the current XDK version from file, returning a previously cached version if called more than once.
+        /// </summary>
+        internal static FileVersionInfo XdkVersion
+        {
+            get
+            {
+                if (currentXdkVersion == null)
+                {
+                    string xdkdir = Environment.GetEnvironmentVariable("DurangoXDK");
+
+                    if (xdkdir == null)
+                    {
+                        throw new XdkNotFoundException("The environment variable for XDK location is not found. Please make sure the XDK is installed.");
+                    }
+
+                    string filePath = Directory.EnumerateFiles(Path.Combine(xdkdir, @"bin"), "xb*", SearchOption.TopDirectoryOnly).FirstOrDefault();
+
+                    if (filePath == null)
+                    {
+                        throw new XboxConsoleException("Unable to find 'xb*' file to verify version of XDK installed");
+                    }
+
+                    currentXdkVersion = FileVersionInfo.GetVersionInfo(filePath);                    
+                }
+
+                return currentXdkVersion;
+            }
+        }
+
+        /// <summary>
         /// Creates and returns an adapter compatible with installed XDK.
         /// </summary>
         /// <returns>The best compatible adapter.</returns>
         internal static XboxConsoleAdapterBase CreateAdapterForInstalledXdk()
         {
-            string xdkdir = Environment.GetEnvironmentVariable("DurangoXDK");
-            if (xdkdir == null)
-            {
-                throw new XdkNotFoundException("The environment variable for XDK location is not found. Please make sure the XDK is installed.");
-            }
-
-            string filePath = Directory.EnumerateFiles(Path.Combine(xdkdir, @"bin"), "xb*", SearchOption.TopDirectoryOnly).FirstOrDefault();
-            if (filePath == null)
-            {
-                throw new XboxConsoleException("Unable to find 'xb*' file to verify version of XDK installed");
-            }
-
-            FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(filePath);
+            FileVersionInfo fileVersionInfo = XdkVersion;
             var buildKey = fileVersionInfo.FileBuildPart;
 
             // format: <version> (<branchName>.<timestamp>)

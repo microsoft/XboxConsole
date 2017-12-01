@@ -572,6 +572,15 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.November2014
         }
 
         /// <summary>
+        /// Disconnects all XboxGamepads from the console.
+        /// </summary>
+        /// <param name="ipAddress">The tools IP address of the console.</param>
+        public override void DisconnectAllXboxGamepads(string ipAddress)
+        {
+            XtfGamepad.DisconnectAll(ipAddress);
+        }
+
+        /// <summary>
         /// Push deploys loose files to the console.
         /// </summary>
         /// <param name="systemIpAddress">The tools IP address of the console.</param>

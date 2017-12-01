@@ -268,6 +268,15 @@ namespace Microsoft.Internal.GamesTest.Xbox
         }
 
         /// <summary>
+        /// Disconnects all XboxGamepads from the console.
+        /// </summary>
+        /// <param name="ipAddress">The tools IP address of the console.</param>
+        public virtual void DisconnectAllXboxGamepads(string ipAddress)
+        {
+            throw new XboxConsoleFeatureNotSupportedException(NotSupportedMessage);
+        }
+
+        /// <summary>
         /// Sets the state of the XboxGamepad.
         /// </summary>
         /// <param name="ipAddress">The tools IP address of the console.</param>

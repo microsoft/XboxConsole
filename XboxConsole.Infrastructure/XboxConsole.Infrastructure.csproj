@@ -11,10 +11,14 @@
     <AssemblyName>GamesTest.XboxConsole.Infrastructure</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <SccProjectName>SAK</SccProjectName>
-    <SccLocalPath>SAK</SccLocalPath>
-    <SccAuxPath>SAK</SccAuxPath>
-    <SccProvider>SAK</SccProvider>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
   </PropertyGroup>
@@ -81,6 +85,9 @@
     <Compile Include="Configuration\ColorDepthType.cs" />
     <Compile Include="Configuration\ColorSpaceType.cs" />
     <Compile Include="Configuration\AudioBitstreamFormatType.cs" />
+    <Compile Include="Configuration\XboxDevkitAllowAcgConfigurationSetting.cs" />
+    <Compile Include="Configuration\XboxDnsServerConfigurationSetting.cs" />
+    <Compile Include="Configuration\XboxMacAddressConfigurationSetting.cs" />
     <Compile Include="Configuration\ProfilingModeType.cs" />
     <Compile Include="Configuration\XboxIdleShutdownTimeoutConfigurationSetting.cs" />
     <Compile Include="Configuration\OpticalAudioOutput.cs" />
@@ -107,6 +114,7 @@
     <Compile Include="Configuration\XboxProfilingModeConfigurationSetting.cs" />
     <Compile Include="Configuration\XboxSessionKeyConfigurationSetting.cs" />
     <Compile Include="Configuration\XboxTimeZoneConfigurationSetting.cs" />
+    <Compile Include="Configuration\DebugMemoryModeType.cs" />
     <Compile Include="Deployment\XboxDeploymentError.cs" />
     <Compile Include="Deployment\XboxDeploymentMetric.cs" />
     <Compile Include="Deployment\XboxDeploymentInfo.cs" />
@@ -116,6 +124,7 @@
     <Compile Include="Exceptions\InvalidXuidException.cs" />
     <Compile Include="Exceptions\NoLocalSignedInUsersInPartyException.cs" />
     <Compile Include="Exceptions\XboxAggregateException.cs" />
+    <Compile Include="Exceptions\XboxConfigurationValidationException.cs" />
     <Compile Include="Exceptions\XboxConsoleFeatureNotSupportedException.cs" />
     <Compile Include="Exceptions\XboxDeployException.cs" />
     <Compile Include="Exceptions\XboxInputException.cs" />
@@ -123,6 +132,7 @@
     <Compile Include="Exceptions\XboxSignInException.cs" />
     <Compile Include="Exceptions\XboxSnapException.cs" />
     <Compile Include="Exceptions\XboxUserNotSignedInException.cs" />
+    <Compile Include="Exceptions\XdkVersionMismatchException.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Input\XboxGamepadButtons.cs" />
     <Compile Include="Input\XboxGamepadReading.cs" />

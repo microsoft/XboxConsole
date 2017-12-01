@@ -45,8 +45,16 @@ namespace Microsoft.Internal.GamesTest.Xbox.Configuration
 
             set
             {
-                this.stringValue = value;
                 this.stronglyTypedValue = this.GetValueFromStringValue(value);
+
+                if (value == null)
+                {
+                    this.stringValue = null;
+                }
+                else
+                {
+                    this.stringValue = this.GetStringValueFromValue(this.stronglyTypedValue);
+                }
             }
         }
 

@@ -112,6 +112,49 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.Tests
         }
 
         /// <summary>
+        /// Verifies that the DisconnectAllXboxGamepads method throws an exception if
+        /// the adapter has been disposed.
+        /// </summary>
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        [TestCategory(AdapterInputTestCategory)]
+        [ExpectedException(typeof(ObjectDisposedException))]
+        public void TestDisconnectAllXboxGamepadsThrowsObjectDisposedException()
+        {
+            this.adapter.Dispose();
+            this.adapter.DisconnectAllXboxGamepads(SystemIpAddress);
+        }
+
+        /// <summary>
+        /// Verifies that the DisconnectAllXboxGamepads method throws an exception if
+        /// the systemIpAddress parameter is null.
+        /// </summary>
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        [TestCategory(AdapterInputTestCategory)]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void TestDisconnectAllXboxGamepadsThrowsArgumentNullExceptionForNullSystemIpAddress()
+        {
+            this.adapter.DisconnectAllXboxGamepads(null);
+        }
+
+        /// <summary>
+        /// Verifies that the DisconnectAllXboxGamepads method in XboxXdk is invoked by the adapter.
+        /// </summary>
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        [TestCategory(AdapterInputTestCategory)]
+        public void TestDisconnectAllXboxGamepads()
+        {
+            bool invoked = false;
+            this.fakeXboxXdk.DisconnectAllXboxGamepadsAction = (i) => { invoked = true; };
+
+            this.adapter.DisconnectAllXboxGamepads(SystemIpAddress);
+
+            Assert.IsTrue(invoked);
+        }
+
+        /// <summary>
         /// Verifies that the SendGamepadReport method works correctly with valid parameters.
         /// </summary>
         [TestMethod]

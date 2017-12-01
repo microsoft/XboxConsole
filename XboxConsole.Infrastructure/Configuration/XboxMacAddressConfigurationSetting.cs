@@ -1,5 +1,5 @@
 ﻿//------------------------------------------------------------------------------
-// <copyright file="XboxHostNameConfigurationSetting.cs" company="Microsoft">
+// <copyright file="XboxMacAddressConfigurationSetting.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //------------------------------------------------------------------------------
@@ -10,15 +10,15 @@ namespace Microsoft.Internal.GamesTest.Xbox.Configuration
 
     /// <summary>
     /// An explicit override of the XboxConfigurationSetting class meant to represent the use of the string
-    /// of the HostName configuration setting (see xbconfig command line utility).
+    /// of the MACAddress configuration setting (see xbconfig command line utility).
     /// </summary>
-    internal class XboxHostNameConfigurationSetting : XboxConfigurationSetting<string>
+    internal class XboxMacAddressConfigurationSetting : XboxConfigurationSetting<string>
     {
         /// <summary>
-        /// Initializes a new instance of the XboxHostNameConfigurationSetting class.
+        /// Initializes a new instance of the XboxMacAddressConfigurationSetting class.
         /// </summary>
         /// <param name="key">The setting key.</param>
-        internal XboxHostNameConfigurationSetting(string key)
+        internal XboxMacAddressConfigurationSetting(string key)
             : base(key)
         {
         }
@@ -26,18 +26,18 @@ namespace Microsoft.Internal.GamesTest.Xbox.Configuration
         /// <summary>
         /// Converts a strongly-typed value into a string value.
         /// </summary>
-        /// <param name="hostName">The value to be converted.</param>
+        /// <param name="macAddress">The value to be converted.</param>
         /// <returns>The string value that corresponds to the specified value.</returns>
-        protected override string GetStringValueFromValue(string hostName)
+        protected override string GetStringValueFromValue(string macAddress)
         {
             // Enforce allowed values.
-            if (string.IsNullOrEmpty(hostName) || (hostName.Length <= 15 && System.Text.RegularExpressions.Regex.IsMatch(hostName, "^[-a-zA-Z0-9]*[a-zA-Z][-a-zA-Z0-9]*$")))
+            if (string.IsNullOrEmpty(macAddress) || System.Text.RegularExpressions.Regex.IsMatch(macAddress, @"^([0-9A-F]{2}[:-]){5}([0-9A-F]{2})$"))
             {
-                return hostName;
+                return macAddress;
             }
             else
             {
-                throw new ArgumentException("hostName must be either null or a string of 15 characters or less and only contain letters, numbers and hyphens.", "hostName");
+                throw new ArgumentException("MACAddress is expected to be formatted as six 2-digit hex components separated by dashes.", "macAddress");
             }
         }
     }

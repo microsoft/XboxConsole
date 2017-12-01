@@ -154,8 +154,54 @@ namespace Microsoft.Internal.GamesTest.Xbox.Configuration
         AudioBitstreamFormatType AudioBitstreamFormat { get; }
 
         /// <summary>
+        /// Gets the DebugMemoryMode value.
+        /// </summary>
+        DebugMemoryModeType DebugMemoryMode { get; }
+
+        /// <summary>
+        /// Gets the DisableSelectiveSuspend value.
+        /// </summary>
+        bool? DisableSelectiveSuspend { get; }
+
+        /// <summary>
+        /// Gets the DevkitAllowACG value.
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "ACG", Justification = "Matches xbconfig setting"),
+        System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Devkit", Justification = "Matches xbconfig setting")]
+        bool? DevkitAllowACG { get; }
+
+        /// <summary>
+        /// Gets the AutoBoot value.
+        /// </summary>
+        bool? AutoBoot { get; }
+
+        /// <summary>
+        /// Gets the MACAddress value.
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "MAC", Justification = "Matches xbconfig setting")]
+        string MACAddress { get; }
+
+        /// <summary>
+        /// Gets the DNSServer value.
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "DNS", Justification = "Matches xbconfig setting")]
+        string DNSServer { get; }
+
+        /// <summary>
         /// Gets the HostName value (network name).
         /// </summary>
         string HostName { get; }
+
+        /// <summary>
+        /// Load the Xbox configuration from an XML file.
+        /// </summary>
+        /// <param name="path">Configuration file path.</param>
+        void Load(string path);
+
+        /// <summary>
+        /// Save the Xbox configuration to an XML file.
+        /// </summary>
+        /// <param name="path">Configuration file path.</param>
+        void Save(string path);
     }
 }

@@ -40,6 +40,7 @@
       <Word>Bitstream</Word>
       <Word>Dts</Word>
       <Word>Xuid</Word>
+      <Word>Devkit</Word>
     </Recognized>
   </Words>
   <Acronyms>
@@ -56,6 +57,9 @@
       <Acronym>UI</Acronym>
       <Acronym>OOBE</Acronym>
       <Acronym>XUID</Acronym>
+      <Acronym>ACG</Acronym>
+      <Acronym>DNS</Acronym>
+      <Acronym>MAC</Acronym>
     </CasingExceptions>
   </Acronyms>
 </Dictionary>

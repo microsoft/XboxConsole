@@ -623,7 +623,7 @@ namespace Microsoft.Internal.GamesTest.Xbox.Tests
       string testAccessoryFlags = "0";
       string testPowerMode = "EnergySaving";
       string testIdleShutdownTimeout = "360";
-      string testDimTimeout = "6";
+      string testDimTimeout = "5";
       string testHttpProxyHost = "10.161.24.254:8888";
       string testDisplayResolution = "HD";
       string testColorSpace = "RgbFull";
@@ -637,6 +637,12 @@ namespace Microsoft.Internal.GamesTest.Xbox.Tests
       string testOpticalAudio = "Bitstream";
       string testAudioBitstreamFormat = "DolbyDigital";
       string testHostName = "TestHostName";
+      string testDebugMemoryMode = "Pix_Tool";
+      string testSelectiveSuspend = "true";
+      string testDevkitAllowACG = "On";
+      string testAutoBoot = "true";
+      string testMacAddress = "60-45-BD-C4-95-2F";
+      string testDnsServer = "157.54.14.162,10.221.228.12";
       ShimXboxConsole.ConstructorIPAddress = null;
 
       ShimXboxConsoleAdapterBase.AllInstances.GetConfigValueStringString = (adapter, systemIpAddress, key) =>
@@ -675,7 +681,13 @@ namespace Microsoft.Internal.GamesTest.Xbox.Tests
           case "OpticalAudio": return testOpticalAudio;
           case "AudioBitstreamFormat": return testAudioBitstreamFormat;
           case "HostName": return testHostName;
-          default: Assert.Fail("The XboxConsole Configuration (get) property did not return the proper key."); break;
+          case "DebugMemoryMode": return testDebugMemoryMode;
+          case "DisableSelectiveSuspend": return testSelectiveSuspend;
+          case "DevkitAllowACG": return testDevkitAllowACG;
+          case "AutoBoot": return testAutoBoot;
+          case "MACAddress": return testMacAddress;
+          case "DNSServer": return testDnsServer;
+          default: Assert.Fail("The XboxConsole Configuration (get) property for {0} did not return the proper key.", key); break;
         }
 
         return null;
@@ -1483,7 +1495,7 @@ namespace Microsoft.Internal.GamesTest.Xbox.Tests
         }
       };
 
-      ShimXboxConfiguration.AllInstances.SetSettingValuesActionOfStringString = (config, setSettingValue) =>
+      ShimBaseXboxConfiguration.AllInstances.SetSettingValuesActionOfStringString = (config, setSettingValue) =>
       {
         // We want to make sure Reboot is called AFTER applying the config
         isRebootCalled = false;

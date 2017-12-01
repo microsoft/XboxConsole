@@ -26,6 +26,8 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.October2014
     /// </summary>
     internal partial class XboxConsoleAdapter : XboxConsoleAdapterBase
     {
+        private const int UnregisterNonFolderBasedDeploymentHResult = unchecked((int)0x8083000B);
+
         private COMExceptionWhenConnectingHandler comExceptionWhenConnectingHandler = new COMExceptionWhenConnectingHandler();
 
         /// <summary>
@@ -386,8 +388,22 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.October2014
             {
                 throw new ArgumentNullException("packageFullName");
             }
-
-            this.XboxXdk.UnregisterPackage(systemIpAddress, packageFullName);
+            
+            try
+            {
+                this.XboxXdk.UnregisterPackage(systemIpAddress, packageFullName);
+            }
+            catch (COMException ex)
+            {
+                if (ex.HResult == UnregisterNonFolderBasedDeploymentHResult)
+                {
+                    throw new XboxConsoleException("Failed to unregister package. The package was not deployed with folder based deployment.", ex, systemIpAddress);
+                }
+                else
+                {
+                    throw;
+                }
+            }
         }
 
         /// <summary>

@@ -19,56 +19,7 @@ namespace Microsoft.Internal.GamesTest.Xbox.Configuration
         /// <param name="getSettingValue">The setting value provider.</param>
         internal ReadOnlyXboxConfiguration(Func<string, string> getSettingValue)
         {
-            if (getSettingValue == null)
-            {
-                throw new ArgumentNullException("getSettingValue");
-            }
-
-            this.EnvironmentSetting.StringValue = getSettingValue(this.EnvironmentSetting.Key);
-            this.SandboxIdSetting.StringValue = getSettingValue(this.SandboxIdSetting.Key);
-            this.OOBECompletedSetting.StringValue = getSettingValue(this.OOBECompletedSetting.Key);
-            this.ProfilingModeSetting.StringValue = getSettingValue(this.ProfilingModeSetting.Key);
-            this.PreferredLanguagesSetting.StringValue = getSettingValue(this.PreferredLanguagesSetting.Key);
-            this.GeographicRegionSetting.StringValue = getSettingValue(this.GeographicRegionSetting.Key);
-            this.TimeZoneSetting.StringValue = getSettingValue(this.TimeZoneSetting.Key);
-            this.SimulateVersionSwitchSetting.StringValue = getSettingValue(this.SimulateVersionSwitchSetting.Key);
-            this.EnableKernelDebuggingSetting.StringValue = getSettingValue(this.EnableKernelDebuggingSetting.Key);
-            this.SessionKeySetting.StringValue = getSettingValue(this.SessionKeySetting.Key);
-
-            if (this.SessionKeySetting.StringValue == null)
-            {
-                this.SessionKeySetting.StringValue = string.Empty;
-            }
-
-            this.AccessoryFlagsSetting.StringValue = getSettingValue(this.AccessoryFlagsSetting.Key);
-            this.PowerModeSetting.StringValue = getSettingValue(this.PowerModeSetting.Key);
-            this.IdleShutdownTimeoutSetting.StringValue = getSettingValue(this.IdleShutdownTimeoutSetting.Key);
-            this.DimTimeoutSetting.StringValue = getSettingValue(this.DimTimeoutSetting.Key);
-            this.HttpProxyHostSetting.StringValue = getSettingValue(this.HttpProxyHostSetting.Key);
-
-            if (this.HttpProxyHostSetting.StringValue == null)
-            {
-                this.HttpProxyHostSetting.StringValue = string.Empty;
-            }
-
-            this.DisplayResolutionSetting.StringValue = getSettingValue(this.DisplayResolutionSetting.Key);
-            this.ColorSpaceSetting.StringValue = getSettingValue(this.ColorSpaceSetting.Key);
-            this.ColorDepthSetting.StringValue = getSettingValue(this.ColorDepthSetting.Key);
-            this.NetworkTypeSetting.StringValue = getSettingValue(this.NetworkTypeSetting.Key);
-            this.NetworkAddressModeSetting.StringValue = getSettingValue(this.NetworkAddressModeSetting.Key);
-            this.DefaultUserSetting.StringValue = getSettingValue(this.DefaultUserSetting.Key);
-
-            if (this.DefaultUserSetting.StringValue == null)
-            {
-                this.DefaultUserSetting.StringValue = string.Empty;
-            }
-
-            this.DefaultUserPairingSetting.StringValue = getSettingValue(this.DefaultUserPairingSetting.Key);
-            this.WirelessRadioSettingsSetting.StringValue = getSettingValue(this.WirelessRadioSettingsSetting.Key);
-            this.AudioBitstreamFormatSetting.StringValue = getSettingValue(this.AudioBitstreamFormatSetting.Key);
-            this.HdmiAudioSetting.StringValue = getSettingValue(this.HdmiAudioSetting.Key);
-            this.OpticalAudioSetting.StringValue = getSettingValue(this.OpticalAudioSetting.Key);
-            this.HostNameSetting.StringValue = getSettingValue(this.HostNameSetting.Key);
+            this.GetSettingValues(getSettingValue);
         }
 
         /// <summary>
@@ -370,6 +321,72 @@ namespace Microsoft.Internal.GamesTest.Xbox.Configuration
         }
 
         /// <summary>
+        /// Gets the DebugMemoryMode.
+        /// </summary>
+        public DebugMemoryModeType DebugMemoryMode
+        {
+            get
+            {
+                return this.DebugMemoryModeSetting.Value;
+            }
+        }
+
+        /// <summary>
+        /// Gets the DisableSelectiveSuspend.
+        /// </summary>
+        public bool? DisableSelectiveSuspend
+        {
+            get
+            {
+                return this.DisableSelectiveSuspendSetting.Value;
+            }
+        }
+
+        /// <summary>
+        /// Gets the DevkitAllowACG.
+        /// </summary>
+        public bool? DevkitAllowACG
+        {
+            get
+            {
+                return this.DevkitAllowACGSetting.Value;
+            }
+        }
+
+        /// <summary>
+        /// Gets the AutoBoot.
+        /// </summary>
+        public bool? AutoBoot
+        {
+            get
+            {
+                return this.AutoBootSetting.Value;
+            }
+        }
+
+        /// <summary>
+        /// Gets the MACAddress.
+        /// </summary>
+        public string MACAddress
+        {
+            get
+            {
+                return this.MACAddressSetting.Value;
+            }
+        }
+
+        /// <summary>
+        /// Gets the DNSServer.
+        /// </summary>
+        public string DNSServer
+        {
+            get
+            {
+                return this.DNSServerSetting.Value;
+            }
+        }
+
+        /// <summary>
         /// Gets the HostName.
         /// </summary>
         public string HostName
@@ -378,6 +395,24 @@ namespace Microsoft.Internal.GamesTest.Xbox.Configuration
             {
                 return this.HostNameSetting.Value;
             }
+        }
+
+        /// <summary>
+        /// Loads the Xbox configuration from an XML file.
+        /// </summary>
+        /// <param name="path">The configuration file path.</param>
+        public void Load(string path)
+        {
+            throw new InvalidOperationException("XboxConsole.Configuration describes the current configuration and cannot be loaded from file. Create a new XboxConfiguration, use its Load method, and apply it to XboxConsole using the Restart method.");
+        }
+
+        /// <summary>
+        /// Saves the Xbox configuration to an XML file.
+        /// </summary>
+        /// <param name="path">The configuration file path.</param>
+        public void Save(string path)
+        {
+            this.Save(path, XboxConsole.XdkVersion);
         }
     }
 }

@@ -16,10 +16,14 @@
     <ReferencePath>$(ProgramFiles)\Common Files\microsoft shared\VSTT\$(VisualStudioVersion)\UITestExtensionPackages</ReferencePath>
     <IsCodedUITest>False</IsCodedUITest>
     <TestProjectType>UnitTest</TestProjectType>
-    <SccProjectName>SAK</SccProjectName>
-    <SccLocalPath>SAK</SccLocalPath>
-    <SccAuxPath>SAK</SccAuxPath>
-    <SccProvider>SAK</SccProvider>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -53,6 +57,7 @@
     <Reference Include="sysglobl" />
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.XML" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <Choose>
@@ -86,7 +91,9 @@
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="ReadOnlyXboxConfigurationTests.cs" />
     <Compile Include="XboxApplicationTests.cs" />
-    <Compile Include="XboxConfigurationTests.cs" />
+    <Compile Include="XboxConfigurationTests.cs">
+      <ExcludeFromStyleCop>False</ExcludeFromStyleCop>
+    </Compile>
     <Compile Include="XboxConsoleDeploymentTests.cs" />
     <Compile Include="XboxDirectoryTests.cs" />
     <Compile Include="DirectoryInfoExtensionsTests.cs" />

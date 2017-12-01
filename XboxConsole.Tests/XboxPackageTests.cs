@@ -527,20 +527,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.Tests
             Assert.IsTrue(isCorrectMethodCalled, "The Unregister() method didn't call the adapter's UninstallPackage(systemIpAddress, packageFullName).");
         }
 
-        /// <summary>
-        /// Verifies that the Unregister method calls the adapter's UnregisterPackage method.
-        /// </summary>
-        [TestMethod]
-        [TestCategory("UnitTest")]
-        [TestCategory(XboxPackageTestCategory)]
-        [ExpectedException(typeof(InvalidOperationException))]
-        public void TestUnregisterThrowsForNonScratchPackage()
-        {
-            ShimXboxConsoleAdapterBase.AllInstances.UnregisterPackageStringString = (adapter, systemIpAddress, packageFullName) => { };
-
-            this.xboxPackage.Unregister();
-        }
-
         private void TestExecutionStatePolling(Action subscriptionAction, Action unsubscriptionAction)
         {
             ManualResetEventSlim hasMethodBeenCalled = new ManualResetEventSlim(false);

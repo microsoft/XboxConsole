@@ -46,6 +46,16 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.October2014
         }
 
         /// <summary>
+        /// Disconnects all XboxGamepads from the console.
+        /// </summary>
+        /// <param name="systemIpAddress">The system IP address of the console.</param>
+        protected override void DisconnectAllXboxGamepadsImpl(string systemIpAddress)
+        {
+            this.XboxXdk.DisconnectAllXboxGamepads(systemIpAddress);
+            this.gamepads.Clear();
+        }
+
+        /// <summary>
         /// Sets the state of the XboxGamepad.
         /// </summary>
         /// <param name="systemIpAddress">The system IP address of the console.</param>

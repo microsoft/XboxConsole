@@ -8,6 +8,9 @@ namespace Microsoft.Internal.GamesTest.Xbox.Configuration
 {
     using System;
     using System.Globalization;
+    using System.Linq;
+    using System.Xml;
+    using Microsoft.Internal.GamesTest.Xbox.Exceptions;
     using Microsoft.Internal.GamesTest.Xbox.Telemetry;
 
     /// <summary>
@@ -16,6 +19,14 @@ namespace Microsoft.Internal.GamesTest.Xbox.Configuration
     /// </summary>
     public class XboxConfiguration : BaseXboxConfiguration, IXboxConfiguration
     {
+        private static readonly Lazy<System.Xml.Schema.XmlSchema> serializationSchema = new Lazy<System.Xml.Schema.XmlSchema>(() =>
+            {
+                using (var stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Microsoft.Internal.GamesTest.Xbox.Configuration.XboxSettingsSchema.xsd"))
+                {
+                    return System.Xml.Schema.XmlSchema.Read(stream, (o, a) => { });
+                }
+            });
+
         /// <summary>
         /// Initializes a new instance of the XboxConfiguration class. Call XboxConsole.Reboot method to apply configuration to a console.
         /// </summary>
@@ -62,6 +73,18 @@ namespace Microsoft.Internal.GamesTest.Xbox.Configuration
             this.HdmiAudio = source.HdmiAudio;
             this.OpticalAudio = source.OpticalAudio;
             this.AudioBitstreamFormat = source.AudioBitstreamFormat;
+            this.DebugMemoryMode = source.DebugMemoryMode;
+            this.DisableSelectiveSuspend = source.DisableSelectiveSuspend;
+            this.DevkitAllowACG = source.DevkitAllowACG;
+            this.AutoBoot = source.AutoBoot;
+        }
+
+        /// <summary>
+        /// Gets the schema used for validating the serialized XboxConfiguration.
+        /// </summary>
+        public static System.Xml.Schema.XmlSchema SerializationSchema
+        {
+            get { return serializationSchema.Value; }
         }
 
         /// <summary>
@@ -510,41 +533,144 @@ namespace Microsoft.Internal.GamesTest.Xbox.Configuration
         }
 
         /// <summary>
-        /// Sets setting values using the specified action.
+        /// Gets or sets the DebugMemoryMode value. Call XboxConsole.Reboot method to apply configuration to a console. 
         /// </summary>
-        /// <param name="setSettingValue">The action called for each setting.</param>
-        internal void SetSettingValues(Action<string, string> setSettingValue)
+        public DebugMemoryModeType DebugMemoryMode
         {
-            if (setSettingValue == null)
+            get
             {
-                throw new ArgumentNullException("setSettingValue");
+                return this.DebugMemoryModeSetting.Value;
             }
 
-            setSettingValue(this.EnvironmentSetting.Key, this.EnvironmentSetting.StringValue);
-            setSettingValue(this.SandboxIdSetting.Key, this.SandboxIdSetting.StringValue);
-            setSettingValue(this.OOBECompletedSetting.Key, this.OOBECompletedSetting.StringValue);
-            setSettingValue(this.ProfilingModeSetting.Key, this.ProfilingModeSetting.StringValue);
-            setSettingValue(this.PreferredLanguagesSetting.Key, this.PreferredLanguagesSetting.StringValue);
-            setSettingValue(this.GeographicRegionSetting.Key, this.GeographicRegionSetting.StringValue);
-            setSettingValue(this.TimeZoneSetting.Key, this.TimeZoneSetting.StringValue);
-            setSettingValue(this.SimulateVersionSwitchSetting.Key, this.SimulateVersionSwitchSetting.StringValue);
-            setSettingValue(this.EnableKernelDebuggingSetting.Key, this.EnableKernelDebuggingSetting.StringValue);
-            setSettingValue(this.SessionKeySetting.Key, this.SessionKeySetting.StringValue);
-            setSettingValue(this.AccessoryFlagsSetting.Key, this.AccessoryFlagsSetting.StringValue);
-            setSettingValue(this.PowerModeSetting.Key, this.PowerModeSetting.StringValue);
-            setSettingValue(this.IdleShutdownTimeoutSetting.Key, this.IdleShutdownTimeoutSetting.StringValue);
-            setSettingValue(this.DimTimeoutSetting.Key, this.DimTimeoutSetting.StringValue);
-            setSettingValue(this.HttpProxyHostSetting.Key, this.HttpProxyHostSetting.StringValue);
-            setSettingValue(this.DisplayResolutionSetting.Key, this.DisplayResolutionSetting.StringValue);
-            setSettingValue(this.ColorSpaceSetting.Key, this.ColorSpaceSetting.StringValue);
-            setSettingValue(this.ColorDepthSetting.Key, this.ColorDepthSetting.StringValue);
-            setSettingValue(this.DefaultUserSetting.Key, this.DefaultUserSetting.StringValue);
-            setSettingValue(this.DefaultUserPairingSetting.Key, this.DefaultUserPairingSetting.StringValue);
-            setSettingValue(this.WirelessRadioSettingsSetting.Key, this.WirelessRadioSettingsSetting.StringValue);
-            setSettingValue(this.HdmiAudioSetting.Key, this.HdmiAudioSetting.StringValue);
-            setSettingValue(this.OpticalAudioSetting.Key, this.OpticalAudioSetting.StringValue);
-            setSettingValue(this.AudioBitstreamFormatSetting.Key, this.AudioBitstreamFormatSetting.StringValue);
-            setSettingValue(this.HostNameSetting.Key, this.HostNameSetting.StringValue);
+            set
+            {
+                this.DebugMemoryModeSetting.Value = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the DisableSelectiveSuspend value. Call XboxConsole.Reboot method to apply configuration to a console.
+        /// </summary>
+        public bool? DisableSelectiveSuspend
+        {
+            get
+            {
+                return this.DisableSelectiveSuspendSetting.Value;
+            }
+
+            set
+            {
+                this.DisableSelectiveSuspendSetting.Value = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the DevkitAllowACG value. Call XboxConsole.Reboot method to apply configuration to a console.
+        /// </summary>
+        public bool? DevkitAllowACG
+        {
+            get
+            {
+                return this.DevkitAllowACGSetting.Value;
+            }
+
+            set
+            {
+                this.DevkitAllowACGSetting.Value = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the AutoBoot value. Call XboxConsole.Reboot method to apply configuration to a console.
+        /// </summary>
+        public bool? AutoBoot
+        {
+            get
+            {
+                return this.AutoBootSetting.Value;
+            }
+
+            set
+            {
+                this.AutoBootSetting.Value = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets the MACAddress value. Call XboxConsole.Reboot method to apply configuration to a console. 
+        /// </summary>
+        /// <remarks>
+        /// The MACAddress is formatted as a sequence of six 2-digit hex bytes separated by dashes.
+        /// </remarks>
+        public string MACAddress
+        {
+            get
+            {
+                return this.MACAddressSetting.Value;
+            }
+        }
+
+        /// <summary>
+        /// Gets the DNSServer value. Call XboxConsole.Reboot method to apply configuration to a console. 
+        /// </summary>
+        /// <remarks>
+        /// The DNSServer can be one or two IPv4 addresses separated by a comma.
+        /// </remarks>
+        public string DNSServer
+        {
+            get
+            {
+                return this.DNSServerSetting.Value;
+            }
+        }
+
+        /// <summary>
+        /// Load the Xbox configuration from an XML file.
+        /// </summary>
+        /// <param name="path">The configuration file path.</param>
+        public void Load(string path)
+        {
+            // Read XML document
+            XmlDocument doc = new XmlDocument();
+            doc.Schemas.Add(XboxConfiguration.serializationSchema.Value);
+            doc.Load(path);
+
+            // Validate
+            if (doc.DocumentElement.Name != BaseXboxConfiguration.SettingsKey ||
+                !doc.DocumentElement.HasAttribute(BaseXboxConfiguration.XdkVersionAttribute))
+            {
+                throw new FormatException("The document is not a valid configuration settings file.");
+            }
+
+            if (doc.DocumentElement.Attributes[BaseXboxConfiguration.XdkVersionAttribute].Value != XboxConsole.XdkVersion)
+            {
+                throw new XdkVersionMismatchException("Attempted to load Xbox Configuration saved on another XDK version.");
+            }
+
+            System.Collections.Generic.List<System.Xml.Schema.ValidationEventArgs> validationErrors = new System.Collections.Generic.List<System.Xml.Schema.ValidationEventArgs>();
+            doc.Validate((o, e) => { validationErrors.Add(e); });
+
+            if (validationErrors.Count > 0)
+            {
+                throw new XboxConfigurationValidationException("Validation of XboxConfiguration XML file failed", validationErrors);
+            }
+
+            // Load settings
+            this.GetSettingValues((setting) =>
+            {
+                // Certain settings are read-only and will not exist in the configuration file.
+                XmlNodeList nodes = doc.DocumentElement.SelectNodes(setting);
+                return nodes.Count > 0 ? nodes[0].InnerText : null;
+            });
+        }
+
+        /// <summary>
+        /// Save the configuration to an XML file.
+        /// </summary>
+        /// <param name="path">The configuration file path.</param>
+        public void Save(string path)
+        {
+            this.Save(path, XboxConsole.XdkVersion);
         }
 
         /// <summary>
@@ -589,6 +715,12 @@ namespace Microsoft.Internal.GamesTest.Xbox.Configuration
                 case "HDMIAudio": return this.HdmiAudioSetting.StringValue;
                 case "OpticalAudio": return this.OpticalAudioSetting.StringValue;
                 case "AudioBitstreamFormat": return this.AudioBitstreamFormatSetting.StringValue;
+                case "DebugMemoryMode": return this.DebugMemoryModeSetting.StringValue;
+                case "DisableSelectiveSuspend": return this.DisableSelectiveSuspendSetting.StringValue;
+                case "DevkitAllowACG": return this.DevkitAllowACGSetting.StringValue;
+                case "AutoBoot": return this.AutoBootSetting.StringValue;
+                case "MACAddress": return this.MACAddressSetting.StringValue;
+                case "DNSServer": return this.DNSServerSetting.StringValue;
                 default: throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, "Provided key '{0}' does not correspond to any XboxConfigurationSettings.", key));
             }
         }

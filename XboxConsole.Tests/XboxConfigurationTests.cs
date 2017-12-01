@@ -8,11 +8,13 @@ namespace Microsoft.Internal.GamesTest.Xbox.Tests
 {
   using System;
   using System.Collections.Generic;
+  using System.Diagnostics;
   using System.Globalization;
   using System.Linq;
   using System.Reflection;
   using Microsoft.Internal.GamesTest.Xbox.Configuration;
   using Microsoft.Internal.GamesTest.Xbox.Configuration.Fakes;
+  using Microsoft.Internal.GamesTest.Xbox.Fakes;
   using Microsoft.QualityTools.Testing.Fakes;
   using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -580,6 +582,7 @@ namespace Microsoft.Internal.GamesTest.Xbox.Tests
     public void TestXboxConfigurationHostName()
     {
         this.TestSetsAndGets<string>((testConfiguration, testValue) => { testConfiguration.HostName = testValue; return testConfiguration.HostName; }, "TestHostName", "HostName");
+        this.TestSetsAndGets<string>((testConfiguration, testValue) => { testConfiguration.HostName = testValue; return testConfiguration.HostName; }, "Test-Host-Name", "HostName");
         this.TestSetsAndGets<string>((testConfiguration, testValue) => { testConfiguration.HostName = testValue; return testConfiguration.HostName; }, string.Empty, "HostName");
         this.TestSetsAndGets<string>((testConfiguration, testValue) => { testConfiguration.HostName = testValue; return testConfiguration.HostName; }, null, "HostName");
     }
@@ -596,8 +599,293 @@ namespace Microsoft.Internal.GamesTest.Xbox.Tests
         this.TestSetInvalidValueThrowsException<string, ArgumentException>((testConfiguration, testValue) => testConfiguration.HostName = testValue, "Ano+her", "HostName");
         this.TestSetInvalidValueThrowsException<string, ArgumentException>((testConfiguration, testValue) => testConfiguration.HostName = testValue, "Lets try spaces", "HostName");
         this.TestSetInvalidValueThrowsException<string, ArgumentException>((testConfiguration, testValue) => testConfiguration.HostName = testValue, "ThisIsAReallyLongStringThatShouldBeLongerThanFifteenCharacters", "HostName");
-        this.TestSetInvalidValueThrowsException<string, ArgumentException>((testConfiguration, testValue) => testConfiguration.HostName = testValue, "1eet", "HostName");
         this.TestSetInvalidValueThrowsException<string, ArgumentException>((testConfiguration, testValue) => testConfiguration.HostName = testValue, "justslightlylong", "HostName");
+        this.TestSetInvalidValueThrowsException<string, ArgumentException>((testConfiguration, testValue) => testConfiguration.HostName = testValue, "0123456", "HostName");
+        this.TestSetInvalidValueThrowsException<string, ArgumentException>((testConfiguration, testValue) => testConfiguration.HostName = testValue, "012-3456", "HostName");
+    }
+
+    /// <summary>
+    /// Verifies that the DebugMemoryMode property returns the correct value.
+    /// </summary>
+    [TestMethod]
+    [TestCategory("UnitTest")]
+    [TestCategory(XboxConfigurationTestCategory)]
+    public void TestXboxConfigurationGetDebugMemoryMode()
+    {
+        this.TestGetter<DebugMemoryModeType>(config => config.DebugMemoryMode, DebugMemoryModeType.PGI_Tool, "DebugMemoryMode");
+    }
+
+    /// <summary>
+    /// Verifies that the DebugMemoryMode property sets the value by setting XboxConfigurationSettings value.
+    /// </summary>
+    [TestMethod]
+    [TestCategory("UnitTest")]
+    [TestCategory(XboxConfigurationTestCategory)]
+    public void TestXboxConfigurationSetDebugMemoryMode()
+    {
+        this.TestSetter<DebugMemoryModeType>(testConfiguration => testConfiguration.DebugMemoryMode = DebugMemoryModeType.Pix_Tool, DebugMemoryModeType.Pix_Tool, "DebugMemoryMode");
+    }
+
+    /// <summary>
+    /// Verifies that the DebugMemoryMode property gets the same value that it sets.
+    /// </summary>
+    [TestMethod]
+    [TestCategory("UnitTest")]
+    [TestCategory(XboxConfigurationTestCategory)]
+    public void TestXboxConfigurationDebugMemoryMode()
+    {
+        this.TestSetsAndGets<DebugMemoryModeType>((testConfiguration, testValue) => { testConfiguration.DebugMemoryMode = testValue; return testConfiguration.DebugMemoryMode; }, DebugMemoryModeType.Pix_Tool, "DebugMemoryMode");
+    }
+
+    /// <summary>
+    /// Verifies that the DisableSelectiveSuspend property returns the correct boolean.
+    /// </summary>
+    [TestMethod]
+    [TestCategory("UnitTest")]
+    [TestCategory(XboxConfigurationTestCategory)]
+    public void TestXboxConfigurationGetDisableSelectiveSuspend()
+    {
+        this.TestGetter<bool?>(config => config.DisableSelectiveSuspend, true, "DisableSelectiveSuspend");
+    }
+
+    /// <summary>
+    /// Verifies that the DisableSelectiveSuspend property sets the value by setting XboxConfigurationSettings Value.
+    /// </summary>
+    [TestMethod]
+    [TestCategory("UnitTest")]
+    [TestCategory(XboxConfigurationTestCategory)]
+    public void TestXboxConfigurationSetDisableSelectiveSuspend()
+    {
+        this.TestSetter<bool?>(testConfiguration => testConfiguration.DisableSelectiveSuspend = true, true, "DisableSelectiveSuspend");
+    }
+
+    /// <summary>
+    /// Verifies that the DisableSelectiveSuspend property gets the same value that it sets.
+    /// </summary>
+    [TestMethod]
+    [TestCategory("UnitTest")]
+    [TestCategory(XboxConfigurationTestCategory)]
+    public void TestXboxConfigurationDisableSelectiveSuspend()
+    {
+        this.TestSetsAndGets<bool?>((testConfiguration, testValue) => { testConfiguration.DisableSelectiveSuspend = testValue; return testConfiguration.DisableSelectiveSuspend; }, true, "DisableSelectiveSuspend");
+    }
+
+    /// <summary>
+    /// Verifies that the DevkitAllowACG property returns the correct boolean.
+    /// </summary>
+    [TestMethod]
+    [TestCategory("UnitTest")]
+    [TestCategory(XboxConfigurationTestCategory)]
+    public void TestXboxConfigurationGetDevkitAllowACG()
+    {
+        this.TestGetter<bool?>(config => config.DevkitAllowACG, true, "DevkitAllowACG");
+    }
+
+    /// <summary>
+    /// Verifies that the DevkitAllowACG property sets the value by setting XboxConfigurationSettings Value.
+    /// </summary>
+    [TestMethod]
+    [TestCategory("UnitTest")]
+    [TestCategory(XboxConfigurationTestCategory)]
+    public void TestXboxConfigurationSetDevkitAllowACG()
+    {
+        this.TestSetter<bool?>(testConfiguration => testConfiguration.DevkitAllowACG = true, true, "DevkitAllowACG");
+    }
+
+    /// <summary>
+    /// Verifies that the DevkitAllowACG property gets the same value that it sets.
+    /// </summary>
+    [TestMethod]
+    [TestCategory("UnitTest")]
+    [TestCategory(XboxConfigurationTestCategory)]
+    public void TestXboxConfigurationDevkitAllowACG()
+    {
+        this.TestSetsAndGets<bool?>((testConfiguration, testValue) => { testConfiguration.DevkitAllowACG = testValue; return testConfiguration.DevkitAllowACG; }, true, "DevkitAllowACG");
+    }
+
+    /// <summary>
+    /// Verifies that the AutoBoot property returns the correct boolean.
+    /// </summary>
+    [TestMethod]
+    [TestCategory("UnitTest")]
+    [TestCategory(XboxConfigurationTestCategory)]
+    public void TestXboxConfigurationGetAutoBoot()
+    {
+        this.TestGetter<bool?>(config => config.AutoBoot, true, "AutoBoot");
+    }
+
+    /// <summary>
+    /// Verifies that the AutoBoot property sets the value by setting XboxConfigurationSettings Value.
+    /// </summary>
+    [TestMethod]
+    [TestCategory("UnitTest")]
+    [TestCategory(XboxConfigurationTestCategory)]
+    public void TestXboxConfigurationSetAutoBoot()
+    {
+        this.TestSetter<bool?>(testConfiguration => testConfiguration.AutoBoot = true, true, "AutoBoot");
+    }
+
+    /// <summary>
+    /// Verifies that the AutoBoot property gets the same value that it sets.
+    /// </summary>
+    [TestMethod]
+    [TestCategory("UnitTest")]
+    [TestCategory(XboxConfigurationTestCategory)]
+    public void TestXboxConfigurationDevkitAutoBoot()
+    {
+        this.TestSetsAndGets<bool?>((testConfiguration, testValue) => { testConfiguration.AutoBoot = testValue; return testConfiguration.AutoBoot; }, true, "AutoBoot");
+    }
+
+    /// <summary>
+    /// Verifies that the MACAddress property returns the correct value (calls get on XboxConfigurationSettings Value).
+    /// </summary>
+    [TestMethod]
+    [TestCategory("UnitTest")]
+    [TestCategory(XboxConfigurationTestCategory)]
+    public void TestXboxConfigurationGetMACAddress()
+    {
+        this.TestGetter<string>(config => config.MACAddress, "01-0b-02-0c-5e-ff", "MACAddress");
+    }
+
+    /// <summary>
+    /// Verifies that the MACAddress property throws exceptions on invalid values.
+    /// Special case for read-only property.
+    /// </summary>
+    [TestMethod]
+    [TestCategory("UnitTest")]
+    [TestCategory(XboxConfigurationTestCategory)]
+    public void TestXboxConfigurationMACAddressThrowsArgumentException()
+    {
+        XboxMacAddressConfigurationSetting setting = new XboxMacAddressConfigurationSetting("MACAddress");
+
+        bool thrown = false;
+
+        try
+        {
+            setting.StringValue = "Not a MAC address";
+        }
+        catch (ArgumentException)
+        {
+            thrown = true;
+        }
+
+        Assert.IsTrue(thrown, "MAC address not properly validated (using 'Not a MAC address' string).");
+
+        try
+        {
+            thrown = false;
+            setting.StringValue = "0104-01-b0-c1-f5-d5";
+        }
+        catch (ArgumentException)
+        {
+            thrown = true;
+        }
+
+        Assert.IsTrue(thrown, "MAC address not properly validated (using 4 hex digits in one group instad of max. 2).");
+
+        try
+        {
+            thrown = false;
+            setting.StringValue = "ff-df";
+        }
+        catch (ArgumentException)
+        {
+            thrown = true;
+        }
+
+        Assert.IsTrue(thrown, "MAC address not properly validated (using 2 groups of hex digits instead of min. 6).");
+
+        try
+        {
+            thrown = false;
+            setting.StringValue = "f4-a1-d0-cf-b3-f9-90-43";
+        }
+        catch (ArgumentException)
+        {
+            thrown = true;
+        }
+
+        Assert.IsTrue(thrown, "MAC address not properly validated (using 8 groups of hex digits instead of max. 6).");
+    }
+
+    /// <summary>
+    /// Verifies that the DNSServer property returns the correct value (calls get on XboxConfigurationSettings Value).
+    /// </summary>
+    [TestMethod]
+    [TestCategory("UnitTest")]
+    [TestCategory(XboxConfigurationTestCategory)]
+    public void TestXboxConfigurationGetDNSServer()
+    {
+        this.TestGetter<string>(config => config.DNSServer, "192.168.55.20", "DNSServer");
+    }
+
+    /// <summary>
+    /// Verifies that the DNSServer property throws exceptions on invalid values.
+    /// </summary>
+    [TestMethod]
+    [TestCategory("UnitTest")]
+    [TestCategory(XboxConfigurationTestCategory)]
+    public void TestXboxConfigurationDnsServerThrowsArgumentException()
+    {
+        this.TestSetInvalidValueThrowsException<string, ArgumentException>((testConfiguration, testValue) => testConfiguration.HostName = testValue, "Not an IP addresss", "DNSServer");
+        this.TestSetInvalidValueThrowsException<string, ArgumentException>((testConfiguration, testValue) => testConfiguration.HostName = testValue, "Not.an.IP.address", "DNSServer");
+        this.TestSetInvalidValueThrowsException<string, ArgumentException>((testConfiguration, testValue) => testConfiguration.HostName = testValue, "920.25.25.30", "DNSServer");
+        this.TestSetInvalidValueThrowsException<string, ArgumentException>((testConfiguration, testValue) => testConfiguration.HostName = testValue, "192.168.0.1.192.195.20", "DNSServer");
+        this.TestSetInvalidValueThrowsException<string, ArgumentException>((testConfiguration, testValue) => testConfiguration.HostName = testValue, "192.28", "DNSServer");
+        this.TestSetInvalidValueThrowsException<string, ArgumentException>((testConfiguration, testValue) => testConfiguration.HostName = testValue, "192.28.56.32,", "DNSServer");
+        this.TestSetInvalidValueThrowsException<string, ArgumentException>((testConfiguration, testValue) => testConfiguration.HostName = testValue, "192.28.56.256", "DNSServer");
+    }
+
+    /// <summary>
+    /// Tests that SerializationSchema.
+    /// </summary>
+    [TestMethod]
+    [TestCategory("UnitTest")]
+    [TestCategory(XboxConfigurationTestCategory)]
+    public void TestXboxConfigurationSerializationSchema()
+    {
+        var schema = XboxConfiguration.SerializationSchema;
+        Assert.IsNotNull(schema, "XboxConfiguration static property SerializationSchema should not be null.");
+
+        // XmlSchema don't actually finish setting up the schema until they are "compiled"
+        // which happens either when the XmlSchema.Compile method, which is obsolete, or
+        // when a XmlSchemaSet compiles, which happens after automatically after calling
+        // add. Going with the XmlSchemaSet as Compile is obsolete.
+        var set = new System.Xml.Schema.XmlSchemaSet();
+        set.Add(schema);
+
+        Assert.AreEqual(30, schema.Elements.Count, "Schema didn't contain the expected amount of elements");
+
+        Assert.IsTrue(schema.Elements.Contains(new System.Xml.XmlQualifiedName("XboxSettings")), "Schema missing a definition of the XboxSettings element");
+        Assert.IsTrue(schema.Elements.Contains(new System.Xml.XmlQualifiedName("Environment")), "Schema missing a definition of the Environment element");
+        Assert.IsTrue(schema.Elements.Contains(new System.Xml.XmlQualifiedName("SandboxId")), "Schema missing a definition of the SandboxId element");
+        Assert.IsTrue(schema.Elements.Contains(new System.Xml.XmlQualifiedName("OOBECompleted")), "Schema missing a definition of the OOBECompleted element");
+        Assert.IsTrue(schema.Elements.Contains(new System.Xml.XmlQualifiedName("ProfilingMode")), "Schema missing a definition of the ProfilingMode element");
+        Assert.IsTrue(schema.Elements.Contains(new System.Xml.XmlQualifiedName("PreferredLanguages")), "Schema missing a definition of the PreferredLanguages element");
+        Assert.IsTrue(schema.Elements.Contains(new System.Xml.XmlQualifiedName("GeographicRegion")), "Schema missing a definition of the GeographicRegion element");
+        Assert.IsTrue(schema.Elements.Contains(new System.Xml.XmlQualifiedName("TimeZone")), "Schema missing a definition of the TimeZone element");
+        Assert.IsTrue(schema.Elements.Contains(new System.Xml.XmlQualifiedName("SimulateVersionSwitch")), "Schema missing a definition of the SimulateVersionSwitch element");
+        Assert.IsTrue(schema.Elements.Contains(new System.Xml.XmlQualifiedName("EnableKernelDebugging")), "Schema missing a definition of the EnableKernelDebugging element");
+        Assert.IsTrue(schema.Elements.Contains(new System.Xml.XmlQualifiedName("SessionKey")), "Schema missing a definition of the SessionKey element");
+        Assert.IsTrue(schema.Elements.Contains(new System.Xml.XmlQualifiedName("AccessoryFlags")), "Schema missing a definition of the AccessoryFlags element");
+        Assert.IsTrue(schema.Elements.Contains(new System.Xml.XmlQualifiedName("PowerMode")), "Schema missing a definition of the PowerMode element");
+        Assert.IsTrue(schema.Elements.Contains(new System.Xml.XmlQualifiedName("IdleShutdownTimeout")), "Schema missing a definition of the IdleShutdownTimeout element");
+        Assert.IsTrue(schema.Elements.Contains(new System.Xml.XmlQualifiedName("DimTimeout")), "Schema missing a definition of the DimTimeout element");
+        Assert.IsTrue(schema.Elements.Contains(new System.Xml.XmlQualifiedName("HttpProxyHost")), "Schema missing a definition of the HttpProxyHost element");
+        Assert.IsTrue(schema.Elements.Contains(new System.Xml.XmlQualifiedName("DisplayResolution")), "Schema missing a definition of the DisplayResolution element");
+        Assert.IsTrue(schema.Elements.Contains(new System.Xml.XmlQualifiedName("ColorSpace")), "Schema missing a definition of the ColorSpace element");
+        Assert.IsTrue(schema.Elements.Contains(new System.Xml.XmlQualifiedName("ColorDepth")), "Schema missing a definition of the ColorDepth element");
+        Assert.IsTrue(schema.Elements.Contains(new System.Xml.XmlQualifiedName("DefaultUser")), "Schema missing a definition of the DefaultUser element");
+        Assert.IsTrue(schema.Elements.Contains(new System.Xml.XmlQualifiedName("DefaultUserPairing")), "Schema missing a definition of the DefaultUserPairing element");
+        Assert.IsTrue(schema.Elements.Contains(new System.Xml.XmlQualifiedName("WirelessRadioSettings")), "Schema missing a definition of the WirelessRadioSettings element");
+        Assert.IsTrue(schema.Elements.Contains(new System.Xml.XmlQualifiedName("HDMIAudio")), "Schema missing a definition of the HDMIAudio element");
+        Assert.IsTrue(schema.Elements.Contains(new System.Xml.XmlQualifiedName("OpticalAudio")), "Schema missing a definition of the OpticalAudio element");
+        Assert.IsTrue(schema.Elements.Contains(new System.Xml.XmlQualifiedName("AudioBitstreamFormat")), "Schema missing a definition of the AudioBitstreamFormat element");
+        Assert.IsTrue(schema.Elements.Contains(new System.Xml.XmlQualifiedName("HostName")), "Schema missing a definition of the HostName element");
+        Assert.IsTrue(schema.Elements.Contains(new System.Xml.XmlQualifiedName("DebugMemoryMode")), "Schema missing a definition of the DebugMemoryMode element");
+        Assert.IsTrue(schema.Elements.Contains(new System.Xml.XmlQualifiedName("DisableSelectiveSuspend")), "Schema missing a definition of the DisableSelectiveSuspend element");
+        Assert.IsTrue(schema.Elements.Contains(new System.Xml.XmlQualifiedName("DevkitAllowACG")), "Schema missing a definition of the DevkitAllowACG element");
+        Assert.IsTrue(schema.Elements.Contains(new System.Xml.XmlQualifiedName("AutoBoot")), "Schema missing a definition of the AutoBoot element");
     }
 
     /// <summary>

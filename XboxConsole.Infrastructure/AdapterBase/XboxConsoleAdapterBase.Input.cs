@@ -51,6 +51,21 @@ namespace Microsoft.Internal.GamesTest.Xbox
         }
 
         /// <summary>
+        /// Disconnects all XboxGamepads from the console.
+        /// </summary>
+        /// <param name="systemIpAddress">The system IP address of the console.</param>
+        public void DisconnectAllXboxGamepads(string systemIpAddress)
+        {
+            this.ThrowIfDisposed();
+            this.ThrowIfInvalidSystemIpAddress(systemIpAddress);
+
+            this.PerformXdkAction(
+                systemIpAddress,
+                () => this.DisconnectAllXboxGamepadsImpl(systemIpAddress),
+                "Failed to disconnect all gamepads.");
+        }
+
+        /// <summary>
         /// Sets the state of the XboxGamepad.
         /// </summary>
         /// <param name="systemIpAddress">The system IP address of the console.</param>
@@ -84,6 +99,15 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// <param name="systemIpAddress">The system IP address of the console.</param>
         /// <param name="gamepadId">The id of the XboxGamepad to disconnect.</param>
         protected virtual void DisconnectXboxGamepadImpl(string systemIpAddress, ulong gamepadId)
+        {
+            throw new XboxConsoleFeatureNotSupportedException(NotSupportedMessage);
+        }
+
+        /// <summary>
+        /// Disconnects all XboxGamepads from the console.
+        /// </summary>
+        /// <param name="systemIpAddress">The system IP address of the console.</param>
+        protected virtual void DisconnectAllXboxGamepadsImpl(string systemIpAddress)
         {
             throw new XboxConsoleFeatureNotSupportedException(NotSupportedMessage);
         }

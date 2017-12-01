@@ -200,11 +200,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         {
             XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
 
-            if (!this.Definition.IsScratchPackage)
-            {
-                throw new InvalidOperationException("Attempting to unregister a deployed package. Unregistering is supported only for packages registered with XboxConsole.RegisterPackage.");
-            }
-
             this.Console.Adapter.UnregisterPackage(this.Console.SystemIpAddressAndSessionKeyCombined, this.Definition.FullName);
         }
 

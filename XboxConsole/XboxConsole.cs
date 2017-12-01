@@ -32,6 +32,11 @@ namespace Microsoft.Internal.GamesTest.Xbox
     /// </summary>
     public class XboxConsole : DisposableObject
     {
+        // These settings will return null from the console when they are set to nothing.
+        // As such when we get them from the console we will need to check for these keys
+        // and then return string.Empty if the value is null.
+        private static readonly string[] EmptyStringIfNullConfigurationKeys = { "SessionKey", "HttpProxyHost", "DefaultUser" };
+
         /// <summary>
         /// Initializes static members of the XboxConsole class.
         /// </summary>
@@ -203,6 +208,17 @@ namespace Microsoft.Internal.GamesTest.Xbox
         }
 
         /// <summary>
+        /// Gets the current XDK version.
+        /// </summary>
+        public static string XdkVersion
+        {
+            get
+            {
+                return XboxConsoleAdapterFactory.XdkVersion.ProductVersion;
+            }
+        }
+
+        /// <summary>
         /// Gets the system IP address for this console.
         /// </summary>
         public IPAddress SystemIpAddress
@@ -282,7 +298,19 @@ namespace Microsoft.Internal.GamesTest.Xbox
 
                 this.ThrowIfDisposed();
 
-                return new ReadOnlyXboxConfiguration(settingKey => this.Adapter.GetConfigValue(this.SystemIpAddressAndSessionKeyCombined, settingKey));
+                return new ReadOnlyXboxConfiguration(settingKey => 
+                    {
+                        var value = this.Adapter.GetConfigValue(this.SystemIpAddressAndSessionKeyCombined, settingKey);
+                        
+                        // Some configuration settings return null instead of an empty string.
+                        // Check for that case and return string.empty.
+                        if (value == null && EmptyStringIfNullConfigurationKeys.Contains(settingKey))
+                        {
+                            return string.Empty;
+                        }
+
+                        return value;
+                    });
             }
         }
 
@@ -550,6 +578,19 @@ namespace Microsoft.Internal.GamesTest.Xbox
             this.XboxGamepads.Add(gamepad);
 
             return gamepad;
+        }
+
+        /// <summary>
+        /// Disconnects all connected gamepads for this console.
+        /// </summary>
+        public void DisconnectAllGamepads()
+        {
+            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
+
+            this.ThrowIfDisposed();
+
+            this.Adapter.DisconnectAllXboxGamepads(this.SystemIpAddressAndSessionKeyCombined);
+            this.XboxGamepads.Clear();           
         }
 
         /// <summary>

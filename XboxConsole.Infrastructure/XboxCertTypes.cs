@@ -26,11 +26,13 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// <summary>
         /// ERA development specified on the console.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "DevKit", Justification = "Matches xbconfig setting.")]
         EraDevKit = 0x1,
 
         /// <summary>
         /// SRA development specified on the console.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "DevKit", Justification = "Matches xbconfig setting.")]
         SraDevKit = 0x2,
 
         /// <summary>
