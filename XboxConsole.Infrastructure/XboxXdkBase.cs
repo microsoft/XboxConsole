@@ -110,6 +110,17 @@ namespace Microsoft.Internal.GamesTest.Xbox
         public abstract string GetInstalledPackages(string ipAddress);
 
         /// <summary>
+        /// Enables or disables debug mode for the Package.
+        /// </summary>
+        /// <param name="ipAddress">The IP address of the console.</param>
+        /// <param name="packageFullName">The Package Full Name of the package to set debug mode for.</param>
+        /// <param name="enabled">The value indicating whether debug mode should be enabled or disabled.</param>
+        public virtual void SetDebugMode(string ipAddress, string packageFullName, bool enabled)
+        {
+            throw new XboxConsoleFeatureNotSupportedException(NotSupportedMessage);
+        }
+
+        /// <summary>
         /// Launches the application with the given Application User Model Id.
         /// </summary>
         /// <param name="ipAddress">The IP address of the console on which the application will be launched.</param>

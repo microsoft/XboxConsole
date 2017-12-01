@@ -56,6 +56,11 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.Tests
         public Func<string, string> GetInstalledPackagesFunc { get; set; }
 
         /// <summary>
+        /// Gets or sets the action to shim the "SetDebugMode" method.
+        /// </summary>
+        public Action<string, string, bool> SetDebugModeAction { get; set; }
+
+        /// <summary>
         /// Gets or sets the action to shim the "LaunchApplication" method.
         /// </summary>
         public Action<string, string> LaunchApplicationAction { get; set; }
@@ -390,6 +395,24 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.Tests
             else
             {
                 throw new NotImplementedException("GetInstalledPackagesFunc is not set.");
+            }
+        }
+
+        /// <summary>
+        /// Enables or disables debug mode for the Package.
+        /// </summary>
+        /// <param name="ipAddress">The IP address of the console.</param>
+        /// <param name="packageFullName">The Package Full Name of the package to set debug mode for.</param>
+        /// <param name="enabled">The value indicating whether debug mode should be enabled or disabled.</param>
+        public override void SetDebugMode(string ipAddress, string packageFullName, bool enabled)
+        {
+            if (this.SetDebugModeAction != null)
+            {
+                this.SetDebugModeAction(ipAddress, packageFullName, enabled);
+            }
+            else
+            {
+                throw new NotImplementedException("SetDebugModeAction is not set.");
             }
         }
 

@@ -98,6 +98,24 @@ namespace Microsoft.Internal.GamesTest.Xbox.Tests
         }
 
         /// <summary>
+        /// Verifies that the setter of DebugEnabled property calls the adapter's SetDebugMode method.
+        /// </summary>
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        [TestCategory(XboxPackageTestCategory)]
+        public void TestDebugEnabledSetterCallsAdapterSetDebugMode()
+        {
+            bool isCorrectMethodCalled = false;
+            ShimXboxConsoleAdapterBase.AllInstances.SetDebugModeStringXboxPackageDefinitionBoolean = (adapter, systemIpAddress, package, enabled) =>
+            {
+                isCorrectMethodCalled = true;
+            };
+
+            this.xboxPackage.DebugEnabled = true;
+            Assert.IsTrue(isCorrectMethodCalled, "The setter of DebugEnabled property didn't call the adapter's SetDebugMode(systemIpAddress, package, enabled).");
+        }
+
+        /// <summary>
         /// Verifies that the Suspend method calls the adapter's SuspendPackage method.
         /// </summary>
         [TestMethod]

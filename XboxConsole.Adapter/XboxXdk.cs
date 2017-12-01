@@ -4,7 +4,7 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-namespace Microsoft.Internal.GamesTest.Xbox.Adapter.November2014
+namespace Microsoft.Internal.GamesTest.Xbox.Adapter.October2014
 {
     using System;
     using System.Collections.Generic;
@@ -25,6 +25,7 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.November2014
     using Microsoft.Xbox.XTF.Diagnostics;
     using Microsoft.Xbox.XTF.IO;
     using Microsoft.Xbox.XTF.RemoteRun;
+    using Microsoft.Xbox.XTF.RemoteServer;
     using Microsoft.Xbox.XTF.User;
 
     /// <summary>
@@ -150,28 +151,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.November2014
             using (ConsoleControlClient console = new ConsoleControlClient(systemIpAddress))
             {
                 console.ShutdownConsole(ShutdownConsoleFlags.None);
-            }
-        }
-
-        /// <summary>
-        /// Enables or disables debug mode for the Package.
-        /// </summary>
-        /// <param name="systemIpAddress">The IP address of the console.</param>
-        /// <param name="packageFullName">The Package Full Name of the package to set debug mode for.</param>
-        /// <param name="enabled">The value indicating whether debug mode should be enabled or disabled.</param>
-        /// <exception cref="CannotConnectException">Thrown when not able to connect to the console.</exception>
-        public override void SetDebugMode(string systemIpAddress, string packageFullName, bool enabled)
-        {
-            try
-            {
-                using (ApplicationClient client = new ApplicationClient(systemIpAddress))
-                {
-                    client.DebugEnable(packageFullName, enabled);
-                }
-            }
-            catch (XtfApplicationNoConnectionException ex)
-            {
-                throw new CannotConnectException(string.Format(CultureInfo.InvariantCulture, "Unable to connect to {0}.", systemIpAddress), ex, systemIpAddress);
             }
         }
 
@@ -594,15 +573,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.November2014
         }
 
         /// <summary>
-        /// Disconnects all XboxGamepads from the console.
-        /// </summary>
-        /// <param name="ipAddress">The tools IP address of the console.</param>
-        public override void DisconnectAllXboxGamepads(string ipAddress)
-        {
-            XtfGamepad.DisconnectAll(ipAddress);
-        }
-
-        /// <summary>
         /// Push deploys loose files to the console.
         /// </summary>
         /// <param name="systemIpAddress">The tools IP address of the console.</param>
@@ -732,6 +702,72 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.November2014
 
                         throw;
                     }
+                }
+            });
+        }
+
+        /// <summary>
+        /// Start pull deployment of loose files to the console.
+        /// </summary>
+        /// <param name="systemIpAddress">The tools IP address of the console.</param>
+        /// <param name="deployFilePath">The path to the folder to deploy.</param>
+        /// <param name="mapFilePath">The optional path to a map file. Can be null.</param>
+        /// <param name="tempPath">The optional path to the directory where temporary files will be created. Can be null.</param>
+        /// <param name="progressInfo">The progress handler that the calling app uses to receive progress updates about the deployment. This may be null.</param>
+        /// <param name="progressError">The progress handler that the calling app uses to receive progress updates about errors. This may be null.</param>
+        /// <returns>The task object representing the asynchronous operation whose result is the deployed package.</returns>
+        public override Task<XboxPackageDefinition> DeployPullStartAsync(string systemIpAddress, string deployFilePath, string mapFilePath, string tempPath, IProgress<XboxDeploymentInfo> progressInfo, IProgress<XboxDeploymentInfo> progressError)
+        {
+            return Task.Run(() =>
+            {
+                Action<string> infoCallback = null;
+                Action<string> errorCallback = null;
+                if (progressInfo != null)
+                {
+                    infoCallback = (s) => progressInfo.Report(new XboxDeploymentInfo(s));
+                }
+
+                if (progressError != null)
+                {
+                    errorCallback = (s) => progressError.Report(new XboxDeploymentInfo(s));
+                }
+
+                using (RemoteDeviceServer server = new RemoteDeviceServer(systemIpAddress))
+                {
+                    var packageInfo = server.StartApplication(deployFilePath, mapFilePath, tempPath, null, infoCallback, errorCallback);
+                    return new XboxPackageDefinition(packageInfo.FullName, packageInfo.AumIds);
+                }
+            });
+        }
+
+        /// <summary>
+        /// Stops the pull deployment of a package.
+        /// </summary>
+        /// <param name="systemIpAddress">The tools IP address of the console.</param>
+        /// <param name="packageFullName">The Package Full Name of the package for which to stop deployment of.</param>
+        /// <param name="progressInfo">The progress handler that the calling app uses to receive progress updates. This may be null.</param>
+        /// <param name="progressError">The progress handler that the calling app uses to receive progress updates about errors. This may be null.</param>
+        /// <returns>A task object representing the asyncrounous operation.</returns>
+        /// <remarks>If <paramref name="packageFullName"/> is null, all pull deployments on the system will be stopped.</remarks>
+        public override Task DeployPullStopAsync(string systemIpAddress, string packageFullName, IProgress<XboxDeploymentInfo> progressInfo, IProgress<XboxDeploymentInfo> progressError)
+        {
+            return Task.Run(() =>
+            {
+                Action<string> infoCallback = null;
+                Action<string> errorCallback = null;
+                if (progressInfo != null)
+                {
+                    infoCallback = (s) => progressInfo.Report(new XboxDeploymentInfo(s));
+                }
+
+                if (progressError != null)
+                {
+                    errorCallback = (s) => progressError.Report(new XboxDeploymentInfo(s));
+                }
+
+                using (RemoteDeviceServer server = new RemoteDeviceServer(systemIpAddress))
+                {
+                    server.StopApplication(packageFullName, infoCallback, errorCallback);
                 }
             });
         }
@@ -918,20 +954,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.November2014
             using (UserClient console = new UserClient(systemIpAddress))
             {
                 console.PairControllerWithUser(userId, controllerId);
-            }
-        }
-
-        /// <summary>
-        /// Pairs a controller to a user on a console.
-        /// </summary>
-        /// <param name="systemIpAddress">The "System Ip" address of console.</param>
-        /// <param name="userId">The user id of the user to pair.</param>
-        /// <param name="controllerId">The controller of the id to pair.</param>
-        public override void PairControllerToUserExclusive(string systemIpAddress, uint userId, ulong controllerId)
-        {
-            using (UserClient console = new UserClient(systemIpAddress))
-            {
-                console.PairControllerWithUserExclusive(userId, controllerId);
             }
         }
 

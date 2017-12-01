@@ -204,6 +204,83 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.Tests
         }
 
         /// <summary>
+        /// Verifies that the SetDebugMode(XboxPackageDefinition) method throws an ArgumentNullException.
+        /// </summary>
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        [TestCategory(AdapterPackageManagementTestCategory)]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void TestSetDebugModeThrowsNullArgumentException()
+        {
+            this.adapter.SetDebugMode(ConsoleAddress, null, true);
+        }
+
+        /// <summary>
+        /// Verifies that the SetDebugMode(XboxPackageDefinition) method throws an ObjectDisposedException.
+        /// </summary>
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        [TestCategory(AdapterPackageManagementTestCategory)]
+        [ExpectedException(typeof(ObjectDisposedException))]
+        public void TestSetDebugModeThrowsObjectDisposedException()
+        {
+            this.adapter.Dispose();
+            this.adapter.SetDebugMode(ConsoleAddress, this.CreateXboxPackageDefinition(), true);
+        }
+
+        /// <summary>
+        /// Verifies that the SetDebugMode(XboxPackageDefinition) method calls the XDK's SetDebugMode method.
+        /// </summary>
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        [TestCategory(AdapterPackageManagementTestCategory)]
+        public void TestSetDebugModeCallsXdkSetDebugMode()
+        {
+            XboxPackageDefinition package = this.CreateXboxPackageDefinition();
+            bool debugModeEnabled = true;
+
+            bool isCorrectMethodCalled = false;
+            this.fakeXboxXdk.SetDebugModeAction = (ipAddress, packageFullName, enabled) =>
+            {
+                isCorrectMethodCalled = true;
+                Assert.AreEqual(package.FullName, packageFullName, "Package Full Name passed to XDK was different than value in XboxPackage parameter.");
+                Assert.AreEqual(enabled, debugModeEnabled, "Debug mode passed to XDK was different than value in parameter.");
+            };
+
+            this.adapter.SetDebugMode(ConsoleAddress, package, debugModeEnabled);
+
+            Assert.IsTrue(isCorrectMethodCalled, "The Adapter did not call the XDK's SetDebugMode method.");
+
+            this.VerifyThrows<ArgumentNullException>(() => this.adapter.SetDebugMode(null, package, debugModeEnabled));
+        }
+
+        /// <summary>
+        /// Verifies that the SetDebugMode(XboxPackageDefinition) method turns COMExceptions into XboxConsoleExceptions.
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2201:DoNotRaiseReservedExceptionTypes", Justification = "Need to simulate XDK")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Need to catch all exception types so that I can verify we capture the correct exception type.")]
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        [TestCategory(AdapterPackageManagementTestCategory)]
+        public void TestSetDebugModeTurnsComExceptionIntoXboxConsoleException()
+        {
+            this.fakeXboxXdk.SetDebugModeAction = (s, s1, enabled) =>
+            {
+                throw new COMException();
+            };
+
+            try
+            {
+                this.adapter.SetDebugMode(ConsoleAddress, this.CreateXboxPackageDefinition(), true);
+            }
+            catch (Exception ex)
+            {
+                Assert.IsInstanceOfType(ex, typeof(XboxConsoleException), "The XboxConsole SetDebugMode method did not convert a COMException into an XboxConsoleException.");
+                Assert.IsInstanceOfType(ex.InnerException, typeof(COMException), "The XboxConsole SetDebugMode method did not include the COMException as the inner exception of the XboxConsoleException that it threw.");
+            }
+        }
+
+        /// <summary>
         /// Verifies that the LaunchApplication(XboxApplicationDefinition) method throws an ObjectDisposedException.
         /// </summary>
         [TestMethod]

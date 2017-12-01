@@ -4,7 +4,7 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-namespace Microsoft.Internal.GamesTest.Xbox.Adapter.November2014
+namespace Microsoft.Internal.GamesTest.Xbox.Adapter.October2014
 {
     using System;
     using System.Collections.Generic;
@@ -22,12 +22,10 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.November2014
 
     /// <summary>
     /// This class represents an implemenation of the XboxConsoleAdapter
-    /// that is supported by the November 2014 version of the XDK.
+    /// that is supported by the October 2014 version of the XDK.
     /// </summary>
     internal partial class XboxConsoleAdapter : XboxConsoleAdapterBase
     {
-        private const int UnregisterNonFolderBasedDeploymentHResult = unchecked((int)0x8083000B);
-
         private COMExceptionWhenConnectingHandler comExceptionWhenConnectingHandler = new COMExceptionWhenConnectingHandler();
 
         /// <summary>
@@ -37,7 +35,7 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.November2014
         /// <returns>The collection of packages installed on the console.</returns>
         protected override IEnumerable<XboxPackageDefinition> GetInstalledPackagesImpl(string systemIpAddress)
         {
-            // In the November 2014 XDK the format of the string returned by the XDK is a JSON object with this schema:
+            // In the October 2014 XDK the format of the string returned by the XDK is a JSON object with this schema:
             // {"Packages":[{"FullName":"Achievements_1.0.1308.7000_x64__8wekyb3d8bbwe","Applications":[{"Aumid":"Achievements_8wekyb3d8bbwe!App"}]}]}
             string xdkOutput = this.XboxXdk.GetInstalledPackages(systemIpAddress);
 
@@ -68,22 +66,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.November2014
             }
 
             return returnValue;
-        }
-
-        /// <summary>
-        /// Sets debug mode for a package.
-        /// </summary>
-        /// <param name="systemIpAddress">The "System Ip" address of the Xbox kit.</param>
-        /// <param name="package">The package to be set debug mode for.</param>
-        /// <param name="enabled">The value indicating whether debug mode should be enabled or disabled.</param>
-        protected override void SetDebugModeImpl(string systemIpAddress, XboxPackageDefinition package, bool enabled)
-        {
-            if (package == null)
-            {
-                throw new ArgumentNullException("package");
-            }
-
-            this.XboxXdk.SetDebugMode(systemIpAddress, package.FullName, enabled);
         }
 
         /// <summary>
@@ -316,7 +298,7 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.November2014
                 throw new ArgumentNullException("deployFilePath");
             }
 
-            // In the November 2014 XDK the format of the string returned by the XDK is a JSON object with this schema:
+            // In the October 2014 XDK the format of the string returned by the XDK is a JSON object with this schema:
             // {"Applications":["XboxConsole.XboxSample_zjr0dfhgjwvde!App"],"Identity":{"FullName":"XboxConsole.XboxSample_1.0.0.0_x64__zjr0dfhgjwvde"}}
             string xdkOutput = null;
 
@@ -355,6 +337,54 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.November2014
             string aumid = package.Applications.FirstOrDefault();
 
             return new XboxPackageDefinition(packageFullName, package.Applications);
+        }
+
+        /// <summary>
+        /// Start pull deployment of loose files to the console.
+        /// </summary>
+        /// <param name="systemIpAddress">The "System Ip" address of the Xbox kit.</param>
+        /// <param name="deployFilePath">The path to the folder to deploy.</param>
+        /// <param name="mapFilePath">The optional path to a map file. Can be null.</param>
+        /// <param name="tempPath">The optional path to the directory where temporary files will be created. Can be null.</param>
+        /// <param name="progressInfo">The progress handler that the calling app uses to receive progress updates about the deployment. This may be null.</param>
+        /// <param name="progressError">The progress handler that the calling app uses to receive progress updates about errors. This may be null.</param>
+        /// <returns>The task object representing the asynchronous operation whose result is the deployed package.</returns>
+        protected override Task<XboxPackageDefinition> DeployPullStartImplAsync(string systemIpAddress, string deployFilePath, string mapFilePath, string tempPath, IProgress<XboxDeploymentInfo> progressInfo, IProgress<XboxDeploymentInfo> progressError)
+        {
+            if (string.IsNullOrWhiteSpace(deployFilePath))
+            {
+                throw new ArgumentException("deployFilePath was not a valid value", "deployFilePath");
+            }
+
+            try
+            {
+                return this.XboxXdk.DeployPullStartAsync(systemIpAddress, deployFilePath, mapFilePath, tempPath, progressInfo, progressError);
+            }
+            catch (COMException e)
+            {
+                throw new XboxDeployException("The build could not be successfully deployed.", e, systemIpAddress);
+            }
+        }
+
+        /// <summary>
+        /// Stops the pull deployment of a package.
+        /// </summary>
+        /// <param name="systemIpAddress">The "System Ip" address of the Xbox kit.</param>
+        /// <param name="package">The package to stop the deployment of.</param>
+        /// <param name="progressInfo">The progress handler that the calling app uses to receive progress updates. This may be null.</param>
+        /// <param name="progressError">The progress handler that the calling app uses to receive progress updates about errors. This may be null.</param>
+        /// <returns>A task object representing the asyncrounous operation.</returns>
+        protected async override Task DeployPullStopImplAsync(string systemIpAddress, XboxPackageDefinition package, IProgress<XboxDeploymentInfo> progressInfo, IProgress<XboxDeploymentInfo> progressError)
+        {
+            string fullName = package != null ? package.FullName : null;
+            try
+            {
+                await this.XboxXdk.DeployPullStopAsync(systemIpAddress, fullName, progressInfo, progressError);
+            }
+            catch (COMException e)
+            {
+                throw new XboxDeployException("An error occured attempting to stop deployment.", e, systemIpAddress);
+            }
         }
 
         /// <summary>
@@ -405,21 +435,7 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.November2014
                 throw new ArgumentNullException("packageFullName");
             }
 
-            try
-            {
-                this.XboxXdk.UnregisterPackage(systemIpAddress, packageFullName);
-            }
-            catch (COMException ex)
-            {
-                if (ex.HResult == UnregisterNonFolderBasedDeploymentHResult)
-                {
-                    throw new XboxConsoleException("Failed to unregister package. The package was not deployed with folder based deployment.", ex, systemIpAddress);
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            this.XboxXdk.UnregisterPackage(systemIpAddress, packageFullName);
         }
 
         /// <summary>

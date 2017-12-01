@@ -41,6 +41,28 @@ namespace Microsoft.Internal.GamesTest.Xbox
         }
 
         /// <summary>
+        /// Enables or disables debug mode for the Package.
+        /// </summary>
+        /// <param name="systemIpAddress">The "System Ip" address of the Xbox kit.</param>
+        /// <param name="package">The package to be set debug mode for.</param>
+        /// <param name="enabled">The value indicating whether debug mode should be enabled or disabled.</param>
+        public void SetDebugMode(string systemIpAddress, XboxPackageDefinition package, bool enabled)
+        {
+            this.ThrowIfDisposed();
+            this.ThrowIfInvalidSystemIpAddress(systemIpAddress);
+
+            if (package == null)
+            {
+                throw new ArgumentNullException("package");
+            }
+
+            this.PerformXdkAction(
+                systemIpAddress,
+                () => this.SetDebugModeImpl(systemIpAddress, package, enabled),
+                string.Format(CultureInfo.InvariantCulture, "Failed to set debug mode ({1}) for package: {0}", package.FullName, enabled));
+        }
+
+        /// <summary>
         /// Launches the given package.
         /// </summary>
         /// <param name="systemIpAddress">The "System Ip" address of the Xbox kit.</param>
@@ -353,6 +375,17 @@ namespace Microsoft.Internal.GamesTest.Xbox
                 systemIpAddress,
                 () => this.GetAvailableSpaceForAppInstallationImpl(systemIpAddress, storageName),
                 "Failed to get the space available for app installation");
+        }
+
+        /// <summary>
+        /// Provides the adapter-specific implementation of the "DebugEnable" method.
+        /// </summary>
+        /// <param name="systemIpAddress">The "System Ip" address of the Xbox kit.</param>
+        /// <param name="package">The package to be set debug mode for.</param>
+        /// <param name="enabled">The value indicating whether debug mode should be enabled or disabled.</param>
+        protected virtual void SetDebugModeImpl(string systemIpAddress, XboxPackageDefinition package, bool enabled)
+        {
+            throw new XboxConsoleFeatureNotSupportedException(NotSupportedMessage);
         }
 
         /// <summary>

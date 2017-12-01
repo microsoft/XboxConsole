@@ -118,6 +118,18 @@ namespace Microsoft.Internal.GamesTest.Xbox
         }
 
         /// <summary>
+        /// Sets a value indicating whether the debug mode for this package is enabled.
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1044:PropertiesShouldNotBeWriteOnly", Justification = "By design.")]
+        public bool DebugEnabled
+        {
+            set
+            {
+                this.Console.Adapter.SetDebugMode(this.Console.SystemIpAddressAndSessionKeyCombined, this.Definition, value);
+            }
+        }
+
+        /// <summary>
         /// Gets the definition object backing this package object.
         /// This is a property and not a field so that it can be shimmed in the Unit Tests.
         /// </summary>

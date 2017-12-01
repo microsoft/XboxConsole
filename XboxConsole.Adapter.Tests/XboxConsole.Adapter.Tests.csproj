@@ -91,11 +91,6 @@
     <Compile Include="XboxConsoleAdapter.User.Tests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Fakes Include="Fakes\GamesTest.XboxConsole.Infrastructure.fakes" />
-    <Fakes Include="Fakes\System.fakes" />
-    <Fakes Include="Fakes\mscorlib.fakes" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\XboxConsole.Adapter.November2014\XboxConsole.Adapter.November2014.csproj">
       <Project>{14889cb2-40c7-4f4f-a200-0a432d773a44}</Project>
       <Name>XboxConsole.Adapter.November2014</Name>
@@ -109,6 +104,15 @@
     <CodeAnalysisDictionary Include="..\dependencies\CodeAnalysis\CustomDictionary.xml">
       <Link>CustomDictionary.xml</Link>
     </CodeAnalysisDictionary>
+  </ItemGroup>
+  <ItemGroup>
+    <Fakes Include="Fakes\GamesTest.XboxConsole.Infrastructure.fakes" />
+  </ItemGroup>
+  <ItemGroup>
+    <Fakes Include="Fakes\System.fakes" />
+  </ItemGroup>
+  <ItemGroup>
+    <Fakes Include="Fakes\mscorlib.fakes" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
