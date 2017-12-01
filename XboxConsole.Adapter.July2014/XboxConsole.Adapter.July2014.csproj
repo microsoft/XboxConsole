@@ -11,14 +11,10 @@
     <AssemblyName>GamesTest.XboxConsole.Adapter.July2014</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <SccProjectName>
-    </SccProjectName>
-    <SccLocalPath>
-    </SccLocalPath>
-    <SccAuxPath>
-    </SccAuxPath>
-    <SccProvider>
-    </SccProvider>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -42,30 +38,37 @@
     <Reference Include="Microsoft.Xbox.Xtf, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\dependencies\GamesTest.ManagedXtf.2014.07.1.0.40811.0\lib\net45\Microsoft.Xbox.Xtf.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.Xbox.Xtf.Application, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\dependencies\GamesTest.ManagedXtf.2014.07.1.0.40811.0\lib\net45\Microsoft.Xbox.Xtf.Application.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.Xbox.Xtf.ConsoleControl, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\dependencies\GamesTest.ManagedXtf.2014.07.1.0.40811.0\lib\net45\Microsoft.Xbox.Xtf.ConsoleControl.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.Xbox.Xtf.ConsoleManager, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\dependencies\GamesTest.ManagedXtf.2014.07.1.0.40811.0\lib\net45\Microsoft.Xbox.Xtf.ConsoleManager.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.Xbox.Xtf.DebugMonitor, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\dependencies\GamesTest.ManagedXtf.2014.07.1.0.40811.0\lib\net45\Microsoft.Xbox.Xtf.DebugMonitor.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.Xbox.Xtf.FileIO, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\dependencies\GamesTest.ManagedXtf.2014.07.1.0.40811.0\lib\net45\Microsoft.Xbox.Xtf.FileIO.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.Xbox.Xtf.Input, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\dependencies\GamesTest.ManagedXtf.2014.07.1.0.40811.0\lib\net45\Microsoft.Xbox.Xtf.Input.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.Xbox.Xtf.Interop">
       <HintPath>$(DurangoXDK)\bin\Microsoft.Xbox.Xtf.Interop.dll</HintPath>
@@ -75,10 +78,12 @@
     <Reference Include="Microsoft.Xbox.Xtf.RemoteRun, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\dependencies\GamesTest.ManagedXtf.2014.07.1.0.40811.0\lib\net45\Microsoft.Xbox.Xtf.RemoteRun.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.Xbox.Xtf.User, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\dependencies\GamesTest.ManagedXtf.2014.07.1.0.40811.0\lib\net45\Microsoft.Xbox.Xtf.User.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
