@@ -43,7 +43,7 @@ namespace Microsoft.Internal.GamesTest.Xbox
                 TelemetrySink.StopTelemetry();
             };
 
-            XboxConsoleEventSource.Logger.ModuleLoaded(Process.GetCurrentProcess().ProcessName, WindowsIdentity.GetCurrent().Name, Dns.GetHostEntry("localhost").HostName, Assembly.GetExecutingAssembly().GetName().Version.ToString());
+            XboxConsoleEventSource.Logger.ModuleLoaded(Process.GetCurrentProcess().ProcessName, WindowsIdentity.GetCurrent().Name, Dns.GetHostEntry("localhost").HostName, FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion.ToString());
         }
 
         /// <summary>
@@ -148,7 +148,7 @@ namespace Microsoft.Internal.GamesTest.Xbox
             if (!IPAddress.TryParse(connectionString, out systemIpAddress))
             {
                 // Resolve IP address from host name if passed host name
-                systemIpAddress = Dns.GetHostAddresses(connectionString).FirstOrDefault(o => o.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork);                
+                systemIpAddress = Dns.GetHostAddresses(connectionString).FirstOrDefault(o => o.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork);
             }
 
             if (systemIpAddress == null)
@@ -355,8 +355,7 @@ namespace Microsoft.Internal.GamesTest.Xbox
         }
 
         /// <summary>
-        /// Gets the Xbox console adapter to use.  Making this a protected property instead of a private field 
-        /// allows it to be accessed by the Shim framework used in the unit tests.
+        /// Gets the Xbox console adapter to use.
         /// </summary>
         internal XboxConsoleAdapterBase Adapter { get; private set; }
 
@@ -458,7 +457,7 @@ namespace Microsoft.Internal.GamesTest.Xbox
         public void Shutdown(TimeSpan timeout)
         {
             XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-            
+
             this.ThrowIfDisposed();
 
             this.Adapter.Shutdown(this.SystemIpAddressAndSessionKeyCombined, timeout);

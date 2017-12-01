@@ -7,13 +7,16 @@
 namespace Microsoft.Internal.GamesTest.Xbox
 {
     using System;
+    using System.Collections.Generic;
+    using System.Globalization;
+    using System.Linq;
     using Microsoft.Internal.GamesTest.Xbox.Input;
     using Microsoft.Internal.GamesTest.Xbox.Telemetry;
 
     /// <summary>
     /// A virtual user.
     /// </summary>
-    public class XboxUser : XboxItem
+    public class XboxUser : XboxUserBase
     {
         /// <summary>
         /// Initializes a new instance of the XboxUser class.
@@ -23,10 +26,14 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// <param name="emailAddress">The email address used to sign the user in.</param>
         /// <param name="gamertag">The user's GamerTag.</param>
         /// <param name="signedin">If true, the user is signed in on the console.</param>
-        internal XboxUser(XboxConsole console, uint userId, string emailAddress, string gamertag, bool signedin)
+        /// <param name="autoSignIn">If true, the user is setup for automatic sign in on the console.</param>
+        /// <param name="xuid">The unique Xbox Live identifier for the user.</param>
+        internal XboxUser(XboxConsole console, uint userId, string emailAddress, string gamertag, bool signedin, bool autoSignIn, string xuid)
             : base(console)
         {
-            this.Definition = new XboxUserDefinition(userId, emailAddress, gamertag, signedin);
+            XboxConsoleEventSource.Logger.ObjectCreated(XboxConsoleEventSource.GetCurrentConstructor());
+
+            this.Definition = new XboxUserDefinition(userId, emailAddress, gamertag, signedin, autoSignIn, xuid);
         }
 
         /// <summary>
@@ -36,9 +43,11 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// <param name="userId">A unique identifier for the user.</param>
         /// <param name="emailAddress">The email address used to sign the user in.</param>
         /// <param name="gamertag">The user's GamerTag.</param>
-        internal XboxUser(XboxConsole console, uint userId, string emailAddress, string gamertag)
-            : this(console, userId, emailAddress, gamertag, false)
+        /// <param name="signedin">If true, the user is signed in on the console.</param>
+        internal XboxUser(XboxConsole console, uint userId, string emailAddress, string gamertag, bool signedin)
+            : this(console, userId, emailAddress, gamertag, signedin, false, null)
         {
+            XboxConsoleEventSource.Logger.ObjectCreated(XboxConsoleEventSource.GetCurrentConstructor());
         }
 
         /// <summary>
@@ -49,6 +58,8 @@ namespace Microsoft.Internal.GamesTest.Xbox
         internal XboxUser(XboxConsole console, XboxUserDefinition userData)
             : base(console)
         {
+            XboxConsoleEventSource.Logger.ObjectCreated(XboxConsoleEventSource.GetCurrentConstructor());
+
             if (userData == null)
             {
                 throw new ArgumentNullException("userData", "userData can't be null");
@@ -87,6 +98,40 @@ namespace Microsoft.Internal.GamesTest.Xbox
         public bool IsSignedIn
         {
             get { return this.Definition.IsSignedIn; }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether the user is setup for auto login.
+        /// </summary>
+        public bool AutoSignIn
+        {
+            get
+            {
+                XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
+
+                return this.Definition.AutoSignIn;
+            }
+        }
+
+        /// <summary>
+        /// Gets a unique Xbox Live identifier for the user.
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1065:DoNotRaiseExceptionsInUnexpectedLocations", Justification = "Xuid is not available when the user is not signed in.")]
+        public override string Xuid
+        {
+            get
+            {
+                XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
+
+                if (string.IsNullOrEmpty(this.Definition.Xuid))
+                {
+                    throw new XboxUserNotSignedInException(string.Format(CultureInfo.CurrentCulture, "Could not retrieve XUID for {0} because this user is not signed in.", this.Definition.EmailAddress));
+                }
+                else
+                {
+                    return this.Definition.Xuid;
+                }
+            }
         }
 
         /// <summary>
@@ -167,6 +212,106 @@ namespace Microsoft.Internal.GamesTest.Xbox
             }
 
             this.Definition = newDefinition;
+        }
+
+        /// <summary>
+        /// Creates a party for the given title ID (if one does not exist) and adds the given local users to it.
+        /// </summary>
+        /// <param name="party">The party to add local users to.</param>
+        /// <param name="localUsersToAdd">Users to add to the party.</param>
+        public void AddLocalUsersToParty(XboxParty party, XboxUser[] localUsersToAdd)
+        {
+            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
+
+            if (party == null)
+            {
+                throw new ArgumentNullException("party");
+            }
+
+            if (localUsersToAdd == null)
+            {
+                throw new ArgumentNullException("localUsersToAdd");
+            }
+
+            this.Console.Adapter.AddLocalUsersToParty(this.Console.SystemIpAddressAndSessionKeyCombined, party.TitleId, this.Xuid, (from xu in localUsersToAdd select xu.Xuid).ToArray());
+        }
+
+        /// <summary>
+        /// Invites the given users on behalf of the acting user to the given party (associated with a specific Title ID).
+        /// </summary>
+        /// <param name="party">The party to invite remote users to.</param>
+        /// <param name="remoteUsersToInvite">Remote users to invite to the party.</param>
+        public void InviteToParty(XboxParty party, IEnumerable<XboxRemoteUser> remoteUsersToInvite)
+        {
+            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
+
+            if (party == null)
+            {
+                throw new ArgumentNullException("party");
+            }
+
+            if (remoteUsersToInvite == null)
+            {
+                throw new ArgumentNullException("remoteUsersToInvite");
+            }
+
+            this.Console.Adapter.InviteToParty(this.Console.SystemIpAddressAndSessionKeyCombined, party.TitleId, this.Xuid, (from xu in remoteUsersToInvite select xu.Xuid).ToArray());
+        }
+
+        /// <summary>
+        /// Removes the given users from the given party belonging to a specific title ID.
+        /// </summary>
+        /// <param name="party">The party to remove local users from.</param>
+        /// <param name="localUsersToRemove">Local users to remove from the party.</param>
+        public void RemoveLocalUsersFromParty(XboxParty party, IEnumerable<XboxUser> localUsersToRemove)
+        {
+            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
+
+            if (party == null)
+            {
+                throw new ArgumentNullException("party");
+            }
+
+            if (localUsersToRemove == null)
+            {
+                throw new ArgumentNullException("localUsersToRemove");
+            }
+
+            this.Console.Adapter.RemoveLocalUsersFromParty(this.Console.SystemIpAddressAndSessionKeyCombined, party.TitleId, (from xu in localUsersToRemove select xu.Xuid).ToArray());
+        }
+
+        /// <summary>
+        /// Accepts the party invitation to a party created on another console and associated with a specific title ID.
+        /// </summary>
+        /// <param name="party">Party created by another user to accept the invitation to.</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters", Justification = "Specific type used to communicate that party invites can only be declined to remote parties.")]
+        public void AcceptInviteToParty(XboxRemoteParty party)
+        {
+            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
+
+            if (party == null)
+            {
+                throw new ArgumentNullException("party");
+            }
+
+            this.Console.Adapter.AcceptInviteToParty(this.Console.SystemIpAddressAndSessionKeyCombined, this.Xuid, party.PartyId);
+        }
+
+        /// <summary>
+        /// Declines the party invitation to a party created on another console and associated with a specific title ID.
+        /// </summary>
+        /// <param name="party">Party created by another user to accept the invitation to.</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters", Justification = "Specific type used to communicate that party invites can only be declined to remote parties.")]
+        public void DeclineInviteToParty(XboxRemoteParty party)
+        {
+            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
+
+            if (party == null)
+            {
+                throw new ArgumentNullException("party");
+            }
+
+            this.Console.Adapter.DeclineInviteToParty(this.Console.SystemIpAddressAndSessionKeyCombined, this.Xuid, party.PartyId);
         }
     }
 }

@@ -13,7 +13,7 @@ namespace Microsoft.Internal.GamesTest.Xbox.Configuration
     /// An explicit override of the XboxConfigurationSetting class meant to represent the use of the string
     /// of the ColorDepth configuration setting (see xbconfig command line utility).
     /// </summary>
-    internal class XboxColorDepthConfigurationSetting : XboxConfigurationSetting<int>
+    internal class XboxColorDepthConfigurationSetting : XboxConfigurationSetting<ColorDepthType>
     {
         /// <summary>
         /// Initializes a new instance of the XboxColorDepthConfigurationSetting class.
@@ -27,23 +27,44 @@ namespace Microsoft.Internal.GamesTest.Xbox.Configuration
         /// <summary>
         /// Converts a strongly-typed value into a string value.
         /// </summary>
-        /// <param name="colorDepth">The value to be converted.</param>
+        /// <param name="displayResolution">The value to be converted.</param>
         /// <returns>The string value that corresponds to the specified value.</returns>
-        protected override string GetStringValueFromValue(int colorDepth)
+        protected override string GetStringValueFromValue(ColorDepthType displayResolution)
         {
-            if (colorDepth == 0)
+            // Enforce allowed values.
+            switch (displayResolution)
             {
-                return null;
+                default:
+                case ColorDepthType.TwentyFourBit:
+                    return "24";
+                case ColorDepthType.ThirtyBit:
+                    return "30";
+                case ColorDepthType.ThirtySixBit:
+                    return "36";
+            }
+        }
+
+        /// <summary>
+        /// Converts a string value into a stringly-typed value.
+        /// </summary>
+        /// <param name="stringVal">The string value to be converted.</param>
+        /// <returns>The strongly typed value corresponding to the specified string value.</returns>
+        protected override ColorDepthType GetValueFromStringValue(string stringVal)
+        {
+            if (string.IsNullOrEmpty(stringVal))
+            {
+                return ColorDepthType.TwentyFourBit;
             }
 
-            // Enforce allowed values.
-            if (colorDepth == 24 || colorDepth == 30 || colorDepth == 36)
+            switch (stringVal.ToUpperInvariant())
             {
-                return colorDepth.ToString(CultureInfo.InvariantCulture);
-            }
-            else
-            {
-                throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "ColorDepth must be 24, 30, or 36. '{0}' passed.", colorDepth.ToString(CultureInfo.InvariantCulture)), "colorDepth");
+                default:
+                case "24":
+                    return ColorDepthType.TwentyFourBit;
+                case "30":
+                    return ColorDepthType.ThirtyBit;
+                case "36":
+                    return ColorDepthType.ThirtySixBit;
             }
         }
     }

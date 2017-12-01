@@ -23,6 +23,12 @@ namespace Microsoft.Internal.GamesTest.Xbox.Tests
     {
         private const string XboxUserTestCategory = "XboxConsole.XboxUser";
         private const string ConsoleAddress = "10.124.151.244"; // The actual IP address used here is irrelevant.
+        private const string TestGamertag = "Test Gamertag";
+        private const string TestEmailAddress = "TestAddress@test.test";
+        private const string TestXuidString = "1111111111111111";
+        private const uint TestUserId = 12345;
+        private const string TestPartyId = "1234";
+        private const uint TestTitleId = 12255;
 
         private IDisposable shimsContext;
         private XboxConsole xboxConsole;
@@ -73,7 +79,7 @@ namespace Microsoft.Internal.GamesTest.Xbox.Tests
             var gamepad = new XboxGamepad(this.xboxConsole);
             gamepad.Connect();
 
-            XboxUser user = new XboxUser(this.xboxConsole, 0, null, null, false);
+            XboxUser user = this.CreateTestUser();
 
             bool isCorrectMethodCalled = false;
 
@@ -99,11 +105,11 @@ namespace Microsoft.Internal.GamesTest.Xbox.Tests
         [TestCategory(XboxUserTestCategory)]
         public void TestPairWithMethodsPassOnIds()
         {
-            const uint ExpectedUserId = 12345;
+            const uint ExpectedUserId = TestUserId;
             const ulong ExpectedGamepadId = 9876543210;
             var gamepad = new XboxGamepad(this.xboxConsole);
 
-            XboxUser user = new XboxUser(this.xboxConsole, ExpectedUserId, null, null, false);
+            XboxUser user = this.CreateTestUser();
 
             ShimXboxConsoleAdapterBase.AllInstances.ConnectXboxGamepadString = (_, __) => ExpectedGamepadId;
 
@@ -129,7 +135,7 @@ namespace Microsoft.Internal.GamesTest.Xbox.Tests
         [ExpectedException(typeof(ArgumentNullException))]
         public void TestPairWithVirtualControllerThrowsArgumentNullExceptions()
         {
-            XboxUser user = new XboxUser(this.xboxConsole, 0, null, null, false);
+            XboxUser user = this.CreateTestUser();
 
             ShimXboxConsoleAdapterBase.AllInstances.PairGamepadToUserStringUInt64UInt32 = (adapter, systemIpAddress, gamepadId, userId) =>
             {
@@ -149,7 +155,7 @@ namespace Microsoft.Internal.GamesTest.Xbox.Tests
         public void TestPairWithVirtualControllerThrowsArgumentExceptions()
         {
             XboxGamepad gamepad = new XboxGamepad(this.xboxConsole);
-            XboxUser user = new XboxUser(this.xboxConsole, 0, null, null, false);
+            XboxUser user = this.CreateTestUser();
 
             ShimXboxConsoleAdapterBase.AllInstances.PairGamepadToUserStringUInt64UInt32 = (adapter, systemIpAddress, gamepadId, userId) =>
             {
@@ -167,10 +173,12 @@ namespace Microsoft.Internal.GamesTest.Xbox.Tests
         [TestCategory(XboxUserTestCategory)]
         public void TestConstructorsCorrectlySetProperties()
         {
-            const uint ExpectedId = 12345;
-            const string ExpectedEmail = "Test Email String";
-            const string ExpectedGamerTag = "Test Gamertag";
-
+            const uint ExpectedId = TestUserId;
+            const string ExpectedEmail = TestEmailAddress;
+            const string ExpectedGamerTag = TestGamertag;
+            const string ExpectedXuidValue = TestXuidString;
+            
+            bool expectedAutoSignInValue = true;
             bool expectedIsSignedInValue = false;
 
             this.TestXboxUserProperties(
@@ -178,7 +186,7 @@ namespace Microsoft.Internal.GamesTest.Xbox.Tests
                 ExpectedEmail,
                 ExpectedGamerTag,
                 expectedIsSignedInValue,
-                () => new XboxUser(this.xboxConsole, ExpectedId, ExpectedEmail, ExpectedGamerTag));
+                () => new XboxUser(this.xboxConsole, ExpectedId, ExpectedEmail, ExpectedGamerTag, false));
 
             this.TestXboxUserProperties(
                 ExpectedId,
@@ -186,8 +194,18 @@ namespace Microsoft.Internal.GamesTest.Xbox.Tests
                 ExpectedGamerTag,
                 expectedIsSignedInValue,
                 () => new XboxUser(this.xboxConsole, ExpectedId, ExpectedEmail, ExpectedGamerTag, expectedIsSignedInValue));
+
+            this.TestXboxUserProperties(
+                ExpectedId,
+                ExpectedEmail,
+                ExpectedGamerTag,
+                expectedIsSignedInValue,
+                expectedAutoSignInValue,
+                ExpectedXuidValue,
+                () => new XboxUser(this.xboxConsole, ExpectedId, ExpectedEmail, ExpectedGamerTag, expectedIsSignedInValue, expectedAutoSignInValue, ExpectedXuidValue));
 
             expectedIsSignedInValue = true;
+            expectedAutoSignInValue = false;
 
             this.TestXboxUserProperties(
                 ExpectedId,
@@ -195,6 +213,15 @@ namespace Microsoft.Internal.GamesTest.Xbox.Tests
                 ExpectedGamerTag,
                 expectedIsSignedInValue,
                 () => new XboxUser(this.xboxConsole, ExpectedId, ExpectedEmail, ExpectedGamerTag, expectedIsSignedInValue));
+
+            this.TestXboxUserProperties(
+                ExpectedId,
+                ExpectedEmail,
+                ExpectedGamerTag,
+                expectedIsSignedInValue,
+                expectedAutoSignInValue,
+                ExpectedXuidValue,
+                () => new XboxUser(this.xboxConsole, ExpectedId, ExpectedEmail, ExpectedGamerTag, expectedIsSignedInValue, expectedAutoSignInValue, ExpectedXuidValue));
 
             XboxUserDefinition definition = new XboxUserDefinition(ExpectedId, ExpectedEmail, ExpectedGamerTag, expectedIsSignedInValue);
 
@@ -214,14 +241,14 @@ namespace Microsoft.Internal.GamesTest.Xbox.Tests
         [TestCategory(XboxUserTestCategory)]
         public void TestSignInCallsAdapterSignIn()
         {
-            XboxUser user = new XboxUser(this.xboxConsole, 0, null, null, false);
+            XboxUser user = this.CreateTestUser();
 
             bool isCorrectMethodCalled = false;
 
             ShimXboxConsoleAdapterBase.AllInstances.SignInUserStringXboxUserDefinitionStringBoolean = (adapter, systemIpAddress, userDefinition, password, storePassword) =>
             {
                 isCorrectMethodCalled = true;
-                return new XboxUserDefinition(0, null, null, false);
+                return this.CreateTestUserDefinition();
             };
 
             user.SignIn(null, false);
@@ -236,9 +263,9 @@ namespace Microsoft.Internal.GamesTest.Xbox.Tests
         [TestCategory(XboxUserTestCategory)]
         public void TestSignInPassesArguments()
         {
-            const uint ExpectedUserId = 54;
-            const string ExpectedEmailAddress = "TestAddress@test.test";
-            const string ExpectedGamerTag = "TestGamerTag";
+            const uint ExpectedUserId = TestUserId;
+            const string ExpectedEmailAddress = TestEmailAddress;
+            const string ExpectedGamerTag = TestGamertag;
             const string ExpectedPassword = "TestPassword";
             const bool ExpectedIsSignedInValue = true;
 
@@ -271,7 +298,7 @@ namespace Microsoft.Internal.GamesTest.Xbox.Tests
         [ExpectedException(typeof(XboxSignInException))]
         public void TestSignInHandlesNullReturn()
         {
-            XboxUser user = new XboxUser(this.xboxConsole, 0, "TestEmailAddress", null, false);
+            XboxUser user = this.CreateTestUser();
 
             ShimXboxConsoleAdapterBase.AllInstances.SignInUserStringXboxUserDefinitionStringBoolean = (adapter, systemIpAddress, userDefinition, password, storePassword) =>
             {
@@ -290,11 +317,11 @@ namespace Microsoft.Internal.GamesTest.Xbox.Tests
         [ExpectedException(typeof(XboxSignInException))]
         public void TestSignInHandlesIncorrectReturn()
         {
-            XboxUser user = new XboxUser(this.xboxConsole, 0, "TestEmailAddress", null, false);
+            XboxUser user = this.CreateTestUser();
 
             ShimXboxConsoleAdapterBase.AllInstances.SignInUserStringXboxUserDefinitionStringBoolean = (adapter, systemIpAddress, userDefinition, password, storePassword) =>
             {
-                return new XboxUserDefinition(0, "DifferentEmail", null, false);
+                return new XboxUserDefinition(TestUserId, "DifferentEmail", null, false);
             };
 
             user.SignIn(null, false);
@@ -308,14 +335,14 @@ namespace Microsoft.Internal.GamesTest.Xbox.Tests
         [TestCategory(XboxUserTestCategory)]
         public void TestSignOutInvokesAdapterSignOut()
         {
-            XboxUser user = new XboxUser(this.xboxConsole, 0, null, null, false);
+            XboxUser user = this.CreateTestUser();
 
             bool isCorrectMethodCalled = false;
 
             ShimXboxConsoleAdapterBase.AllInstances.SignOutUserStringXboxUserDefinition = (adapter, systemIpAddress, userDefinition) =>
             {
                 isCorrectMethodCalled = true;
-                return new XboxUserDefinition(0, null, null, false);
+                return this.CreateTestUserDefinition();
             };
 
             user.SignOut();
@@ -330,9 +357,9 @@ namespace Microsoft.Internal.GamesTest.Xbox.Tests
         [TestCategory(XboxUserTestCategory)]
         public void TestSignOutPassesArguments()
         {
-            const uint ExpectedUserId = 54;
-            const string ExpectedEmailAddress = "TestAddress@test.test";
-            const string ExpectedGamerTag = "TestGamerTag";
+            const uint ExpectedUserId = TestUserId;
+            const string ExpectedEmailAddress = TestEmailAddress;
+            const string ExpectedGamerTag = TestGamertag;
 
             const bool ExpectedIsSignedInValue = false;
 
@@ -358,7 +385,7 @@ namespace Microsoft.Internal.GamesTest.Xbox.Tests
         [ExpectedException(typeof(XboxSignInException))]
         public void TestSignOutHandlesNullReturn()
         {
-            XboxUser user = new XboxUser(this.xboxConsole, 0, "TestEmailAddress", null, false);
+            XboxUser user = this.CreateTestUser();
 
             ShimXboxConsoleAdapterBase.AllInstances.SignOutUserStringXboxUserDefinition = (adapter, systemIpAddress, userDefinition) =>
             {
@@ -377,15 +404,113 @@ namespace Microsoft.Internal.GamesTest.Xbox.Tests
         [ExpectedException(typeof(XboxSignInException))]
         public void TestSignOutHandlesIncorrectReturn()
         {
-            XboxUser user = new XboxUser(this.xboxConsole, 0, "TestEmailAddress", null, false);
+            XboxUser user = this.CreateTestUser();
 
             ShimXboxConsoleAdapterBase.AllInstances.SignOutUserStringXboxUserDefinition = (adapter, systemIpAddress, userDefinition) =>
             {
-                return new XboxUserDefinition(0, "DifferentEmail", null, false);
+                return new XboxUserDefinition(TestUserId, "DifferentEmail", null, false);
             };
 
             user.SignOut();
         }
+
+        /// <summary>
+        /// Verifies that this method calls the corresponding method on the adapter and passes the correct parameters.
+        /// </summary>
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        [TestCategory(XboxUserTestCategory)]
+        public void TestAddLocalUsersToPartyInvokesAdapterAddLocalUsersToParty()
+        {
+            bool isCorrectMethodCalled = false;
+
+            ShimXboxConsoleAdapterBase.AllInstances.AddLocalUsersToPartyStringUInt32StringStringArray = (adapter, systemIpAddress, titleId, actingUserXuid, addUserXuids) =>
+            {
+                isCorrectMethodCalled = true;
+
+                Assert.AreEqual(TestTitleId, titleId);
+                Assert.AreEqual(TestXuidString, actingUserXuid);
+                Assert.IsNotNull(addUserXuids);
+                Assert.AreEqual(1, addUserXuids.Length);
+                Assert.AreEqual(TestXuidString, addUserXuids[0]);
+            };
+
+            this.CreateTestUser().AddLocalUsersToParty(XboxParty.FromTitleId(this.xboxConsole, TestTitleId), new XboxUser[] { this.CreateTestUser() });
+
+            Assert.IsTrue(isCorrectMethodCalled, "XboxUser method did not call the correct Adapter method.");
+        }
+
+        /// <summary>
+        /// Verifies that this method calls the corresponding method on the adapter and passes the correct parameters.
+        /// </summary>
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        [TestCategory(XboxUserTestCategory)]
+        public void TestInviteToPartyInvokesAdapterInviteToParty()
+        {
+            bool isCorrectMethodCalled = false;
+
+            ShimXboxConsoleAdapterBase.AllInstances.InviteToPartyStringUInt32StringStringArray = (adapter, systemIpAddress, titleId, actingUserXuid, inviteUserXuids) =>
+            {
+                isCorrectMethodCalled = true;
+
+                Assert.AreEqual(TestTitleId, titleId);
+                Assert.AreEqual(TestXuidString, actingUserXuid);
+                Assert.IsNotNull(inviteUserXuids);
+                Assert.AreEqual(1, inviteUserXuids.Length);
+                Assert.AreEqual(TestXuidString, inviteUserXuids[0]);
+            };
+
+            this.CreateTestUser().InviteToParty(XboxParty.FromTitleId(this.xboxConsole, TestTitleId), new XboxRemoteUser[] { this.CreateTestRemoteUser() });
+
+            Assert.IsTrue(isCorrectMethodCalled, "XboxUser method did not call the correct Adapter method.");
+        }
+
+        /// <summary>
+        /// Verifies that this method calls the corresponding method on the adapter and passes the correct parameters.
+        /// </summary>
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        [TestCategory(XboxUserTestCategory)]
+        public void TestAcceptInviteToPartyInvokesAdapterAcceptInviteToParty()
+        {
+            bool isCorrectMethodCalled = false;
+
+            ShimXboxConsoleAdapterBase.AllInstances.AcceptInviteToPartyStringStringString = (adapter, systemIp, actingUserXuid, partyId) =>
+            {
+                isCorrectMethodCalled = true;
+
+                Assert.AreEqual(TestXuidString, actingUserXuid);
+                Assert.AreEqual(TestPartyId, partyId);
+            };
+
+            this.CreateTestUser().AcceptInviteToParty(XboxRemoteParty.FromPartyId(this.xboxConsole, TestPartyId));
+
+            Assert.IsTrue(isCorrectMethodCalled, "XboxUser method did not call the correct Adapter method.");
+        }
+
+        /// <summary>
+        /// Verifies that this method calls the corresponding method on the adapter and passes the correct parameters.
+        /// </summary>
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        [TestCategory(XboxUserTestCategory)]
+        public void TestDeclineInviteToPartyInvokesAdapterDeclineInviteToParty()
+        {
+            bool isCorrectMethodCalled = false;
+
+            ShimXboxConsoleAdapterBase.AllInstances.DeclineInviteToPartyStringStringString = (adapter, systemIp, actingUserXuid, partyId) =>
+            {
+                isCorrectMethodCalled = true;
+
+                Assert.AreEqual(TestXuidString, actingUserXuid);
+                Assert.AreEqual(TestPartyId, partyId);
+            };
+
+            this.CreateTestUser().DeclineInviteToParty(XboxRemoteParty.FromPartyId(this.xboxConsole, TestPartyId));
+
+            Assert.IsTrue(isCorrectMethodCalled, "XboxUser method did not call the correct Adapter method.");
+        }        
 
         private void TestXboxUserProperties(uint expectedId, string expectedEmail, string expectedGamerTag, bool expectedIsSignedInValue, Func<XboxUser> constructorFunc)
         {
@@ -395,6 +520,33 @@ namespace Microsoft.Internal.GamesTest.Xbox.Tests
             Assert.AreEqual(expectedEmail, user.EmailAddress, "EmailAddress Property did not match expected value");
             Assert.AreEqual(expectedGamerTag, user.GamerTag, "GamerTag Property did not match expected value");
             Assert.AreEqual(expectedIsSignedInValue, user.IsSignedIn, "IsSignedIn Property did not match expected value");
+        }
+
+        private void TestXboxUserProperties(uint expectedId, string expectedEmail, string expectedGamerTag, bool expectedIsSignedInValue, bool expectedAutoSignInValue, string expectedXuidValue, Func<XboxUser> constructorFunc)
+        {
+            XboxUser user = constructorFunc();
+
+            Assert.AreEqual(expectedId, user.UserId, "UserId Property did not match expected value");
+            Assert.AreEqual(expectedEmail, user.EmailAddress, "EmailAddress Property did not match expected value");
+            Assert.AreEqual(expectedGamerTag, user.GamerTag, "GamerTag Property did not match expected value");
+            Assert.AreEqual(expectedIsSignedInValue, user.IsSignedIn, "IsSignedIn Property did not match expected value");
+            Assert.AreEqual(expectedAutoSignInValue, user.AutoSignIn, "AutoSignIn Property did not match the expected value");
+            Assert.AreEqual(expectedXuidValue, user.Xuid, "Xuid Property did not match the expected value");
+        }
+
+        private XboxUserDefinition CreateTestUserDefinition()
+        {
+            return new XboxUserDefinition(TestUserId, TestEmailAddress, TestGamertag, false, false, TestXuidString);
+        }
+
+        private XboxUser CreateTestUser()
+        {
+            return new XboxUser(this.xboxConsole, this.CreateTestUserDefinition());
+        }
+
+        private XboxRemoteUser CreateTestRemoteUser()
+        {
+            return new XboxRemoteUser(this.xboxConsole, TestXuidString);
         }
     }
 }

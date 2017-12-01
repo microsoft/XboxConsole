@@ -39,24 +39,21 @@
     <DocumentationFile>bin\x64\Release\GamesTest.XboxConsole.Infrastructure.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Practices.EnterpriseLibrary.SemanticLogging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.SemanticLogging, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\EnterpriseLibrary.SemanticLogging.1.1.1403.1\lib\net45\Microsoft.Practices.EnterpriseLibrary.SemanticLogging.dll</HintPath>
+      <HintPath>..\packages\EnterpriseLibrary.SemanticLogging.2.0.1406.1\lib\net45\Microsoft.Practices.EnterpriseLibrary.SemanticLogging.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.EnterpriseLibrary.SemanticLogging.Database, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.SemanticLogging.Database, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\EnterpriseLibrary.SemanticLogging.Database.1.1.1403.1\lib\net45\Microsoft.Practices.EnterpriseLibrary.SemanticLogging.Database.dll</HintPath>
+      <HintPath>..\packages\EnterpriseLibrary.SemanticLogging.Database.2.0.1406.1\lib\net45\Microsoft.Practices.EnterpriseLibrary.SemanticLogging.Database.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling">
       <HintPath>..\packages\EnterpriseLibrary.TransientFaultHandling.6.0.1304.0\lib\portable-net45+win+wp8\Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling.Data, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling.Data">
       <HintPath>..\packages\EnterpriseLibrary.TransientFaultHandling.Data.6.0.1304.1\lib\NET45\Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling.Data.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.5.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="sysglobl" />
@@ -81,6 +78,7 @@
     <Compile Include="AdapterBase\XboxConsoleAdapterBase.PackageManagement.cs" />
     <Compile Include="AdapterBase\XboxConsoleAdapterBase.ExecutableManagement.cs" />
     <Compile Include="Configuration\BaseXboxConfiguration.cs" />
+    <Compile Include="Configuration\ColorDepthType.cs" />
     <Compile Include="Configuration\ColorSpaceType.cs" />
     <Compile Include="Configuration\AudioBitstreamFormatType.cs" />
     <Compile Include="Configuration\XboxIdleShutdownTimeoutConfigurationSetting.cs" />
@@ -113,6 +111,9 @@
     <Compile Include="Deployment\XboxDeploymentInfo.cs" />
     <Compile Include="Deployment\XtfDeployCallbackActions.cs" />
     <Compile Include="DisposableObject.cs" />
+    <Compile Include="Exceptions\InvalidPartyInviteException.cs" />
+    <Compile Include="Exceptions\InvalidXuidException.cs" />
+    <Compile Include="Exceptions\NoLocalSignedInUsersInPartyException.cs" />
     <Compile Include="Exceptions\XboxAggregateException.cs" />
     <Compile Include="Exceptions\XboxConsoleFeatureNotSupportedException.cs" />
     <Compile Include="Exceptions\XboxDeployException.cs" />
@@ -120,6 +121,7 @@
     <Compile Include="Exceptions\XboxSessionKeyException.cs" />
     <Compile Include="Exceptions\XboxSignInException.cs" />
     <Compile Include="Exceptions\XboxSnapException.cs" />
+    <Compile Include="Exceptions\XboxUserNotSignedInException.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Input\XboxGamepadButtons.cs" />
     <Compile Include="Input\XboxGamepadReading.cs" />

@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using AdapterVersion = Microsoft.Internal.GamesTest.Xbox.Adapter.May2014;
+using AdapterVersion = Microsoft.Internal.GamesTest.Xbox.Adapter.July2014;
 
 namespace Microsoft.Internal.GamesTest.Xbox.Adapter.Tests
 {

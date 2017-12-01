@@ -92,9 +92,9 @@
     <Fakes Include="Fakes\mscorlib.fakes" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\XboxConsole.Adapter.May2014\XboxConsole.Adapter.May2014.csproj">
-      <Project>{7c44371f-e7ee-4a48-bdc8-54e69a4f7c0c}</Project>
-      <Name>XboxConsole.Adapter.May2014</Name>
+    <ProjectReference Include="..\XboxConsole.Adapter.July2014\XboxConsole.Adapter.July2014.csproj">
+      <Project>{e842b4d7-58d2-4435-b876-004de9a45fbd}</Project>
+      <Name>XboxConsole.Adapter.July2014</Name>
     </ProjectReference>
     <ProjectReference Include="..\XboxConsole.Infrastructure\XboxConsole.Infrastructure.csproj">
       <Project>{e0785338-9f71-4d35-95a8-6388bc7f5518}</Project>

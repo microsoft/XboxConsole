@@ -98,7 +98,10 @@
     <Compile Include="XboxInputTests.cs" />
     <Compile Include="XboxPackageTests.cs" />
     <Compile Include="XboxConsoleTests.cs" />
+    <Compile Include="XboxPartyTests.cs" />
     <Compile Include="XboxProcessTests.cs" />
+    <Compile Include="XboxRemotePartyTests.cs" />
+    <Compile Include="XboxRemoteUserTests.cs" />
     <Compile Include="XboxUserTests.cs" />
   </ItemGroup>
   <ItemGroup>

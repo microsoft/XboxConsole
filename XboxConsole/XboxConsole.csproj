@@ -70,8 +70,13 @@
     <Compile Include="XboxConsoleAdapterFactory.cs" />
     <Compile Include="XboxItem.cs" />
     <Compile Include="XboxPackage.cs" />
+    <Compile Include="XboxParty.cs" />
+    <Compile Include="XboxPartyBase.cs" />
     <Compile Include="XboxProcess.cs" />
+    <Compile Include="XboxRemoteParty.cs" />
+    <Compile Include="XboxRemoteUser.cs" />
     <Compile Include="XboxUser.cs" />
+    <Compile Include="XboxUserBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <CodeAnalysisDictionary Include="..\dependencies\CodeAnalysis\CustomDictionary.xml">
@@ -82,6 +87,10 @@
     <ProjectReference Include="..\XboxConsole.Adapter.April2014\XboxConsole.Adapter.April2014.csproj">
       <Project>{5e7a10c7-20e2-4c7d-91b8-f744207eddcc}</Project>
       <Name>XboxConsole.Adapter.April2014</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\XboxConsole.Adapter.July2014\XboxConsole.Adapter.July2014.csproj">
+      <Project>{e842b4d7-58d2-4435-b876-004de9a45fbd}</Project>
+      <Name>XboxConsole.Adapter.July2014</Name>
     </ProjectReference>
     <ProjectReference Include="..\XboxConsole.Adapter.May2014\XboxConsole.Adapter.May2014.csproj">
       <Project>{7c44371f-e7ee-4a48-bdc8-54e69a4f7c0c}</Project>

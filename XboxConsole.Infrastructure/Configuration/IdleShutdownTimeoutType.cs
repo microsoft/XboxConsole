@@ -17,13 +17,13 @@ namespace Microsoft.Internal.GamesTest.Xbox.Configuration
         NoTimeout,
 
         /// <summary>
-        /// One minute (value of "60").
+        /// One Hour (value of "60").
         /// </summary>
-        TimeoutOneMinute,
+        TimeoutOneHour,
 
         /// <summary>
-        /// One hour (value of "360").
+        /// Six hours (value of "360").
         /// </summary>
-        TimeoutOneHour
+        TimeoutSixHours
     }
 }

@@ -17,7 +17,7 @@ namespace Microsoft.Internal.GamesTest.Xbox.Telemetry
     /// </summary>
     public static class TelemetrySink
     {
-        private const string LoggingConnectionString = "";
+        private const string LoggingConnectionString = "";   
 
         private static ObservableEventListener processEventListener;
         private static SinkSubscription<SqlDatabaseSink> sinkSubscription;

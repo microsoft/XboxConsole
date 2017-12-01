@@ -111,7 +111,7 @@ namespace Microsoft.Internal.GamesTest.Xbox.Configuration
         /// <summary>
         /// Gets the ColorDepth value.
         /// </summary>
-        int ColorDepth { get; }
+        ColorDepthType ColorDepth { get; }
 
         /// <summary>
         /// Gets the NetworkType value.

@@ -273,7 +273,7 @@ namespace Microsoft.Internal.GamesTest.Xbox.Configuration
         /// <summary>
         /// Gets the ColorDepth.
         /// </summary>
-        public int ColorDepth
+        public ColorDepthType ColorDepth
         {
             get
             {

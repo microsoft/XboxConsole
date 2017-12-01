@@ -38,9 +38,9 @@ namespace Microsoft.Internal.GamesTest.Xbox.Configuration
                 case IdleShutdownTimeoutType.NoTimeout:
                     return "0";
                 case IdleShutdownTimeoutType.TimeoutOneHour:
-                    return "360";
-                case IdleShutdownTimeoutType.TimeoutOneMinute:
                     return "60";
+                case IdleShutdownTimeoutType.TimeoutSixHours:
+                    return "360";
             }
         }
 
@@ -62,9 +62,9 @@ namespace Microsoft.Internal.GamesTest.Xbox.Configuration
                 case "0":
                     return IdleShutdownTimeoutType.NoTimeout;
                 case "60":
-                    return IdleShutdownTimeoutType.TimeoutOneMinute;
-                case "360":
                     return IdleShutdownTimeoutType.TimeoutOneHour;
+                case "360":
+                    return IdleShutdownTimeoutType.TimeoutSixHours;
             }
         }
     }

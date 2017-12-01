@@ -982,7 +982,7 @@ namespace Microsoft.Internal.GamesTest.Xbox.Tests
             isCorrectMethodCalled = true;
         };
 
-        XboxUser user = new XboxUser(this.console, 0, null, null);
+        XboxUser user = new XboxUser(this.console, 0, null, null, false);
         this.console.DeleteUser(user);
 
         Assert.IsTrue(isCorrectMethodCalled, "The XboxConsole object did not call the adapter's DeleteUser method.");
@@ -996,7 +996,7 @@ namespace Microsoft.Internal.GamesTest.Xbox.Tests
     [TestCategory(XboxConsoleTestCategory)]
     public void TestDeleteUserPassesArguments()
     {
-        XboxUser user = new XboxUser(this.console, 0, null, null);
+        XboxUser user = new XboxUser(this.console, 0, null, null, false);
 
         ShimXboxConsoleAdapterBase.AllInstances.DeleteUserStringXboxUserDefinition = (adapter, systemIpAddress, userDefinition) =>
         {

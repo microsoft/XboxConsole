@@ -38,6 +38,7 @@
       <Word>Hdmi</Word>
       <Word>Bitstream</Word>
       <Word>Dts</Word>
+      <Word>Xuid</Word>
     </Recognized>
   </Words>
   <Acronyms>
@@ -53,6 +54,7 @@
       <Acronym>Ip</Acronym>
       <Acronym>UI</Acronym>
       <Acronym>OOBE</Acronym>
+      <Acronym>XUID</Acronym>
     </CasingExceptions>
   </Acronyms>
 </Dictionary>

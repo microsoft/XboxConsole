@@ -455,6 +455,85 @@ namespace Microsoft.Internal.GamesTest.Xbox
             throw new XboxConsoleFeatureNotSupportedException(NotSupportedMessage);
         }
 
+        /// <summary>
+        /// Creates a party for the given title ID (if one does not exist) and adds the given local users to it.
+        /// </summary>
+        /// <param name="ipAddress">The IP address of the console.</param>
+        /// <param name="titleId">Title ID of the title to manage a party for.</param>
+        /// <param name="actingUserXuid">Acting user XUID on whose behalf to add other users to the party.</param>
+        /// <param name="localUserXuidsToAdd">User XUIDs to add to the party.</param>
+        public virtual void AddLocalUsersToParty(string ipAddress, uint titleId, string actingUserXuid, string[] localUserXuidsToAdd)
+        {
+            throw new XboxConsoleFeatureNotSupportedException(NotSupportedMessage);
+        }
+
+        /// <summary>
+        /// Invites the given users on behalf of the acting user to the party associated with the given title ID.
+        /// </summary>
+        /// <param name="ipAddress">The IP address of the console.</param>
+        /// <param name="titleId">Title ID of the title to manage a party for.</param>
+        /// <param name="actingUserXuid">Acting user XUID on whose behalf to invite other users to the party.</param>
+        /// <param name="remoteUserXuidsToInvite">Remote user XUIDs to invite to the party.</param>
+        public virtual void InviteToParty(string ipAddress, uint titleId, string actingUserXuid, string[] remoteUserXuidsToInvite)
+        {
+            throw new XboxConsoleFeatureNotSupportedException(NotSupportedMessage);
+        }
+
+        /// <summary>
+        /// Removes the given users from the party belonging to the given title ID.
+        /// </summary>
+        /// <param name="ipAddress">The IP address of the console.</param>
+        /// <param name="titleId">Title ID of the title to manage a party for.</param>
+        /// <param name="localUserXuidsToRemove">Local user XUIDs to remove from the party.</param>
+        public virtual void RemoveLocalUsersFromParty(string ipAddress, uint titleId, string[] localUserXuidsToRemove)
+        {
+            throw new XboxConsoleFeatureNotSupportedException(NotSupportedMessage);
+        }
+
+        /// <summary>
+        /// Returns the party ID belonging to the given title ID.
+        /// </summary>
+        /// <param name="ipAddress">The IP address of the console.</param>
+        /// <param name="titleId">Title ID of the title to get the associated party ID for.</param>
+        /// <returns>ID of existing party used to accept or decline an invitation to the party.</returns>
+        public virtual string GetPartyId(string ipAddress, uint titleId)
+        {
+            throw new XboxConsoleFeatureNotSupportedException(NotSupportedMessage);
+        }
+
+        /// <summary>
+        /// Lists both the current members and the reserved members of the party belonging to given title ID.
+        /// </summary>
+        /// <param name="ipAddress">The IP address of the console.</param>
+        /// <param name="titleId">Title ID of the title to get party members for.</param>
+        /// <returns>Party member user XUIDs, which may contain a mix of local and remote users.</returns>
+        public virtual string[] GetPartyMembers(string ipAddress, uint titleId)
+        {
+            throw new XboxConsoleFeatureNotSupportedException(NotSupportedMessage);
+        }
+
+        /// <summary>
+        /// Accepts the party invitation on behalf of the given acting user to the party associated with the given title ID.
+        /// </summary>
+        /// <param name="ipAddress">The IP address of the console.</param>
+        /// <param name="actingUserXuid">XUID of acting user on whose behalf to accept the invitation.</param>
+        /// <param name="partyId">Title ID of the party created by another user to accept the invitation to.</param>
+        public virtual void AcceptInviteToParty(string ipAddress, string actingUserXuid, string partyId)
+        {
+            throw new XboxConsoleFeatureNotSupportedException(NotSupportedMessage);
+        }
+
+        /// <summary>
+        /// Declines the party invitation on behalf of the given acting user to the party associated with the given title ID.
+        /// </summary>
+        /// <param name="ipAddress">The IP address of the console.</param>
+        /// <param name="actingUserXuid">XUID of acting user on whose behalf to decline the invitation.</param>
+        /// <param name="partyId">Title ID of the party created by another user to accept the invitation to.</param>
+        public virtual void DeclineInviteToParty(string ipAddress, string actingUserXuid, string partyId)
+        {
+            throw new XboxConsoleFeatureNotSupportedException(NotSupportedMessage);
+        }
+
         private static byte[] CreateRawAssembly(Stream streamFromResources)
         {
             if (streamFromResources == null || !streamFromResources.CanSeek || streamFromResources.Length == 0)

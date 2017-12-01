@@ -359,7 +359,7 @@ namespace Microsoft.Internal.GamesTest.Xbox.Configuration
         /// <summary>
         /// Gets or sets the ColorDepth value. Call XboxConsole.Reboot method to apply configuration to a console.
         /// </summary>
-        public int ColorDepth
+        public ColorDepthType ColorDepth
         {
             get
             {

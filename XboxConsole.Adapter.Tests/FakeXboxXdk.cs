@@ -199,6 +199,41 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.Tests
         public Action<string, uint, ulong> PairControllerToUserFunc { get; set; }
 
         /// <summary>
+        /// Gets or sets the function to shim the "AddLocalUsersToParty" method.
+        /// </summary>
+        public Action<string, uint, string, string[]> AddLocalUsersToPartyFunc { get; set; }
+
+        /// <summary>
+        /// Gets or sets the function to shim the "InviteToParty" method.
+        /// </summary>
+        public Action<string, uint, string, string[]> InviteToPartyFunc { get; set; }
+
+        /// <summary>
+        /// Gets or sets the function to shim the "RemoveLocalUsersFromParty" method.
+        /// </summary>
+        public Action<string, uint, string[]> RemoveLocalUsersFromPartyFunc { get; set; }
+
+        /// <summary>
+        /// Gets or sets the function to shim the "GetPartyId" method.
+        /// </summary>
+        public Func<string, uint, string> GetPartyIdFunc { get; set; }
+
+        /// <summary>
+        /// Gets or sets the function to shim the "GetPartyMembers" method.
+        /// </summary>
+        public Func<string, uint, string[]> GetPartyMembersFunc { get; set; }
+
+        /// <summary>
+        /// Gets or sets the function to shim the "AcceptInviteToParty" method.
+        /// </summary>
+        public Action<string, string, string> AcceptInviteToPartyFunc { get; set; }
+
+        /// <summary>
+        /// Gets or sets the function to shim the "DeclineInviteToParty" method.
+        /// </summary>
+        public Action<string, string, string> DeclineInviteToPartyFunc { get; set; }
+
+        /// <summary>
         /// Gets or sets the function to shim the "CaptureScreenshot" method.
         /// </summary>
         public Func<string, IntPtr> CaptureScreenshotFunc { get; set; }
@@ -827,6 +862,134 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.Tests
             else
             {
                 throw new NotImplementedException("SignOutUserAction is not set.");
+            }
+        }
+
+        /// <summary>
+        /// Creates a party for the given title ID (if one does not exist) and adds the given local users to it.
+        /// </summary>
+        /// <param name="ipAddress">The IP address of the console.</param>
+        /// <param name="titleId">Title ID of the title to manage a party for.</param>
+        /// <param name="actingUserXuid">Acting user XUID on whose behalf to add other users to the party.</param>
+        /// <param name="localUserXuidsToAdd">User XUIDs to add to the party.</param>
+        public override void AddLocalUsersToParty(string ipAddress, uint titleId, string actingUserXuid, string[] localUserXuidsToAdd)
+        {
+            if (this.AddLocalUsersToPartyFunc != null)
+            {
+                this.AddLocalUsersToPartyFunc(ipAddress, titleId, actingUserXuid, localUserXuidsToAdd);
+            }
+            else
+            {
+                throw new XboxConsoleFeatureNotSupportedException(NotSupportedMessage);
+            }
+        }
+
+        /// <summary>
+        /// Invites the given users on behalf of the acting user to the party associated with the given title ID.
+        /// </summary>
+        /// <param name="ipAddress">The IP address of the console.</param>
+        /// <param name="titleId">Title ID of the title to manage a party for.</param>
+        /// <param name="actingUserXuid">Acting user XUID on whose behalf to invite other users to the party.</param>
+        /// <param name="remoteUserXuidsToInvite">Remote user XUIDs to invite to the party.</param>
+        public override void InviteToParty(string ipAddress, uint titleId, string actingUserXuid, string[] remoteUserXuidsToInvite)
+        {
+            if (this.InviteToPartyFunc != null)
+            {
+                this.InviteToPartyFunc(ipAddress, titleId, actingUserXuid, remoteUserXuidsToInvite);
+            }
+            else
+            {
+                throw new XboxConsoleFeatureNotSupportedException(NotSupportedMessage);
+            }
+        }
+
+        /// <summary>
+        /// Removes the given users from the party belonging to the given title ID.
+        /// </summary>
+        /// <param name="ipAddress">The IP address of the console.</param>
+        /// <param name="titleId">Title ID of the title to manage a party for.</param>
+        /// <param name="localUserXuidsToRemove">Local user XUIDs to remove from the party.</param>
+        public override void RemoveLocalUsersFromParty(string ipAddress, uint titleId, string[] localUserXuidsToRemove)
+        {
+            if (this.RemoveLocalUsersFromPartyFunc != null)
+            {
+                this.RemoveLocalUsersFromPartyFunc(ipAddress, titleId, localUserXuidsToRemove);
+            }
+            else
+            {
+                throw new XboxConsoleFeatureNotSupportedException(NotSupportedMessage);
+            }
+        }
+
+        /// <summary>
+        /// Returns the party ID belonging to the given title ID.
+        /// </summary>
+        /// <param name="ipAddress">The IP address of the console.</param>
+        /// <param name="titleId">Title ID of the title to get the associated party ID for.</param>
+        /// <returns>ID of existing party used to accept or decline an invitation to the party.</returns>
+        public override string GetPartyId(string ipAddress, uint titleId)
+        {
+            if (this.GetPartyIdFunc != null)
+            {
+                return this.GetPartyIdFunc(ipAddress, titleId);
+            }
+            else
+            {
+                throw new XboxConsoleFeatureNotSupportedException(NotSupportedMessage);
+            }
+        }
+
+        /// <summary>
+        /// Lists both the current members and the reserved members of the party belonging to given title ID.
+        /// </summary>
+        /// <param name="ipAddress">The IP address of the console.</param>
+        /// <param name="titleId">Title ID of the title to get party members for.</param>
+        /// <returns>Party member user XUIDs, which may contain a mix of local and remote users.</returns>
+        public override string[] GetPartyMembers(string ipAddress, uint titleId)
+        {
+            if (this.GetPartyMembersFunc != null)
+            {
+                return this.GetPartyMembersFunc(ipAddress, titleId);
+            }
+            else
+            {
+                throw new XboxConsoleFeatureNotSupportedException(NotSupportedMessage);
+            }
+        }
+
+        /// <summary>
+        /// Accepts the party invitation on behalf of the given acting user to the party associated with the given title ID.
+        /// </summary>
+        /// <param name="ipAddress">The IP address of the console.</param>
+        /// <param name="actingUserXuid">XUID of acting user on whose behalf to accept the invitation.</param>
+        /// <param name="partyId">Title ID of the party created by another user to accept the invitation to.</param>
+        public override void AcceptInviteToParty(string ipAddress, string actingUserXuid, string partyId)
+        {
+            if (this.AcceptInviteToPartyFunc != null)
+            {
+                this.AcceptInviteToPartyFunc(ipAddress, actingUserXuid, partyId);
+            }
+            else
+            {
+                throw new XboxConsoleFeatureNotSupportedException(NotSupportedMessage);
+            }
+        }
+
+        /// <summary>
+        /// Declines the party invitation on behalf of the given acting user to the party associated with the given title ID.
+        /// </summary>
+        /// <param name="ipAddress">The IP address of the console.</param>
+        /// <param name="actingUserXuid">XUID of acting user on whose behalf to decline the invitation.</param>
+        /// <param name="partyId">Title ID of the party created by another user to accept the invitation to.</param>
+        public override void DeclineInviteToParty(string ipAddress, string actingUserXuid, string partyId)
+        {
+            if (this.DeclineInviteToPartyFunc != null)
+            {
+                this.DeclineInviteToPartyFunc(ipAddress, actingUserXuid, partyId);
+            }
+            else
+            {
+                throw new XboxConsoleFeatureNotSupportedException(NotSupportedMessage);
             }
         }
 
