@@ -115,7 +115,7 @@ namespace Microsoft.Internal.GamesTest.Xbox.Configuration
         /// <summary>
         /// Gets or sets the ProfilingMode value. Call XboxConsole.Reboot method to apply configuration to a console.
         /// </summary>
-        public bool? ProfilingMode
+        public ProfilingModeType ProfilingMode
         {
             get
             {

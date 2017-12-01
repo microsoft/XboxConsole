@@ -331,6 +331,89 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.Tests
         }
 
         /// <summary>
+        /// Verifies that the GetConsoleInfo method throws an ObjectDisposedException if
+        /// the adapter has been disposed.
+        /// </summary>
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        [TestCategory(XboxConsoleAdapterTestCategory)]
+        [ExpectedException(typeof(ObjectDisposedException))]
+        public void TestGetConsoleInfoThrowsObjectDisposedException()
+        {
+            this.adapter.Dispose();
+            var value = this.adapter.GetConsoleInfo(ConsoleAddress);
+            Assert.Fail("ObjectDisposedException was not thrown.");
+        }
+
+        /// <summary>
+        /// Verifies that the GetConsoleInfo method converts COMExceptions thrown by the XDK
+        /// into XboxConsoleExceptions.
+        /// </summary>
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        [TestCategory(XboxConsoleAdapterTestCategory)]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2201:DoNotRaiseReservedExceptionTypes", Justification = "Need to simulate XDK")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Need to catch all exception types so that I can verify we capture the correct exception type.")]
+        public void TestGetConsoleInfoTurnsComExceptionIntoXboxConsoleException()
+        {
+            this.fakeXboxXdk.GetConsoleInfoFunc = (address) =>
+            {
+                throw new COMException();
+            };
+
+            try
+            {
+                var value = this.adapter.GetConsoleInfo(ConsoleAddress);
+                Assert.Fail("The XDK should have thrown a COMException");
+            }
+            catch (Exception ex)
+            {
+                Assert.IsInstanceOfType(ex, typeof(XboxConsoleException), "The XboxConsoleAdapter GetConsoleInfo method did not convert a COMException into an XboxConsoleException.");
+                Assert.IsInstanceOfType(ex.InnerException, typeof(COMException), "The XboxConsoleAdapter GetConsoleInfo method did not include the COMException as the inner exception of the XboxConsoleException that it threw.");
+            }
+        }
+
+        /// <summary>
+        /// Verifies that the GetConsoleInfo method passes the correct parameters to the Xdk.
+        /// </summary>
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        [TestCategory(XboxConsoleAdapterTestCategory)]
+        public void TestGetConsoleInfoCallsXdkGetConsoleInfo()
+        {
+            bool isCorrectMethodCalled = false;
+
+            string expectedToolsIp = "Expected Tools Ip";
+            string expectedSystemIp = "Expected System Ip";
+            string expectedAccessKey = "Expected Access Key";
+            string expectedConsoleId = "Expected Console Id";
+            XboxCertTypes expectedCertType = XboxCertTypes.EraDevKit | XboxCertTypes.Other;
+            string expectedHostName = "Expected Host Name";
+            string expectedDeviceId = "Expected Device Id";
+
+            XboxConsoleInfo expectedValue = new XboxConsoleInfo(expectedToolsIp, expectedSystemIp, expectedAccessKey, expectedConsoleId, expectedCertType, expectedHostName, expectedDeviceId);
+            this.fakeXboxXdk.GetConsoleInfoFunc = (address) =>
+            {
+                isCorrectMethodCalled = true;
+                Assert.AreEqual(ConsoleAddress, address, "GetConsoleInfo method did not pass the correct system IP address to the Xdk.");
+                return expectedValue;
+            };
+
+            var value = this.adapter.GetConsoleInfo(ConsoleAddress);
+            Assert.IsTrue(isCorrectMethodCalled, "The GetConsoleInfo method did not call the Xdk's GetConsoleInfo method.");
+
+            Assert.AreEqual(expectedToolsIp, value.ToolsIpAddress, "GetConsoleInfo method did not receive the correct tools ip value in the returned XboxConsoleInfo object from the xdk.");
+            Assert.AreEqual(expectedSystemIp, value.ConsoleIPAddress, "etConsoleInfo method did not receive the correct console ip value in the returned XboxConsoleInfo object from the xdk.");
+            Assert.AreEqual(expectedAccessKey, value.AccessKey, "GetConsoleInfo method did not receive the correct access key value in the returned XboxConsoleInfo object from the xdk.");
+            Assert.AreEqual(expectedConsoleId, value.ConsoleId, "GetConsoleInfo method did not receive the correct console id value in the returned XboxConsoleInfo object from the xdk.");
+            Assert.AreEqual(expectedCertType, value.CertType, "GetConsoleInfo method did not receive the correct cert type value in the returned XboxConsoleInfo object from the xdk.");
+            Assert.AreEqual(expectedHostName, value.HostName, "GetConsoleInfo method did not receive the correct host name value in the returned XboxConsoleInfo object from the xdk.");
+            Assert.AreEqual(expectedDeviceId, value.DeviceId, "GetConsoleInfo method did not receive the correct device id value in the returned XboxConsoleInfo object from the xdk.");
+
+            this.VerifyThrows<ArgumentNullException>(() => this.adapter.GetConsoleInfo(null));
+        }
+
+        /// <summary>
         /// Verifies that Xtf assemblies from ManagedXtf are embedded into the currently loaded adapter.
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Xtf", Justification = "Xtf is the name of embedded assemblies used by XboxConsole"), TestMethod]

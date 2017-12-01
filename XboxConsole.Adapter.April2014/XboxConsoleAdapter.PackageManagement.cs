@@ -13,6 +13,7 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.April2014
     using System.Runtime.Serialization;
     using System.Runtime.Serialization.Json;
     using System.Text;
+    using System.Threading;
     using System.Threading.Tasks;
     using System.Xml;
     using Microsoft.Internal.GamesTest.Xbox.Deployment;
@@ -281,7 +282,7 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.April2014
 
             // In the April 2014 XDK the format of the string returned by the XDK is a JSON object with this schema:
             // {"Applications":["XboxConsole.XboxSample_zjr0dfhgjwvde!App"],"Identity":{"FullName":"XboxConsole.XboxSample_1.0.0.0_x64__zjr0dfhgjwvde"}}
-            string xdkOutput = await this.XboxXdk.DeployPushAsync(systemIpAddress, deployFilePath, removeExtraFiles, progressMetric, progressError, progressExtraFile);
+            string xdkOutput = await this.XboxXdk.DeployPushAsync(systemIpAddress, deployFilePath, removeExtraFiles, CancellationToken.None, progressMetric, progressError, progressExtraFile);
 
             DeploymentPackage package;
             try

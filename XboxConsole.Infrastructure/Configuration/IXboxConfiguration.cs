@@ -34,7 +34,7 @@ namespace Microsoft.Internal.GamesTest.Xbox.Configuration
         /// <summary>
         /// Gets the ProfilingMode boolean.
         /// </summary>
-        bool? ProfilingMode { get; }
+        ProfilingModeType ProfilingMode { get; }
 
         /// <summary>
         /// Gets the PreferredLanguages.

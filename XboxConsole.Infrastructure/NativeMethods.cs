@@ -27,5 +27,17 @@ namespace Microsoft.Internal.GamesTest.Xbox
         [DllImport("kernel32.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool SetDllDirectory(string pathName);
+
+        /// <summary>
+        /// Gets XTF error description for an HRESULT returned from Xbox One API.
+        /// </summary>
+        /// <param name="hresult">The error code.</param>
+        /// <param name="errorMessageBuffer">Buffer to fill with error message.</param>
+        /// <param name="errorMessageBufferLength">Length of error message written into the buffer.</param>
+        /// <param name="userActionTextBuffer">Buffer to fill with action message.</param>
+        /// <param name="userActionTextBufferLength">Length of action message written into the buffer.</param>
+        /// <returns>The error code for conversion result.</returns>
+        [DllImport(@"XtfApi.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Unicode, ExactSpelling = true, PreserveSig = true)]
+        internal static extern int XtfGetErrorText(int hresult, IntPtr errorMessageBuffer, out uint errorMessageBufferLength, IntPtr userActionTextBuffer, out uint userActionTextBufferLength);
     }
 }

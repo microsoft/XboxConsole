@@ -508,6 +508,39 @@ namespace Microsoft.Internal.GamesTest.Xbox.Tests
             Assert.AreSame(queryException, eventException, "The EventArgs didn't have the expected exception");
         }
 
+        /// <summary>
+        /// Verifies that the Unregister method calls the adapter's UnregisterPackage method.
+        /// </summary>
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        [TestCategory(XboxPackageTestCategory)]
+        public void TestUnregisterCallsAdapterUnregisterPackage()
+        {
+            bool isCorrectMethodCalled = false;
+            ShimXboxConsoleAdapterBase.AllInstances.UnregisterPackageStringString = (adapter, systemIpAddress, packageFullName) =>
+            {
+                isCorrectMethodCalled = true;
+            };
+
+            XboxPackage package = new XboxPackage(new XboxPackageDefinition(PackageFullName, Aumids, true), this.xboxConsole);
+            package.Unregister();
+            Assert.IsTrue(isCorrectMethodCalled, "The Unregister() method didn't call the adapter's UninstallPackage(systemIpAddress, packageFullName).");
+        }
+
+        /// <summary>
+        /// Verifies that the Unregister method calls the adapter's UnregisterPackage method.
+        /// </summary>
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        [TestCategory(XboxPackageTestCategory)]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void TestUnregisterThrowsForNonScratchPackage()
+        {
+            ShimXboxConsoleAdapterBase.AllInstances.UnregisterPackageStringString = (adapter, systemIpAddress, packageFullName) => { };
+
+            this.xboxPackage.Unregister();
+        }
+
         private void TestExecutionStatePolling(Action subscriptionAction, Action unsubscriptionAction)
         {
             ManualResetEventSlim hasMethodBeenCalled = new ManualResetEventSlim(false);

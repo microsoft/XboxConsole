@@ -18,6 +18,9 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.July2014
     /// </summary>
     internal class XboxGamepadAdapter : IVirtualGamepad
     {
+        private const string ConnectErrorMessage = "Could not connect gamepad.{0}**Hint** Max allowed connections is 16, controllers may still be connected if previous instances have crashed or debugging stopped. This may require a reboot of the kit.";
+        private const string UseErrorMessage = "Could not access the gamepad because it was disconnected.";
+
         // Constant used by Xtf to map a trigger value in the range 0.0 to 1.0 to the range 0.0 to 255.0. (Equivalent to 1.0 / 255.0.)
         private const float TriggerConversion = 0.003922f;
 
@@ -57,10 +60,18 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.July2014
                 this.xtfGamepad.Connect();
                 return this.xtfGamepad.Id;
             }
+            catch (XtfInputNoConnectionException ex)
+            {
+                throw new XboxInputException(
+                    string.Format(CultureInfo.InvariantCulture, ConnectErrorMessage, Environment.NewLine),
+                    ex,
+                    this.originalIpAddress,
+                    null);
+            }
             catch (XtfInputException ex)
             {
                 throw new XboxInputException(
-                    string.Format(CultureInfo.InvariantCulture, "Could not connect gamepad.{0}**Hint** Max allowed connections is 16, controllers may still be connected if previous instances have crashed or debugging stopped. This may require a reboot of the kit.", Environment.NewLine),
+                    string.Format(CultureInfo.InvariantCulture, ConnectErrorMessage, Environment.NewLine),
                     ex,
                     this.originalIpAddress,
                     null);
@@ -72,7 +83,18 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.July2014
         /// </summary>
         public void Disconnect()
         {
-            this.xtfGamepad.Disconnect();
+            try
+            {
+                this.xtfGamepad.Disconnect();
+            }
+            catch (XtfInputNoConnectionException ex)
+            {
+                throw new XboxInputException(
+                    string.Format(CultureInfo.InvariantCulture, UseErrorMessage),
+                    ex,
+                    this.originalIpAddress,
+                    null);
+            }
         }
 
         /// <summary>
@@ -95,7 +117,18 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.July2014
             report.LeftTrigger = this.ConvertGamepadStateTriggerValue(state.LeftTrigger);
             report.RightTrigger = this.ConvertGamepadStateTriggerValue(state.RightTrigger);
 
-            this.xtfGamepad.SetGamepadState(report);
+            try
+            {
+                this.xtfGamepad.SetGamepadState(report);
+            }
+            catch (XtfInputNoConnectionException ex)
+            {
+                throw new XboxInputException(
+                    string.Format(CultureInfo.InvariantCulture, UseErrorMessage),
+                    ex,
+                    this.originalIpAddress,
+                    null);
+            }
         }
 
         /// <summary>

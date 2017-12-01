@@ -14,6 +14,7 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.July2014
     using System.Linq;
     using System.Net;
     using System.Runtime.InteropServices;
+    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.Internal.GamesTest.Xbox.Deployment;
     using Microsoft.Internal.GamesTest.Xbox.Input;
@@ -34,6 +35,8 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.July2014
     {
         private const int SuspendNonDebugMode = 0;
         private const int SuspendDebugMode = 1;
+
+        private const int OperationAbortedHResult = unchecked((int)0x800704D3);
 
         /// <summary>
         /// Gets or sets the default console address.
@@ -75,9 +78,16 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.July2014
         /// <returns>A string describing all of the applications installed on the console.</returns>
         public override string GetInstalledPackages(string systemIpAddress)
         {
+            try
+            {
             using (ApplicationClient appClient = new ApplicationClient(systemIpAddress))
             {
                 return appClient.GetInstalled();
+            }
+        }
+            catch (XtfApplicationNoConnectionException ex)
+            {
+                throw new CannotConnectException(string.Format(CultureInfo.InvariantCulture, "Unable to connect to {0}.", systemIpAddress), ex, systemIpAddress);
             }
         }
 
@@ -574,11 +584,12 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.July2014
         /// <param name="systemIpAddress">The tools IP address of the console.</param>
         /// <param name="deployFilePath">The path to the folder to deploy.</param>
         /// <param name="removeExtraFiles"><c>true</c> to remove any extra files, <c>false</c> otherwise.</param>
+        /// <param name="cancellationToken">A CancellationToken to observe while waiting for the deployment to complete.</param>
         /// <param name="progressMetric">The progress handler that the calling app uses to receive progress updates about metrics. This may be null.</param>
         /// <param name="progressError">The progress handler that the calling app uses to receive progress updates about errors. This may be null.</param>
         /// <param name="progressExtraFile">The progress handler that the calling app uses to receive progress updates about extra files. This may be null.</param>
         /// <returns>The task object representing the asynchronous operation whose result is a json string describing the deployed package.</returns>
-        public override async Task<string> DeployPushAsync(string systemIpAddress, string deployFilePath, bool removeExtraFiles, IProgress<XboxDeploymentMetric> progressMetric, IProgress<XboxDeploymentError> progressError, IProgress<XboxDeploymentExtraFile> progressExtraFile)
+        public override async Task<string> DeployPushAsync(string systemIpAddress, string deployFilePath, bool removeExtraFiles, CancellationToken cancellationToken, IProgress<XboxDeploymentMetric> progressMetric, IProgress<XboxDeploymentError> progressError, IProgress<XboxDeploymentExtraFile> progressExtraFile)
         {
             return await Task.Run(() =>
             {
@@ -601,6 +612,8 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.July2014
                             },
                         fileProgressCallback: (e) =>
                             {
+                                cancellationToken.ThrowIfCancellationRequested();
+
                                 // When data1 == data2, that means that we've finished sending the data for this file
                                 double tempBytes = 0;
                                 if (e.BytesTransferred == e.FileSize)
@@ -656,7 +669,23 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.July2014
                                 }
                             });
                 }
+                else if (cancellationToken.CanBeCanceled)
+                {
+                    progressHandler = new DeploymentProgress(
+                        initializedCallback: null,
+                        changeEvaluationCallback: null,
+                        metricsCallback: null,
+                        extraFileRemovedCallback: null,
+                        extraFileDetectedCallback: null,
+                        errorCallback: null,
+                        fileProgressCallback: (e) =>
+                        {
+                            cancellationToken.ThrowIfCancellationRequested();
+                            });
+                }
 
+                try
+                {
                 using (ApplicationClient appClient = new ApplicationClient(systemIpAddress))
                 {
                     int result;
@@ -664,16 +693,32 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.July2014
                     bool cancelled;
                     try
                     {
-                        return appClient.Deploy(deployFilePath, removeExtraFiles, progressHandler, out cancelled, out result, out fullPackageName);
+                            var package = appClient.Deploy(deployFilePath, removeExtraFiles, progressHandler, out cancelled, out result, out fullPackageName);
+                            if (cancelled)
+                            {
+                                cancellationToken.ThrowIfCancellationRequested();
+                            }
+
+                            return package;
                     }
                     catch (COMException e)
                     {
+                            if (e.HResult == OperationAbortedHResult)
+                            {
+                                cancellationToken.ThrowIfCancellationRequested();
+                            }
+
                         throw new XboxDeployException("The build could not be successfully deployed.", e, appClient.Address);
                     }
                     catch (FileLoadException e)
                     {
                         throw new XboxDeployException("The build could not be successfully deployed.", e, appClient.Address);
                     }
+                }
+                }
+                catch (XtfApplicationNoConnectionException ex)
+                {
+                    throw new CannotConnectException(string.Format(CultureInfo.InvariantCulture, "Unable to connect to {0}.", systemIpAddress), ex, systemIpAddress);
                 }
             });
         }
@@ -717,10 +762,17 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.July2014
         /// <returns>An enumeration of XboxUserDefinition instances.</returns>
         public override IEnumerable<XboxUserDefinition> GetUsers(string systemIpAddress)
         {
+            try
+            {
             using (UserClient console = new UserClient(systemIpAddress))
             {
                 return console.ListUsers().Select(x => new XboxUserDefinition(x.UserId, x.EmailAddress, x.Gamertag, x.SignedIn, x.AutoSignIn, x.Xuid));
             }
+            }
+            catch (XtfUserNoConnectionException ex)
+            {
+                throw new CannotConnectException(string.Format(CultureInfo.InvariantCulture, "Unable to connect to {0}.", systemIpAddress), ex, systemIpAddress);
+        }
         }
 
         /// <summary>
@@ -730,9 +782,16 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.July2014
         /// <returns>The user id of the added guest user.</returns>
         public override uint AddGuestUser(string systemIpAddress)
         {
+            try
+            {
             using (UserClient console = new UserClient(systemIpAddress))
             {
                 return console.AddSponseredUser();
+            }
+        }
+            catch (XtfUserNoConnectionException ex)
+            {
+                throw new CannotConnectException(string.Format(CultureInfo.InvariantCulture, "Unable to connect to {0}.", systemIpAddress), ex, systemIpAddress);
             }
         }
 
@@ -744,6 +803,8 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.July2014
         /// <returns>An XboxUserDefinition of the added user.</returns>
         public override XboxUserDefinition AddUser(string systemIpAddress, string emailAddress)
         {
+            try
+            {
             using (UserClient console = new UserClient(systemIpAddress))
             {
                 var id = console.AddUser(emailAddress);
@@ -758,6 +819,11 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.July2014
                 return new XboxUserDefinition(user.UserId, user.EmailAddress, user.Gamertag, user.SignedIn, user.AutoSignIn, user.Xuid);
             }
         }
+            catch (XtfUserNoConnectionException ex)
+            {
+                throw new CannotConnectException(string.Format(CultureInfo.InvariantCulture, "Unable to connect to {0}.", systemIpAddress), ex, systemIpAddress);
+            }
+        }
 
         /// <summary>
         /// Removes all users from the console.
@@ -766,9 +832,16 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.July2014
         /// <remarks>Signed-in users are signed out before being removed from the console.</remarks>
         public override void DeleteAllUsers(string systemIpAddress)
         {
+            try
+            {
             using (UserClient console = new UserClient(systemIpAddress))
             {
                 console.DeleteAllUsers();
+            }
+        }
+            catch (XtfUserNoConnectionException ex)
+            {
+                throw new CannotConnectException(string.Format(CultureInfo.InvariantCulture, "Unable to connect to {0}.", systemIpAddress), ex, systemIpAddress);
             }
         }
 
@@ -785,9 +858,16 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.July2014
                 throw new ArgumentNullException("user", "user cannot be null");
             }
 
+            try
+            {
             using (UserClient console = new UserClient(systemIpAddress))
             {
                 console.DeleteUser(user.EmailAddress);
+            }
+        }
+            catch (XtfUserNoConnectionException ex)
+            {
+                throw new CannotConnectException(string.Format(CultureInfo.InvariantCulture, "Unable to connect to {0}.", systemIpAddress), ex, systemIpAddress);
             }
         }
 
@@ -806,6 +886,8 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.July2014
                 throw new ArgumentNullException("user", "user cannot be null");
             }
 
+            try
+            {
             using (UserClient console = new UserClient(systemIpAddress))
             {
                 console.SignInUserId(user.UserId, password, storePassword);
@@ -818,6 +900,11 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.July2014
                 }
 
                 return new XboxUserDefinition(consoleUser.UserId, consoleUser.EmailAddress, consoleUser.Gamertag, consoleUser.SignedIn, consoleUser.AutoSignIn, consoleUser.Xuid);
+            }
+        }
+            catch (XtfUserNoConnectionException ex)
+            {
+                throw new CannotConnectException(string.Format(CultureInfo.InvariantCulture, "Unable to connect to {0}.", systemIpAddress), ex, systemIpAddress);
             }
         }
 
@@ -834,6 +921,8 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.July2014
                 throw new ArgumentNullException("user", "user cannot be null");
             }
 
+            try
+            {
             using (UserClient console = new UserClient(systemIpAddress))
             {
                 console.SignOutUser(user.EmailAddress);
@@ -848,6 +937,11 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.July2014
                 return new XboxUserDefinition(consoleUser.UserId, consoleUser.EmailAddress, consoleUser.Gamertag, consoleUser.SignedIn, consoleUser.AutoSignIn, consoleUser.Xuid);
             }
         }
+            catch (XtfUserNoConnectionException ex)
+            {
+                throw new CannotConnectException(string.Format(CultureInfo.InvariantCulture, "Unable to connect to {0}.", systemIpAddress), ex, systemIpAddress);
+            }
+        }
 
         /// <summary>
         /// Pairs a controller to a user on a console.
@@ -857,9 +951,16 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.July2014
         /// <param name="controllerId">The controller of the id to pair.</param>
         public override void PairControllerToUser(string systemIpAddress, uint userId, ulong controllerId)
         {
+            try
+            {
             using (UserClient console = new UserClient(systemIpAddress))
             {
                 console.PairControllerWithUser(userId, controllerId);
+            }
+        }
+            catch (XtfUserNoConnectionException ex)
+            {
+                throw new CannotConnectException(string.Format(CultureInfo.InvariantCulture, "Unable to connect to {0}.", systemIpAddress), ex, systemIpAddress);
             }
         }
 
@@ -872,6 +973,8 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.July2014
         /// <param name="localUserXuidsToAdd">User XUIDs to add to the party.</param>
         public override void AddLocalUsersToParty(string systemIpAddress, uint titleId, string actingUserXuid, string[] localUserXuidsToAdd)
         {
+            try
+            {
             using (UserClient console = new UserClient(systemIpAddress))
             {
                 if (localUserXuidsToAdd != null && localUserXuidsToAdd.Length > 1)
@@ -888,6 +991,11 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.July2014
                 }
             }
         }
+            catch (XtfUserNoConnectionException ex)
+            {
+                throw new CannotConnectException(string.Format(CultureInfo.InvariantCulture, "Unable to connect to {0}.", systemIpAddress), ex, systemIpAddress);
+            }
+        }
 
         /// <summary>
         /// Invites the given users on behalf of the acting user to the party associated with the given title ID.
@@ -898,6 +1006,8 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.July2014
         /// <param name="remoteUserXuidsToInvite">Remote user XUIDs to invite to the party.</param>
         public override void InviteToParty(string systemIpAddress, uint titleId, string actingUserXuid, string[] remoteUserXuidsToInvite)
         {
+            try
+            {
             using (UserClient console = new UserClient(systemIpAddress))
             {
                 if (remoteUserXuidsToInvite != null && remoteUserXuidsToInvite.Length > 1)
@@ -914,6 +1024,11 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.July2014
                 }
             }
         }
+            catch (XtfUserNoConnectionException ex)
+            {
+                throw new CannotConnectException(string.Format(CultureInfo.InvariantCulture, "Unable to connect to {0}.", systemIpAddress), ex, systemIpAddress);
+            }
+        }
 
         /// <summary>
         /// Removes the given users from the party belonging to the given title ID.
@@ -923,6 +1038,8 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.July2014
         /// <param name="localUserXuidsToRemove">Local user XUIDs to remove from the party.</param>
         public override void RemoveLocalUsersFromParty(string systemIpAddress, uint titleId, string[] localUserXuidsToRemove)
         {
+            try
+            {
             using (UserClient console = new UserClient(systemIpAddress))
             {
                 if (localUserXuidsToRemove != null && localUserXuidsToRemove.Length > 1)
@@ -939,6 +1056,11 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.July2014
                 }
             }
         }
+            catch (XtfUserNoConnectionException ex)
+            {
+                throw new CannotConnectException(string.Format(CultureInfo.InvariantCulture, "Unable to connect to {0}.", systemIpAddress), ex, systemIpAddress);
+            }
+        }
 
         /// <summary>
         /// Returns the party ID belonging to the given title ID.
@@ -948,10 +1070,17 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.July2014
         /// <returns>ID of existing party used to accept or decline an invitation to the party.</returns>
         public override string GetPartyId(string systemIpAddress, uint titleId)
         {
+            try
+            {
             using (UserClient console = new UserClient(systemIpAddress))
             {
                 return console.GetPartyId(titleId);
             }
+            }
+            catch (XtfUserNoConnectionException ex)
+            {
+                throw new CannotConnectException(string.Format(CultureInfo.InvariantCulture, "Unable to connect to {0}.", systemIpAddress), ex, systemIpAddress);
+        }
         }
 
         /// <summary>
@@ -962,9 +1091,16 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.July2014
         /// <returns>Party member user XUIDs, which may contain a mix of local and remote users.</returns>
         public override string[] GetPartyMembers(string systemIpAddress, uint titleId)
         {
+            try
+            {
             using (UserClient console = new UserClient(systemIpAddress))
             {
                 return console.GetPartyMembers(titleId);
+            }
+        }
+            catch (XtfUserNoConnectionException ex)
+            {
+                throw new CannotConnectException(string.Format(CultureInfo.InvariantCulture, "Unable to connect to {0}.", systemIpAddress), ex, systemIpAddress);
             }
         }
 
@@ -976,9 +1112,16 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.July2014
         /// <param name="partyId">Title ID of the party created by another user to accept the invitation to.</param>
         public override void AcceptInviteToParty(string systemIpAddress, string actingUserXuid, string partyId)
         {
+            try
+            {
             using (UserClient console = new UserClient(systemIpAddress))
             {
                 console.AcceptInviteToParty(actingUserXuid, partyId);
+            }
+        }
+            catch (XtfUserNoConnectionException ex)
+            {
+                throw new CannotConnectException(string.Format(CultureInfo.InvariantCulture, "Unable to connect to {0}.", systemIpAddress), ex, systemIpAddress);
             }
         }
 
@@ -990,9 +1133,16 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.July2014
         /// <param name="partyId">Title ID of the party created by another user to accept the invitation to.</param>
         public override void DeclineInviteToParty(string systemIpAddress, string actingUserXuid, string partyId)
         {
+            try
+            {
             using (UserClient console = new UserClient(systemIpAddress))
             {
                 console.DeclineInviteToParty(actingUserXuid, partyId);
+            }
+        }
+            catch (XtfUserNoConnectionException ex)
+            {
+                throw new CannotConnectException(string.Format(CultureInfo.InvariantCulture, "Unable to connect to {0}.", systemIpAddress), ex, systemIpAddress);
             }
         }
 
@@ -1013,9 +1163,16 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.July2014
         /// <param name="packageFullName">The Pacakge Full Name of the package to be uninstalled.</param>
         public override void UninstallPackage(string systemIpAddress, string packageFullName)
         {
+            try
+            {
             using (ApplicationClient client = new ApplicationClient(systemIpAddress))
             {
                 client.Uninstall(packageFullName);
+            }
+        }
+            catch (XtfApplicationNoConnectionException ex)
+            {
+                throw new CannotConnectException(string.Format(CultureInfo.InvariantCulture, "Unable to connect to {0}.", systemIpAddress), ex, systemIpAddress);
             }
         }
 

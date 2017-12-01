@@ -15,6 +15,7 @@ namespace Microsoft.Internal.GamesTest.Xbox.Tests
     using Microsoft.Internal.GamesTest.Xbox.Configuration.Fakes;
     using Microsoft.Internal.GamesTest.Xbox.Fakes;
     using Microsoft.Internal.GamesTest.Xbox.Input;
+    using Microsoft.Internal.GamesTest.Xbox.IO;
     using Microsoft.QualityTools.Testing.Fakes;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -40,6 +41,8 @@ namespace Microsoft.Internal.GamesTest.Xbox.Tests
     private const string PackageFullName = "NuiView.ERA_1.0.0.0_neutral__8wekyb3d8bbwe";
     private const string ApplicationId = "NuiView.ERA";
     private const string Aumid = PackageFamilyName + "!" + ApplicationId;
+
+    private const string TestOutputPath = "TestClip.mp4";
 
     private IDisposable shimsContext;
     private StubXboxConsoleAdapterBase stubAdapter;
@@ -160,6 +163,46 @@ namespace Microsoft.Internal.GamesTest.Xbox.Tests
         using (XboxConsole xboxConsole = new XboxConsole(ConsoleCombinedIPAndSessionKey))
         {
             Assert.AreEqual(ConsoleCombinedIPAndSessionKey, xboxConsole.ConnectionString, "The XboxConsole connection string was not set properly by Connection String constructor when initializing with IP Address and Session Key.");
+        }
+    }
+
+    /// <summary>
+    /// Verifies that the connection string constructor correctly sets the value for the SystemIpAddress property.
+    /// </summary>
+    [TestMethod]
+    [TestCategory("UnitTest")]
+    [TestCategory(XboxConsoleTestCategory)]
+    public void TestConnectionStringConstructorSetsSystemIpAddressFromHostNameProperly()
+    {
+        ShimXboxConsole.ConstructorString = null;
+        ShimXboxConsole.AllInstances.GetIPAddressFromConnectionStringString = (console, connectionString) =>
+            {
+                return IPAddress.Parse(ConsoleSystemIpAddress);
+            };
+
+        using (XboxConsole xboxConsole = new XboxConsole(ConsoleHostName))
+        {
+            Assert.AreEqual(xboxConsole.SystemIpAddress, IPAddress.Parse(ConsoleSystemIpAddress));
+        }
+    }
+
+    /// <summary>
+    /// Verifies that the connection string constructor with HostName only correctly sets the value for the ConnectionString property.
+    /// </summary>
+    [TestMethod]
+    [TestCategory("UnitTest")]
+    [TestCategory(XboxConsoleTestCategory)]
+    public void TestConnectionStringConstructorWithHostNameProperlySetsConnectionString()
+    {
+        ShimXboxConsole.ConstructorString = null;
+        ShimXboxConsole.AllInstances.GetIPAddressFromConnectionStringString = (console, connectionString) =>
+        {
+            return IPAddress.Parse(ConsoleSystemIpAddress);
+        };
+
+        using (XboxConsole xboxConsole = new XboxConsole(ConsoleHostName))
+        {
+            Assert.AreEqual(ConsoleHostName, xboxConsole.ConnectionString);
         }
     }
 
@@ -569,7 +612,7 @@ namespace Microsoft.Internal.GamesTest.Xbox.Tests
       string testEnvironment = "Test Environment";
       string testSandboxId = "Test SandboxId";
       string testOOBECompleted = "false";
-      string testProfilingMode = "true";
+      string testProfilingMode = "legacy";
       string testPreferredLanguages = "ar-SA;th;en-US";
       string testGeographicRegion = "MX";
       string testTimeZone = TimeZoneInfo.Utc.Id;
@@ -1024,6 +1067,64 @@ namespace Microsoft.Internal.GamesTest.Xbox.Tests
     }
 
     /// <summary>
+    /// Verifies that CaptureRecordedGameClip calls the adapters CaptureRecordedGameClip.
+    /// </summary>
+    [TestMethod]
+    [TestCategory("UnitTest")]
+    [TestCategory(XboxConsoleTestCategory)]
+    public void TestCaptureRecordedGameClipCallsAdapterCaptureRecordedGameClip()
+    {
+        bool isCorrectMethodCalled = false;
+        ShimXboxConsoleAdapterBase.AllInstances.CaptureRecordedGameClipStringStringUInt32 = (adapter, systemIpAddress, path, seconds) =>
+        {
+            isCorrectMethodCalled = true;
+        };
+
+        try
+        {
+            this.console.CaptureRecordedGameClip(TestOutputPath, 30);
+        }
+        catch (XboxConsoleException)
+        {
+            // We don't care what exception is thrown here.
+        }
+
+        Assert.IsTrue(isCorrectMethodCalled, "The XboxConsole object did not call the adapter's CaptureRecordedGameClip method.");
+    }
+
+    /// <summary>
+    /// Verifies that CaptureRecordedGameClip throws an ArgumentException when called with null file path.
+    /// </summary>
+    [TestMethod]
+    [TestCategory("UnitTest")]
+    [TestCategory(XboxConsoleTestCategory)]
+    [ExpectedException(typeof(ArgumentException))]
+    public void TestCaptureRecordedGameClipThrowsArgumentExceptionOnNullPath()
+    {
+        ShimXboxConsoleAdapterBase.AllInstances.CaptureRecordedGameClipStringStringUInt32 = (adapter, systemIpAddress, path, seconds) =>
+        {
+        };
+
+        this.console.CaptureRecordedGameClip(null, 30);
+    }
+
+    /// <summary>
+    /// Verifies that CaptureRecordedGameClip throws an ArgumentException when called with an empty file path.
+    /// </summary>
+    [TestMethod]
+    [TestCategory("UnitTest")]
+    [TestCategory(XboxConsoleTestCategory)]
+    [ExpectedException(typeof(ArgumentException))]
+    public void TestCaptureRecordedGameClipThrowsArgumentExceptionOnEmptyPath()
+    {
+        ShimXboxConsoleAdapterBase.AllInstances.CaptureRecordedGameClipStringStringUInt32 = (adapter, systemIpAddress, path, seconds) =>
+        {
+        };
+
+        this.console.CaptureRecordedGameClip(string.Empty, 30);
+    }
+
+    /// <summary>
     /// Verifies that CaptureScreenshot calls the adapters CaptureScreenshot.
     /// </summary>
     [TestMethod]
@@ -1068,6 +1169,254 @@ namespace Microsoft.Internal.GamesTest.Xbox.Tests
         var bitmapSource = this.console.CaptureScreenshot();
 
         this.VerifyBitmapColor(CreatedBitmapColor, bitmapSource);
+    }
+
+    /// <summary>
+    /// Verifies that ConsoleId get calls the adapter's GetConsoleInfo(). 
+    /// </summary>
+    [TestMethod]
+    [TestCategory("UnitTest")]
+    [TestCategory(XboxConsoleTestCategory)]
+    public void TestConsoleIdCallsAdapterGetConsoleInfo()
+    {
+        bool isCorrectMethodCalled = false;
+
+        string expectedValue = "Expected Value";
+
+        ShimXboxConsoleAdapterBase.AllInstances.GetConsoleInfoString = (adapter, systemIpAddress) =>
+        {
+            isCorrectMethodCalled = true;
+            return new XboxConsoleInfo(null, null, null, expectedValue, XboxCertTypes.None, null, null);
+        };
+
+        var actualValue = this.console.ConsoleId;
+
+        Assert.IsTrue(isCorrectMethodCalled, "The XboxConsole object did not call the adapter's GetConsoleInfo method.");
+        Assert.AreEqual(expectedValue, actualValue, "The ConsoleId property did not return the expected value.");
+    }
+
+    /// <summary>
+    /// Verifies that an ObjectDisposedException is thrown if the
+    /// ConsoleId property is accessed after the XboxConsole object is disposed.
+    /// </summary>
+    [TestMethod]
+    [TestCategory("UnitTest")]
+    [TestCategory(XboxConsoleTestCategory)]
+    [ExpectedException(typeof(ObjectDisposedException))]
+    public void TestConsoleIdThrowsObjectDisposedException()
+    {
+        this.stubAdapter.DisposeBoolean = _ => { };
+
+        this.console.Dispose();
+        var notUsed = this.console.ConsoleId;
+        Assert.Fail("ObjectDisposedException was not thrown.");
+    }
+
+    /// <summary>
+    /// Verifies that DeviceId get calls the adapter's GetConsoleInfo(). 
+    /// </summary>
+    [TestMethod]
+    [TestCategory("UnitTest")]
+    [TestCategory(XboxConsoleTestCategory)]
+    public void TestDeviceIdCallsAdapterGetConsoleInfo()
+    {
+        bool isCorrectMethodCalled = false;
+
+        string expectedValue = "Expected Value";
+
+        ShimXboxConsoleAdapterBase.AllInstances.GetConsoleInfoString = (adapter, systemIpAddress) =>
+        {
+            isCorrectMethodCalled = true;
+            return new XboxConsoleInfo(null, null, null, null, XboxCertTypes.None, null, expectedValue);
+        };
+
+        var actualValue = this.console.DeviceId;
+
+        Assert.IsTrue(isCorrectMethodCalled, "The XboxConsole object did not call the adapter's GetConsoleInfo method.");
+        Assert.AreEqual(expectedValue, actualValue, "The DeviceId property did not return the expected value.");
+    }
+
+    /// <summary>
+    /// Verifies that an ObjectDisposedException is thrown if the
+    /// DeviceId property is accessed after the XboxConsole object is disposed.
+    /// </summary>
+    [TestMethod]
+    [TestCategory("UnitTest")]
+    [TestCategory(XboxConsoleTestCategory)]
+    [ExpectedException(typeof(ObjectDisposedException))]
+    public void TestDeviceIdThrowsObjectDisposedException()
+    {
+        this.stubAdapter.DisposeBoolean = _ => { };
+
+        this.console.Dispose();
+        var notUsed = this.console.DeviceId;
+        Assert.Fail("ObjectDisposedException was not thrown.");
+    }
+
+    /// <summary>
+    /// Verifies that HostName get calls the adapter's GetConsoleInfo(). 
+    /// </summary>
+    [TestMethod]
+    [TestCategory("UnitTest")]
+    [TestCategory(XboxConsoleTestCategory)]
+    public void TestHostNameCallsAdapterGetConsoleInfo()
+    {
+        bool isCorrectMethodCalled = false;
+
+        string expectedValue = "Expected Value";
+
+        ShimXboxConsoleAdapterBase.AllInstances.GetConsoleInfoString = (adapter, systemIpAddress) =>
+        {
+            isCorrectMethodCalled = true;
+            return new XboxConsoleInfo(null, null, null, null, XboxCertTypes.None, expectedValue, null);
+        };
+
+        var actualValue = this.console.HostName;
+
+        Assert.IsTrue(isCorrectMethodCalled, "The XboxConsole object did not call the adapter's GetConsoleInfo method.");
+        Assert.AreEqual(expectedValue, actualValue, "The HostName property did not return the expected value.");
+    }
+
+    /// <summary>
+    /// Verifies that an ObjectDisposedException is thrown if the
+    /// HostName property is accessed after the XboxConsole object is disposed.
+    /// </summary>
+    [TestMethod]
+    [TestCategory("UnitTest")]
+    [TestCategory(XboxConsoleTestCategory)]
+    [ExpectedException(typeof(ObjectDisposedException))]
+    public void TestHostNameThrowsObjectDisposedException()
+    {
+        this.stubAdapter.DisposeBoolean = _ => { };
+
+        this.console.Dispose();
+        var notUsed = this.console.HostName;
+        Assert.Fail("ObjectDisposedException was not thrown.");
+    }
+
+    /// <summary>
+    /// Verifies that CertType get calls the adapter's GetConsoleInfo(). 
+    /// </summary>
+    [TestMethod]
+    [TestCategory("UnitTest")]
+    [TestCategory(XboxConsoleTestCategory)]
+    public void TestCertTypeCallsAdapterGetConsoleInfo()
+    {
+        bool isCorrectMethodCalled = false;
+
+        XboxCertTypes expectedValue = XboxCertTypes.EraTestKit | XboxCertTypes.Other;
+
+        ShimXboxConsoleAdapterBase.AllInstances.GetConsoleInfoString = (adapter, systemIpAddress) =>
+        {
+            isCorrectMethodCalled = true;
+            return new XboxConsoleInfo(null, null, null, null, expectedValue, null, null);
+        };
+
+        var actualValue = this.console.CertType;
+
+        Assert.IsTrue(isCorrectMethodCalled, "The XboxConsole object did not call the adapter's GetConsoleInfo method.");
+        Assert.AreEqual(expectedValue, actualValue, "The CertType property did not return the expected value.");
+    }
+
+    /// <summary>
+    /// Verifies that an ObjectDisposedException is thrown if the
+    /// CertType property is accessed after the XboxConsole object is disposed.
+    /// </summary>
+    [TestMethod]
+    [TestCategory("UnitTest")]
+    [TestCategory(XboxConsoleTestCategory)]
+    [ExpectedException(typeof(ObjectDisposedException))]
+    public void TestCertTypeThrowsObjectDisposedException()
+    {
+        this.stubAdapter.DisposeBoolean = _ => { };
+
+        this.console.Dispose();
+        var notUsed = this.console.CertType;
+        Assert.Fail("ObjectDisposedException was not thrown.");
+    }
+
+    /// <summary>
+    /// Verifies that RegisterPackage get calls the adapter's RegisterPackage(). 
+    /// </summary>
+    [TestMethod]
+    [TestCategory("UnitTest")]
+    [TestCategory(XboxConsoleTestCategory)]
+    public void TestRegisterPackageCallsAdapterRegisterPackage()
+    {
+        bool isCorrectMethodCalled = false;
+
+        string expectedPath = "ExpectedPath";
+        XboxPackageDefinition expectedValue = new XboxPackageDefinition(PackageFullName, new string[] { Aumid });
+
+        ShimXboxConsoleAdapterBase.AllInstances.RegisterPackageStringString = (adapter, systemIpAddress, packagePath) =>
+        {
+            isCorrectMethodCalled = true;
+            return expectedValue;
+        };
+
+        var actualValue = this.console.RegisterPackage(new XboxPath(expectedPath, XboxOperatingSystem.Title));
+
+        Assert.IsTrue(isCorrectMethodCalled, "The XboxConsole object did not call the adapter's RegisterPackage method.");
+        Assert.AreSame(expectedValue, actualValue.Definition, "The RegisterPackage method did not return the expected value.");
+    }
+
+    /// <summary>
+    /// Verifies that an ObjectDisposedException is thrown if the
+    /// RegisterPackage method is accessed after the XboxConsole object is disposed.
+    /// </summary>
+    [TestMethod]
+    [TestCategory("UnitTest")]
+    [TestCategory(XboxConsoleTestCategory)]
+    [ExpectedException(typeof(ObjectDisposedException))]
+    public void TestRegisterPackageThrowsObjectDisposedException()
+    {
+        this.stubAdapter.DisposeBoolean = _ => { };
+
+        this.console.Dispose();
+        var notUsed = this.console.RegisterPackage(new XboxPath("Doesn't matter", XboxOperatingSystem.Title));
+        Assert.Fail("ObjectDisposedException was not thrown.");
+    }
+
+    /// <summary>
+    /// Verifies that GetAvailableSpaceForAppInstallation get calls the adapter's GetAvailableSpaceForAppInstallation(). 
+    /// </summary>
+    [TestMethod]
+    [TestCategory("UnitTest")]
+    [TestCategory(XboxConsoleTestCategory)]
+    public void TestGetAvailableSpaceForAppInstallationCallsAdapterRegisterPackage()
+    {
+        bool isCorrectMethodCalled = false;
+
+        ulong expectedValue = 1234;
+
+        ShimXboxConsoleAdapterBase.AllInstances.GetAvailableSpaceForAppInstallationStringString = (adapter, systemIpAddress, storageName) =>
+        {
+            isCorrectMethodCalled = true;
+            Assert.IsNull(storageName, "XboxConsole didn't pass null to adapter.");
+            return expectedValue;
+        };
+
+        var actualValue = this.console.GetAvailableSpaceForAppInstallation();
+
+        Assert.IsTrue(isCorrectMethodCalled, "The XboxConsole object did not call the adapter's GetAvailableSpaceForAppInstallation method.");
+        Assert.AreEqual(expectedValue, actualValue, "The GetAvailableSpaceForAppInstallation method did not return the expected value.");
+    }
+
+    /// <summary>
+    /// Verifies that an ObjectDisposedException is thrown if the
+    /// GetAvailableSpaceForAppInstallation method is accessed after the XboxConsole object is disposed.
+    /// </summary>
+    [TestMethod]
+    [TestCategory("UnitTest")]
+    [TestCategory(XboxConsoleTestCategory)]
+    [ExpectedException(typeof(ObjectDisposedException))]
+    public void TestGetAvailableSpaceForAppInstallationThrowsObjectDisposedException()
+    {
+        this.stubAdapter.DisposeBoolean = _ => { };
+
+        this.console.Dispose();
+        var notUsed = this.console.GetAvailableSpaceForAppInstallation();
+        Assert.Fail("ObjectDisposedException was not thrown.");
     }
 
     /// <summary>

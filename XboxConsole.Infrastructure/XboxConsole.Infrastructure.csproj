@@ -81,6 +81,7 @@
     <Compile Include="Configuration\ColorDepthType.cs" />
     <Compile Include="Configuration\ColorSpaceType.cs" />
     <Compile Include="Configuration\AudioBitstreamFormatType.cs" />
+    <Compile Include="Configuration\ProfilingModeType.cs" />
     <Compile Include="Configuration\XboxIdleShutdownTimeoutConfigurationSetting.cs" />
     <Compile Include="Configuration\OpticalAudioOutput.cs" />
     <Compile Include="Configuration\XboxHdmiAudioConfigurationSetting.cs" />
@@ -133,6 +134,8 @@
     <Compile Include="Telemetry\TelemetrySink.cs" />
     <Compile Include="Telemetry\XboxConsoleEventSource.cs" />
     <Compile Include="XboxApplicationDefinition.cs" />
+    <Compile Include="XboxCertTypes.cs" />
+    <Compile Include="XboxConsoleInfo.cs" />
     <Compile Include="XboxProcessDefinition.cs" />
     <Compile Include="IXboxDebugMonitorClient.cs" />
     <Compile Include="EventArgs\TextEventArgs.cs" />

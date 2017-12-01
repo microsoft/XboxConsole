@@ -20,6 +20,8 @@ namespace Microsoft.Internal.GamesTest.Xbox
     /// </summary>
     internal static class XboxConsoleAdapterFactory
     {
+        private const int October2014XdkBuild = 11653;
+        private const int August2014XdkBuild = 11396;
         private const int July2014XdkBuild = 11274;
         private const int May2014XdkBuild = 10951;
         private const int April2014XdkBuild = 10812;
@@ -31,6 +33,8 @@ namespace Microsoft.Internal.GamesTest.Xbox
             new Tuple<int, Func<XboxConsoleAdapterBase>>(April2014XdkBuild, () => new Adapter.April2014.XboxConsoleAdapter()),
             new Tuple<int, Func<XboxConsoleAdapterBase>>(May2014XdkBuild, () => new Adapter.May2014.XboxConsoleAdapter()),
             new Tuple<int, Func<XboxConsoleAdapterBase>>(July2014XdkBuild, () => new Adapter.July2014.XboxConsoleAdapter()),
+            new Tuple<int, Func<XboxConsoleAdapterBase>>(August2014XdkBuild, () => new Adapter.August2014.XboxConsoleAdapter()),
+            new Tuple<int, Func<XboxConsoleAdapterBase>>(October2014XdkBuild, () => new Adapter.October2014.XboxConsoleAdapter()),
         };
 
         /// <summary>
@@ -41,6 +45,8 @@ namespace Microsoft.Internal.GamesTest.Xbox
                 { "xb_rel_1404", April2014XdkBuild },
                 { "xb_rel_1405", May2014XdkBuild },
                 { "xb_rel_1407", July2014XdkBuild },
+                { "xb_rel_1408", August2014XdkBuild },
+                { "xb_rel_1410", October2014XdkBuild },
             };
 
         /// <summary>

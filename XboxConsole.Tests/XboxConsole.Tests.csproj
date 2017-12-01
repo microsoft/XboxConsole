@@ -83,6 +83,7 @@
     <Compile Include="..\AssemblyInfoCore.cs">
       <Link>Properties\AssemblyInfoCore.cs</Link>
     </Compile>
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="ReadOnlyXboxConfigurationTests.cs" />
     <Compile Include="XboxApplicationTests.cs" />
     <Compile Include="XboxConfigurationTests.cs" />

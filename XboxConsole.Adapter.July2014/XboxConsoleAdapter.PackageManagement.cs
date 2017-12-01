@@ -13,6 +13,7 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.July2014
     using System.Runtime.Serialization;
     using System.Runtime.Serialization.Json;
     using System.Text;
+    using System.Threading;
     using System.Threading.Tasks;
     using System.Xml;
     using Microsoft.Internal.GamesTest.Xbox.Deployment;
@@ -272,7 +273,23 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.July2014
         /// <param name="progressError">The progress handler that the calling app uses to receive progress updates about errors. This may be null.</param>
         /// <param name="progressExtraFile">The progress handler that the calling app uses to receive progress updates about extra files. This may be null.</param>
         /// <returns>The task object representing the asynchronous operation whose result is the deployed package.</returns>
-        protected async override Task<XboxPackageDefinition> DeployPushImplAsync(string systemIpAddress, string deployFilePath, bool removeExtraFiles, IProgress<XboxDeploymentMetric> progressMetric, IProgress<XboxDeploymentError> progressError, IProgress<XboxDeploymentExtraFile> progressExtraFile)
+        protected override Task<XboxPackageDefinition> DeployPushImplAsync(string systemIpAddress, string deployFilePath, bool removeExtraFiles, IProgress<XboxDeploymentMetric> progressMetric, IProgress<XboxDeploymentError> progressError, IProgress<XboxDeploymentExtraFile> progressExtraFile)
+        {
+            return this.DeployPushImplAsync(systemIpAddress, deployFilePath, removeExtraFiles, CancellationToken.None, progressMetric, progressError, progressExtraFile);
+        }
+
+        /// <summary>
+        /// Push deploys file to the console.
+        /// </summary>
+        /// <param name="systemIpAddress">The "System Ip" address of the Xbox kit.</param>
+        /// <param name="deployFilePath">The path to the folder to deploy.</param>
+        /// <param name="removeExtraFiles"><c>true</c> to remove any extra files, <c>false</c> otherwise.</param>
+        /// <param name="cancellationToken">A CancellationToken to observe while waiting for the deployment to complete.</param>
+        /// <param name="progressMetric">The progress handler that the calling app uses to receive progress updates about metrics. This may be null.</param>
+        /// <param name="progressError">The progress handler that the calling app uses to receive progress updates about errors. This may be null.</param>
+        /// <param name="progressExtraFile">The progress handler that the calling app uses to receive progress updates about extra files. This may be null.</param>
+        /// <returns>The task object representing the asynchronous operation whose result is the deployed package.</returns>
+        protected async override Task<XboxPackageDefinition> DeployPushImplAsync(string systemIpAddress, string deployFilePath, bool removeExtraFiles, CancellationToken cancellationToken, IProgress<XboxDeploymentMetric> progressMetric, IProgress<XboxDeploymentError> progressError, IProgress<XboxDeploymentExtraFile> progressExtraFile)
         {
             if (deployFilePath == null)
             {
@@ -281,7 +298,7 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.July2014
 
             // In the July 2014 XDK the format of the string returned by the XDK is a JSON object with this schema:
             // {"Applications":["XboxConsole.XboxSample_zjr0dfhgjwvde!App"],"Identity":{"FullName":"XboxConsole.XboxSample_1.0.0.0_x64__zjr0dfhgjwvde"}}
-            string xdkOutput = await this.XboxXdk.DeployPushAsync(systemIpAddress, deployFilePath, removeExtraFiles, progressMetric, progressError, progressExtraFile);
+            string xdkOutput = await this.XboxXdk.DeployPushAsync(systemIpAddress, deployFilePath, removeExtraFiles, cancellationToken, progressMetric, progressError, progressExtraFile);
 
             DeploymentPackage package;
             try

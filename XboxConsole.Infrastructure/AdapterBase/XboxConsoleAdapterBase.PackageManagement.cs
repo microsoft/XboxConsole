@@ -11,6 +11,7 @@ namespace Microsoft.Internal.GamesTest.Xbox
     using System.Globalization;
     using System.Linq;
     using System.Text;
+    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.Internal.GamesTest.Xbox.Deployment;
 
@@ -267,6 +268,28 @@ namespace Microsoft.Internal.GamesTest.Xbox
         }
 
         /// <summary>
+        /// Push deploys loose files to the console.
+        /// </summary>
+        /// <param name="systemIpAddress">The "System Ip" address of the Xbox kit.</param>
+        /// <param name="deployFilePath">The path to the folder to deploy.</param>
+        /// <param name="removeExtraFiles"><c>true</c> to remove any extra files, <c>false</c> otherwise.</param>
+        /// <param name="cancellationToken">A CancellationToken to observe while waiting for the deployment to complete.</param>
+        /// <param name="progressMetric">The progress handler that the calling app uses to receive progress updates about metrics. This may be null.</param>
+        /// <param name="progressError">The progress handler that the calling app uses to receive progress updates about errors. This may be null.</param>
+        /// <param name="progressExtraFile">The progress handler that the calling app uses to receive progress updates about extra files. This may be null.</param>
+        /// <returns>The task object representing the asynchronous operation whose result is the deployed package.</returns>
+        public Task<XboxPackageDefinition> DeployPushAsync(string systemIpAddress, string deployFilePath, bool removeExtraFiles, CancellationToken cancellationToken, IProgress<XboxDeploymentMetric> progressMetric, IProgress<XboxDeploymentError> progressError, IProgress<XboxDeploymentExtraFile> progressExtraFile)
+        {
+            this.ThrowIfDisposed();
+            this.ThrowIfInvalidSystemIpAddress(systemIpAddress);
+
+            return this.PerformXdkFunc(
+                systemIpAddress,
+                () => this.DeployPushImplAsync(systemIpAddress, deployFilePath, removeExtraFiles, cancellationToken, progressMetric, progressError, progressExtraFile),
+                "Failed to deploy package");
+        }
+        
+        /// <summary>
         /// Uninstall a package from a given console based on its package full name.
         /// </summary>
         /// <param name="systemIpAddress">The IP address of the console to be affected.</param>
@@ -280,6 +303,56 @@ namespace Microsoft.Internal.GamesTest.Xbox
                 systemIpAddress,
                 () => this.UninstallPackageImpl(systemIpAddress, package),
                 string.Format(CultureInfo.InvariantCulture, "Failed to uninstall package with full name '{0}'", package == null || string.IsNullOrEmpty(package.FullName) ? "null" : package.FullName));
+        }
+
+        /// <summary>
+        /// Registers a package from a path on the scratch drive.
+        /// </summary>
+        /// <param name="systemIpAddress">The "System Ip" address of the Xbox kit.</param>
+        /// <param name="packagePath">The relative path on the consoles scratch drive to the package.</param>
+        /// <returns>The package definition object that describes the package.</returns>
+        public XboxPackageDefinition RegisterPackage(string systemIpAddress, string packagePath)
+        {
+            this.ThrowIfDisposed();
+            this.ThrowIfInvalidSystemIpAddress(systemIpAddress);
+
+            return this.PerformXdkFunc(
+                systemIpAddress,
+                () => this.RegisterPackageImpl(systemIpAddress, packagePath),
+                "Failed to register package");
+        }
+
+        /// <summary>
+        /// Unregisters a package from its package full name.
+        /// </summary>
+        /// <param name="systemIpAddress">The "System Ip" address of the Xbox kit.</param>
+        /// <param name="packageFullName">The Package Full Name of the package to be unregistered.</param>
+        public void UnregisterPackage(string systemIpAddress, string packageFullName)
+        {
+            this.ThrowIfDisposed();
+            this.ThrowIfInvalidSystemIpAddress(systemIpAddress);
+
+            this.PerformXdkAction(
+                systemIpAddress,
+                () => this.UnregisterPackageImpl(systemIpAddress, packageFullName),
+                "Failed to unregister package");
+        }
+
+        /// <summary>
+        /// Gets the available space that is available for app installation.
+        /// </summary>
+        /// <param name="systemIpAddress">The "System Ip" address of the Xbox kit.</param>
+        /// <param name="storageName">The name of the storage device to check. Allowed values are "internal" and null. </param>
+        /// <returns>The number of bytes of freespace on the storage device on the specified console.</returns>
+        public ulong GetAvailableSpaceForAppInstallation(string systemIpAddress, string storageName)
+        {
+            this.ThrowIfDisposed();
+            this.ThrowIfInvalidSystemIpAddress(systemIpAddress);
+
+            return this.PerformXdkFunc(
+                systemIpAddress,
+                () => this.GetAvailableSpaceForAppInstallationImpl(systemIpAddress, storageName),
+                "Failed to get the space available for app installation");
         }
 
         /// <summary>
@@ -390,6 +463,22 @@ namespace Microsoft.Internal.GamesTest.Xbox
         }
 
         /// <summary>
+        /// Provides the adapter-specific implementation of the "DeployPushAsync" method.
+        /// </summary>
+        /// <param name="systemIpAddress">The "System Ip" address of the Xbox kit.</param>
+        /// <param name="deployFilePath">The path to the folder to deploy.</param>
+        /// <param name="removeExtraFiles"><c>true</c> to remove any extra files, <c>false</c> otherwise.</param>
+        /// <param name="cancellationToken">A CancellationToken to observe while waiting for the deployment to complete.</param>
+        /// <param name="progressMetric">The progress handler that the calling app uses to receive progress updates about metrics. This may be null.</param>
+        /// <param name="progressError">The progress handler that the calling app uses to receive progress updates about errors. This may be null.</param>
+        /// <param name="progressExtraFile">The progress handler that the calling app uses to receive progress updates about extra files. This may be null.</param>
+        /// <returns>The task object representing the asynchronous operation whose result is the deployed package.</returns>
+        protected virtual Task<XboxPackageDefinition> DeployPushImplAsync(string systemIpAddress, string deployFilePath, bool removeExtraFiles, CancellationToken cancellationToken, IProgress<XboxDeploymentMetric> progressMetric, IProgress<XboxDeploymentError> progressError, IProgress<XboxDeploymentExtraFile> progressExtraFile)
+        {
+            throw new XboxConsoleFeatureNotSupportedException(NotSupportedMessage);
+        }
+
+        /// <summary>
         /// Provides the adapter-specific implementation of the "SnapApplication" method.
         /// </summary>
         /// <param name="systemIpAddress">The "System Ip" address of the Xbox kit.</param>
@@ -414,6 +503,38 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// <param name="systemIpAddress">The IP address of the console to be affected.</param>
         /// <param name="package">The package to be uninstalled.</param>
         protected virtual void UninstallPackageImpl(string systemIpAddress, XboxPackageDefinition package)
+        {
+            throw new XboxConsoleFeatureNotSupportedException(NotSupportedMessage);
+        }
+
+        /// <summary>
+        /// Provides the adapter-specific implementation of the "RegisterPackage" method.
+        /// </summary>
+        /// <param name="systemIpAddress">The "System Ip" address of the Xbox kit.</param>
+        /// <param name="packagePath">The relative path on the consoles scratch drive to the package.</param>
+        /// <returns>The package definition object that describes the package.</returns>
+        protected virtual XboxPackageDefinition RegisterPackageImpl(string systemIpAddress, string packagePath)
+        {
+            throw new XboxConsoleFeatureNotSupportedException(NotSupportedMessage);
+        }
+
+        /// <summary>
+        /// Provides the adapter-specific implementation of the "UnregisterPackage" method.
+        /// </summary>
+        /// <param name="systemIpAddress">The "System Ip" address of the Xbox kit.</param>
+        /// <param name="packageFullName">The Package Full Name of the package to be unregistered.</param>
+        protected virtual void UnregisterPackageImpl(string systemIpAddress, string packageFullName)
+        {
+            throw new XboxConsoleFeatureNotSupportedException(NotSupportedMessage);
+        }
+
+        /// <summary>
+        /// Provides the adapter-specific implementation of the "GetAvailableSpaceForAppInstallation" method.
+        /// </summary>
+        /// <param name="systemIpAddress">The "System Ip" address of the Xbox kit.</param>
+        /// <param name="storageName">The name of the storage device to check. Allowed values are "internal" and null. </param>
+        /// <returns>The number of bytes of freespace on the storage device on the specified console.</returns>
+        protected virtual ulong GetAvailableSpaceForAppInstallationImpl(string systemIpAddress, string storageName)
         {
             throw new XboxConsoleFeatureNotSupportedException(NotSupportedMessage);
         }

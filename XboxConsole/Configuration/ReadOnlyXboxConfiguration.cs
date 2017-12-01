@@ -105,9 +105,9 @@ namespace Microsoft.Internal.GamesTest.Xbox.Configuration
         }
 
         /// <summary>
-        /// Gets the ProfilingMode boolean.
+        /// Gets the ProfilingMode enumeration.
         /// </summary>
-        public bool? ProfilingMode
+        public ProfilingModeType ProfilingMode
         {
             get
             {

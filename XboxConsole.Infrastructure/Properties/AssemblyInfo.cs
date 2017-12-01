@@ -38,6 +38,8 @@ using System.Runtime.InteropServices;
 [assembly: InternalsVisibleTo("GamesTest.XboxConsole.Adapter.April2014")]
 [assembly: InternalsVisibleTo("GamesTest.XboxConsole.Adapter.May2014")]
 [assembly: InternalsVisibleTo("GamesTest.XboxConsole.Adapter.July2014")]
+[assembly: InternalsVisibleTo("GamesTest.XboxConsole.Adapter.August2014")]
+[assembly: InternalsVisibleTo("GamesTest.XboxConsole.Adapter.October2014")]
 
 [assembly: InternalsVisibleTo("GamesTest.XboxConsole.Fakes")]
 [assembly: InternalsVisibleTo("GamesTest.XboxConsole.Infrastructure.Fakes")]

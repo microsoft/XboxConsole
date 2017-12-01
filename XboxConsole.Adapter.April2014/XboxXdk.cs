@@ -14,6 +14,7 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.April2014
     using System.Linq;
     using System.Net;
     using System.Runtime.InteropServices;
+    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.Internal.GamesTest.Xbox.Deployment;
     using Microsoft.Internal.GamesTest.Xbox.Input;
@@ -575,11 +576,12 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.April2014
         /// <param name="systemIpAddress">The tools IP address of the console.</param>
         /// <param name="deployFilePath">The path to the folder to deploy.</param>
         /// <param name="removeExtraFiles"><c>true</c> to remove any extra files, <c>false</c> otherwise.</param>
+        /// <param name="cancellationToken">A CancellationToken to observe while waiting for the deployment to complete.</param>
         /// <param name="progressMetric">The progress handler that the calling app uses to receive progress updates about metrics. This may be null.</param>
         /// <param name="progressError">The progress handler that the calling app uses to receive progress updates about errors. This may be null.</param>
         /// <param name="progressExtraFile">The progress handler that the calling app uses to receive progress updates about extra files. This may be null.</param>
         /// <returns>The task object representing the asynchronous operation whose result is a json string describing the deployed package.</returns>
-        public override async Task<string> DeployPushAsync(string systemIpAddress, string deployFilePath, bool removeExtraFiles, IProgress<XboxDeploymentMetric> progressMetric, IProgress<XboxDeploymentError> progressError, IProgress<XboxDeploymentExtraFile> progressExtraFile)
+        public override async Task<string> DeployPushAsync(string systemIpAddress, string deployFilePath, bool removeExtraFiles, CancellationToken cancellationToken, IProgress<XboxDeploymentMetric> progressMetric, IProgress<XboxDeploymentError> progressError, IProgress<XboxDeploymentExtraFile> progressExtraFile)
         {
             return await Task.Run(() =>
             {

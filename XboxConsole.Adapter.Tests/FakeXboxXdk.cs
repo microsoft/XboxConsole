@@ -8,6 +8,7 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.Tests
 {
     using System;
     using System.Collections.Generic;
+    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.Internal.GamesTest.Xbox.Deployment;
     using Microsoft.Internal.GamesTest.Xbox.Input;
@@ -156,8 +157,8 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.Tests
         /// <summary>
         /// Gets or sets a custom func to shim the "DeployPushAsync" method.
         /// </summary>
-        public Func<string, string, bool, IProgress<XboxDeploymentMetric>, IProgress<XboxDeploymentError>, IProgress<XboxDeploymentExtraFile>, Task<string>> DeployPushAsyncFunc { get; set; }
-
+        public Func<string, string, bool, CancellationToken, IProgress<XboxDeploymentMetric>, IProgress<XboxDeploymentError>, IProgress<XboxDeploymentExtraFile>, Task<string>> DeployPushAsyncFunc { get; set; }
+        
         /// <summary>
         /// Gets or sets the function to shim the "GetInstalledPackages" method.
         /// </summary>
@@ -237,6 +238,31 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.Tests
         /// Gets or sets the function to shim the "CaptureScreenshot" method.
         /// </summary>
         public Func<string, IntPtr> CaptureScreenshotFunc { get; set; }
+
+        /// <summary>
+        /// Gets or sets the function to shim the "CaptureRecordedGameClip" method.
+        /// </summary>
+        public Action<string, string, uint> CaptureRecordedGameClipAction { get; set; }
+
+        /// <summary>
+        /// Gets or sets the function to shim the "GetConsoleInfo" method.
+        /// </summary>
+        public Func<string, XboxConsoleInfo> GetConsoleInfoFunc { get; set; }
+
+        /// <summary>
+        /// Gets or sets the function to shim the "RegisterPackage" method.
+        /// </summary>
+        public Func<string, string, XboxPackageDefinition> RegisterPackageFunc { get; set; }
+
+        /// <summary>
+        /// Gets or sets the function to shim the "UnregisterPackage" method.
+        /// </summary>
+        public Action<string, string> UnregisterPackageAction { get; set; }
+
+        /// <summary>
+        /// Gets or sets the function to shim the "GetAvailableSpaceForAppInstallation" method.
+        /// </summary>
+        public Func<string, string, ulong> GetAvailableSpaceForAppInstallationFunc { get; set; }
 
         /// <summary>
         /// Gets or sets the default console address.
@@ -724,15 +750,16 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.Tests
         /// <param name="ipAddress">The tools IP address of the console.</param>
         /// <param name="deployFilePath">The path to the folder to deploy.</param>
         /// <param name="removeExtraFiles"><c>true</c> to remove any extra files, <c>false</c> otherwise.</param>
+        /// <param name="cancellationToken">A CancellationToken to observe while waiting for the deployment to complete.</param>
         /// <param name="progressMetric">The progress handler that the calling app uses to receive progress updates about metrics. This may be null.</param>
         /// <param name="progressError">The progress handler that the calling app uses to receive progress updates about errors. This may be null.</param>
         /// <param name="progressExtraFile">The progress handler that the calling app uses to receive progress updates about extra files. This may be null.</param>
         /// <returns>The task object representing the asynchronous operation whose result is a json string describing the deployed package.</returns>
-        public override Task<string> DeployPushAsync(string ipAddress, string deployFilePath, bool removeExtraFiles, IProgress<XboxDeploymentMetric> progressMetric, IProgress<XboxDeploymentError> progressError, IProgress<XboxDeploymentExtraFile> progressExtraFile)
+        public override Task<string> DeployPushAsync(string ipAddress, string deployFilePath, bool removeExtraFiles, CancellationToken cancellationToken, IProgress<XboxDeploymentMetric> progressMetric, IProgress<XboxDeploymentError> progressError, IProgress<XboxDeploymentExtraFile> progressExtraFile)
         {
             if (this.DeployPushAsyncFunc != null)
             {
-                return this.DeployPushAsyncFunc(ipAddress, deployFilePath, removeExtraFiles, progressMetric, progressError, progressExtraFile);
+                return this.DeployPushAsyncFunc(ipAddress, deployFilePath, removeExtraFiles, cancellationToken, progressMetric, progressError, progressExtraFile);
             }
             else
             {
@@ -1025,6 +1052,94 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.Tests
             else
             {
                 throw new NotImplementedException("CaptureScreenshotFunc is not set.");
+            }
+        }
+
+        /// <summary>
+        /// Captures an MP4 clip using the GameDVR service and writes it to the specified output path.
+        /// </summary>
+        /// <param name="ipAddress">The IP address of the console.</param>
+        /// <param name="outputPath">Full path of the MP4 file to create.</param>
+        /// <param name="captureSeconds">How many seconds to capture backward from current time (between 6 and 300).</param>
+        public override void CaptureRecordedGameClip(string ipAddress, string outputPath, uint captureSeconds)
+        {
+            if (this.CaptureRecordedGameClipAction != null)
+            {
+                this.CaptureRecordedGameClipAction(ipAddress, outputPath, captureSeconds);
+            }
+            else
+            {
+                throw new NotImplementedException("CaptureScreenshotFunc is not set.");
+            }
+        }
+
+        /// <summary>
+        /// Gets the information about a console.
+        /// </summary>
+        /// <param name="ipAddress">The IP address of the console.</param>
+        /// <returns>A XboxConsoleInfo containing information about the console.</returns>
+        public override XboxConsoleInfo GetConsoleInfo(string ipAddress)
+        {
+            if (this.GetConsoleInfoFunc != null)
+            {
+                return this.GetConsoleInfoFunc(ipAddress);
+            }
+            else
+            {
+                throw new NotImplementedException("GetConsoleInfoFunc is not set.");
+            }
+        }
+
+        /// <summary>
+        /// Registers a package deployed to the title scratch drive. 
+        /// </summary>
+        /// <param name="ipAddress">The ip address of the Xbox kit.</param>
+        /// <param name="packagePath">The relative path on the consoles scratch drive to the package.</param>
+        /// <returns>The package definition object that describes the package.</returns>
+        public override XboxPackageDefinition RegisterPackage(string ipAddress, string packagePath)
+        {
+            if (this.RegisterPackageFunc != null)
+            {
+                return this.RegisterPackageFunc(ipAddress, packagePath);
+            }
+            else
+            {
+                throw new NotImplementedException("GetConsoleInfoFunc is not set.");
+            }
+        }
+
+        /// <summary>
+        /// Unregisters a package deployed to the title scratch drive.
+        /// </summary>
+        /// <param name="ipAddress">The ip address of the Xbox kit.</param>
+        /// <param name="packageFullName">The Package Full Name of the package to be unregistered.</param>
+        public override void UnregisterPackage(string ipAddress, string packageFullName)
+        {
+            if (this.UnregisterPackageAction != null)
+            {
+                this.UnregisterPackageAction(ipAddress, packageFullName);
+            }
+            else
+            {
+                throw new NotImplementedException("CaptureScreenshotFunc is not set.");
+            }
+        }
+
+        /// <summary>
+        /// Gets the available space that is available for app installation.
+        /// </summary>
+        /// <param name="ipAddress">The IP address of the Xbox kit.</param>
+        /// <param name="storageName">The name of the storage device to check. Allowed values are "internal" and null. </param>
+        /// <returns>The number of bytes of freespace on the storage device on the specified console.</returns>
+        public override ulong GetAvailableSpaceForAppInstallation(string ipAddress, string storageName)
+        {
+            if (this.GetAvailableSpaceForAppInstallationFunc != null)
+            {
+                return this.GetAvailableSpaceForAppInstallationFunc(ipAddress, storageName);
+            }
+            else
+            {
+                throw new NotImplementedException("GetConsoleInfoFunc is not set.");
             }
         }
     }

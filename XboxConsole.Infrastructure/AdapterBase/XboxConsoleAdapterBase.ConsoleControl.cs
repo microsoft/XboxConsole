@@ -84,6 +84,23 @@ namespace Microsoft.Internal.GamesTest.Xbox
         }
 
         /// <summary>
+        /// Captures an MP4 clip using the GameDVR service and writes to specified output path.
+        /// </summary>
+        /// <param name="systemIpAddress">The IP address of the console.</param>
+        /// <param name="outputPath">Full path of the MP4 file to create.</param>
+        /// <param name="captureSeconds">How many seconds to capture backward from current time (between 6 and 300).</param>
+        public void CaptureRecordedGameClip(string systemIpAddress, string outputPath, uint captureSeconds)
+        {
+            this.ThrowIfDisposed();
+            this.ThrowIfInvalidSystemIpAddress(systemIpAddress);
+
+            this.PerformXdkAction(
+                systemIpAddress,
+                () => this.CaptureRecordedGameClipImpl(systemIpAddress, outputPath, captureSeconds),
+                "Failed to capture DVR clip.");
+        }
+
+        /// <summary>
         /// Provides the adapter-specific implementation of the "Reboot" method.
         /// </summary>
         /// <param name="systemIpAddress">The "System Ip" address of the Xbox kit.</param>
@@ -129,6 +146,17 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// <param name="systemIpAddress">The IP address of the console.</param>
         /// <returns>A pointer to the location in memory of the uncompressed frame buffer captured off the console.</returns>
         protected virtual IntPtr CaptureScreenshotImpl(string systemIpAddress)
+        {
+            throw new XboxConsoleFeatureNotSupportedException(NotSupportedMessage);
+        }
+
+        /// <summary>
+        /// Provides the adapter-specific implementation of the "CaptureRecordedGameClip" method.
+        /// </summary>
+        /// <param name="systemIpAddress">The IP address of the console.</param>
+        /// <param name="outputPath">The path where recorded MP4 clip will be output.</param>
+        /// <param name="captureSeconds">How many seconds to capture backward from current time, between 6 and 300.</param>
+        protected virtual void CaptureRecordedGameClipImpl(string systemIpAddress, string outputPath, uint captureSeconds)
         {
             throw new XboxConsoleFeatureNotSupportedException(NotSupportedMessage);
         }

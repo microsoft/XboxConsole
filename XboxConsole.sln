@@ -22,6 +22,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XboxConsole.Adapter.May2014
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XboxConsole.Adapter.July2014", "XboxConsole.Adapter.July2014\XboxConsole.Adapter.July2014.csproj", "{E842B4D7-58D2-4435-B876-004DE9A45FBD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XboxConsole.Adapter.August2014", "XboxConsole.Adapter.August2014\XboxConsole.Adapter.August2014.csproj", "{8EF1C23A-85B2-4EFF-AA17-19FED06F7BF6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XboxConsole.Adapter.October2014", "XboxConsole.Adapter.October2014\XboxConsole.Adapter.October2014.csproj", "{D97088C5-4BFB-4DFB-ADDE-4624D52FE670}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{BBFC58FA-BC44-4760-8F48-85A4C24F6EAA}"
 	ProjectSection(SolutionItems) = preProject
 		.nuget\NuGet.Config = .nuget\NuGet.Config
@@ -31,7 +35,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{BBFC58
 EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 8
+		SccNumberOfProjects = 11
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = http://vstfpg03:8080/tfs/cts
 		SccLocalPath0 = .
@@ -59,6 +63,12 @@ Global
 		SccProjectUniqueName8 = XboxConsole.Adapter.July2014\\XboxConsole.Adapter.July2014.csproj
 		SccProjectName8 = XboxConsole.Adapter.July2014
 		SccLocalPath8 = XboxConsole.Adapter.July2014
+		SccProjectUniqueName9 = XboxConsole.Adapter.August2014\\XboxConsole.Adapter.August2014.csproj
+		SccProjectName9 = XboxConsole.Adapter.August2014
+		SccLocalPath9 = XboxConsole.Adapter.August2014
+		SccProjectUniqueName10 = XboxConsole.Adapter.October2014\\XboxConsole.Adapter.October2014.csproj
+		SccProjectName10 = XboxConsole.Adapter.October2014
+		SccLocalPath10 = XboxConsole.Adapter.October2014
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -93,16 +103,18 @@ Global
 		{7C44371F-E7EE-4A48-BDC8-54E69A4F7C0C}.Debug|x64.Build.0 = Debug|x64
 		{7C44371F-E7EE-4A48-BDC8-54E69A4F7C0C}.Release|x64.ActiveCfg = Release|x64
 		{7C44371F-E7EE-4A48-BDC8-54E69A4F7C0C}.Release|x64.Build.0 = Release|x64
-		{E842B4D7-58D2-4435-B876-004DE9A45FBD}.Debug|Any CPU.ActiveCfg = Debug|x64
-		{E842B4D7-58D2-4435-B876-004DE9A45FBD}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
-		{E842B4D7-58D2-4435-B876-004DE9A45FBD}.Debug|Mixed Platforms.Build.0 = Debug|x64
 		{E842B4D7-58D2-4435-B876-004DE9A45FBD}.Debug|x64.ActiveCfg = Debug|x64
 		{E842B4D7-58D2-4435-B876-004DE9A45FBD}.Debug|x64.Build.0 = Debug|x64
-		{E842B4D7-58D2-4435-B876-004DE9A45FBD}.Release|Any CPU.ActiveCfg = Release|x64
-		{E842B4D7-58D2-4435-B876-004DE9A45FBD}.Release|Mixed Platforms.ActiveCfg = Release|x64
-		{E842B4D7-58D2-4435-B876-004DE9A45FBD}.Release|Mixed Platforms.Build.0 = Release|x64
 		{E842B4D7-58D2-4435-B876-004DE9A45FBD}.Release|x64.ActiveCfg = Release|x64
 		{E842B4D7-58D2-4435-B876-004DE9A45FBD}.Release|x64.Build.0 = Release|x64
+		{8EF1C23A-85B2-4EFF-AA17-19FED06F7BF6}.Debug|x64.ActiveCfg = Debug|x64
+		{8EF1C23A-85B2-4EFF-AA17-19FED06F7BF6}.Debug|x64.Build.0 = Debug|x64
+		{8EF1C23A-85B2-4EFF-AA17-19FED06F7BF6}.Release|x64.ActiveCfg = Release|x64
+		{8EF1C23A-85B2-4EFF-AA17-19FED06F7BF6}.Release|x64.Build.0 = Release|x64
+		{D97088C5-4BFB-4DFB-ADDE-4624D52FE670}.Debug|x64.ActiveCfg = Debug|x64
+		{D97088C5-4BFB-4DFB-ADDE-4624D52FE670}.Debug|x64.Build.0 = Debug|x64
+		{D97088C5-4BFB-4DFB-ADDE-4624D52FE670}.Release|x64.ActiveCfg = Release|x64
+		{D97088C5-4BFB-4DFB-ADDE-4624D52FE670}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

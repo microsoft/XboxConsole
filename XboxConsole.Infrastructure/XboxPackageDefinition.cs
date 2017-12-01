@@ -67,6 +67,8 @@ namespace Microsoft.Internal.GamesTest.Xbox
             this.FullName = packageFullName;
 
             this.ApplicationDefinitions = aumids.Select(aumid => new XboxApplicationDefinition(aumid));
+
+            this.IsScratchPackage = false;
         }
 
         /// <summary>
@@ -75,6 +77,17 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// <param name="packageFullName">The Package Full Name for this package.</param>
         /// <param name="aumids">The Application User Model Ids of the applications for this package.</param>
         public XboxPackageDefinition(string packageFullName, IEnumerable<string> aumids)
+            : this(packageFullName, aumids, false)
+        {            
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the XboxPackageDefinition class.
+        /// </summary>
+        /// <param name="packageFullName">The Package Full Name for this package.</param>
+        /// <param name="aumids">The Application User Model Ids of the applications for this package.</param>
+        /// <param name="isScratchPackage">Specifies whether this pacakge is registered from the scratch drive.</param>
+        public XboxPackageDefinition(string packageFullName, IEnumerable<string> aumids, bool isScratchPackage)
         {
             if (string.IsNullOrWhiteSpace(packageFullName))
             {
@@ -91,6 +104,8 @@ namespace Microsoft.Internal.GamesTest.Xbox
             this.FamilyName = nameParts.First() + "_" + nameParts.Last();
 
             this.ApplicationDefinitions = aumids.Select(aumid => new XboxApplicationDefinition(aumid));
+
+            this.IsScratchPackage = isScratchPackage;
         }
 
         /// <summary>
@@ -107,5 +122,10 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// Gets the Package Full Name for this package.  See the constructor comment for a thorough description of this field.
         /// </summary>
         public string FullName { get; private set; }
+
+        /// <summary>
+        /// Gets a value indicating whether this package is a scratch package.
+        /// </summary>
+        public bool IsScratchPackage { get; private set; }
     }
 }

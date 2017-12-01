@@ -241,7 +241,7 @@ namespace Microsoft.Internal.GamesTest.Xbox.Tests
     [TestCategory(XboxConfigurationTestCategory)]
     public void TestXboxConfigurationGetProfilingMode()
     {
-      this.TestGetter<bool?>(config => config.ProfilingMode, true, "ProfilingMode");
+      this.TestGetter<ProfilingModeType>(config => config.ProfilingMode, ProfilingModeType.Legacy, "ProfilingMode");
     }
 
     /// <summary>
@@ -252,7 +252,7 @@ namespace Microsoft.Internal.GamesTest.Xbox.Tests
     [TestCategory(XboxConfigurationTestCategory)]
     public void TestXboxConfigurationSetProfilingMode()
     {
-      this.TestSetter<bool?>(testConfiguration => testConfiguration.ProfilingMode = true, true, "ProfilingMode");
+        this.TestSetter<ProfilingModeType>(testConfiguration => testConfiguration.ProfilingMode = ProfilingModeType.Off, ProfilingModeType.Off, "ProfilingMode");
     }
 
     /// <summary>
@@ -263,7 +263,7 @@ namespace Microsoft.Internal.GamesTest.Xbox.Tests
     [TestCategory(XboxConfigurationTestCategory)]
     public void TestXboxConfigurationProfilingMode()
     {
-      this.TestSetsAndGets<bool?>((testConfiguration, testValue) => { testConfiguration.ProfilingMode = testValue; return testConfiguration.ProfilingMode; }, true, "ProfilingMode");
+      this.TestSetsAndGets<ProfilingModeType>((testConfiguration, testValue) => { testConfiguration.ProfilingMode = testValue; return testConfiguration.ProfilingMode; }, ProfilingModeType.Legacy, "ProfilingMode");
     }
 
     /// <summary>

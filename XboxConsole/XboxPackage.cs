@@ -193,6 +193,21 @@ namespace Microsoft.Internal.GamesTest.Xbox
             this.Console.Adapter.UninstallPackage(this.Console.SystemIpAddressAndSessionKeyCombined, this.Definition);
         }
 
+        /// <summary>
+        /// Unregisters a package previously registered from the TitleScratch drive location.
+        /// </summary>
+        public void Unregister()
+        {
+            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
+
+            if (!this.Definition.IsScratchPackage)
+            {
+                throw new InvalidOperationException("Attempting to unregister a deployed package. Unregistering is supported only for packages registered with XboxConsole.RegisterPackage.");
+            }
+
+            this.Console.Adapter.UnregisterPackage(this.Console.SystemIpAddressAndSessionKeyCombined, this.Definition.FullName);
+        }
+
         private void AddEvent<T>(ref EventHandler<T> eventBacking, EventHandler<T> value, Action subscribeAction) where T : EventArgs
         {
             lock (this.syncRoot)

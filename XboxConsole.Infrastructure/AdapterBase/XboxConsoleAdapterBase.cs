@@ -159,6 +159,22 @@ namespace Microsoft.Internal.GamesTest.Xbox
         }
 
         /// <summary>
+        /// Gets information about the console.
+        /// </summary>
+        /// <param name="systemIpAddress">The "System Ip" address of the Xbox kit.</param>
+        /// <returns>A XboxConsoleInfo containing information about the console.</returns>
+        public XboxConsoleInfo GetConsoleInfo(string systemIpAddress)
+        {
+            this.ThrowIfDisposed();
+            this.ThrowIfInvalidSystemIpAddress(systemIpAddress);
+
+            return this.PerformXdkFunc(
+                systemIpAddress,
+                () => this.GetConsoleInfoImpl(systemIpAddress),
+                "Failed to get the console information.");
+        }
+
+        /// <summary>
         /// Queries for and returns a value of an Xbox configuration property (see xbconnect command line utility).
         /// </summary>
         /// <param name="systemIpAddress">The "System Ip" address of the Xbox kit.</param>
@@ -176,6 +192,16 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// <param name="key">The configuration property name.</param>
         /// <param name="value">The configuration property value.</param>
         protected virtual void SetConfigValueImpl(string systemIpAddress, string key, string value)
+        {
+            throw new XboxConsoleFeatureNotSupportedException(NotSupportedMessage);
+        }
+
+        /// <summary>
+        /// Gets information about the console.
+        /// </summary>
+        /// <param name="systemIpAddress">The "System Ip" address of the Xbox kit.</param>
+        /// <returns>A XboxConsoleInfo containing information about the console.</returns>
+        protected virtual XboxConsoleInfo GetConsoleInfoImpl(string systemIpAddress)
         {
             throw new XboxConsoleFeatureNotSupportedException(NotSupportedMessage);
         }

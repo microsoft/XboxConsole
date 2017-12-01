@@ -11,6 +11,7 @@ namespace Microsoft.Internal.GamesTest.Xbox
     using System.Globalization;
     using System.IO;
     using System.Reflection;
+    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.Internal.GamesTest.Xbox.Deployment;
     using Microsoft.Internal.GamesTest.Xbox.Input;
@@ -326,11 +327,12 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// <param name="ipAddress">The tools IP address of the console.</param>
         /// <param name="deployFilePath">The path to the folder to deploy.</param>
         /// <param name="removeExtraFiles"><c>true</c> to remove any extra files, <c>false</c> otherwise.</param>
+        /// <param name="cancellationToken">A CancellationToken to observe while waiting for the deployment to complete.</param>
         /// <param name="progressMetric">The progress handler that the calling app uses to receive progress updates about metrics. This may be null.</param>
         /// <param name="progressError">The progress handler that the calling app uses to receive progress updates about errors. This may be null.</param>
         /// <param name="progressExtraFile">The progress handler that the calling app uses to receive progress updates about extra files. This may be null.</param>
         /// <returns>The task object representing the asynchronous operation whose result is a json string describing the deployed package.</returns>
-        public virtual Task<string> DeployPushAsync(string ipAddress, string deployFilePath, bool removeExtraFiles, IProgress<XboxDeploymentMetric> progressMetric, IProgress<XboxDeploymentError> progressError, IProgress<XboxDeploymentExtraFile> progressExtraFile)
+        public virtual Task<string> DeployPushAsync(string ipAddress, string deployFilePath, bool removeExtraFiles, CancellationToken cancellationToken, IProgress<XboxDeploymentMetric> progressMetric, IProgress<XboxDeploymentError> progressError, IProgress<XboxDeploymentExtraFile> progressExtraFile)
         {
             throw new XboxConsoleFeatureNotSupportedException(NotSupportedMessage);
         }
@@ -375,6 +377,17 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// <param name="ipAddress">The IP address of the console.</param>
         /// <returns>A pointer to the location in memory of the uncompressed frame buffer captured off the console.</returns>
         public virtual IntPtr CaptureScreenshot(string ipAddress)
+        {
+            throw new XboxConsoleFeatureNotSupportedException(NotSupportedMessage);
+        }
+
+        /// <summary>
+        /// Captures an MP4 clip using the GameDVR service and writes it to the specified output path.
+        /// </summary>
+        /// <param name="ipAddress">The IP address of the console.</param>
+        /// <param name="outputPath">Full path of the MP4 file to create.</param>
+        /// <param name="captureSeconds">How many seconds to capture backward from current time (between 6 and 300).</param>
+        public virtual void CaptureRecordedGameClip(string ipAddress, string outputPath, uint captureSeconds)
         {
             throw new XboxConsoleFeatureNotSupportedException(NotSupportedMessage);
         }
@@ -530,6 +543,48 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// <param name="actingUserXuid">XUID of acting user on whose behalf to decline the invitation.</param>
         /// <param name="partyId">Title ID of the party created by another user to accept the invitation to.</param>
         public virtual void DeclineInviteToParty(string ipAddress, string actingUserXuid, string partyId)
+        {
+            throw new XboxConsoleFeatureNotSupportedException(NotSupportedMessage);
+        }
+
+        /// <summary>
+        /// Gets the information about a console.
+        /// </summary>
+        /// <param name="ipAddress">The IP address of the console.</param>
+        /// <returns>A XboxConsoleInfo containing information about the console.</returns>
+        public virtual XboxConsoleInfo GetConsoleInfo(string ipAddress)
+        {
+            throw new XboxConsoleFeatureNotSupportedException(NotSupportedMessage);
+        }
+
+        /// <summary>
+        /// Registers a package.
+        /// </summary>
+        /// <param name="ipAddress">The IP address of the console.</param>
+        /// <param name="packagePath">The relative path on the consoles scratch drive to the package.</param>
+        /// <returns>The package definition object that describes the package.</returns>
+        public virtual XboxPackageDefinition RegisterPackage(string ipAddress, string packagePath)
+        {
+            throw new XboxConsoleFeatureNotSupportedException(NotSupportedMessage);
+        }
+
+        /// <summary>
+        /// Unregisters a package.
+        /// </summary>
+        /// <param name="ipAddress">The IP address of the console.</param>
+        /// <param name="packageFullName">The Pacakge Full Name of the package to be unregistered.</param>
+        public virtual void UnregisterPackage(string ipAddress, string packageFullName)
+        {
+            throw new XboxConsoleFeatureNotSupportedException(NotSupportedMessage);
+        }
+
+        /// <summary>
+        /// Gets the available space that is available for app installation.
+        /// </summary>
+        /// <param name="ipAddress">The IP address of the console.</param>
+        /// <param name="storageName">The name of the storage device to check. Allowed values are "internal" and null. </param>
+        /// <returns>The number of bytes of freespace on the storage device on the specified console.</returns>
+        public virtual ulong GetAvailableSpaceForAppInstallation(string ipAddress, string storageName)
         {
             throw new XboxConsoleFeatureNotSupportedException(NotSupportedMessage);
         }

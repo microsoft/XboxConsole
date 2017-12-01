@@ -24,6 +24,7 @@ namespace Microsoft.Internal.GamesTest.Xbox
     using Microsoft.Internal.GamesTest.Xbox.Configuration;
     using Microsoft.Internal.GamesTest.Xbox.Deployment;
     using Microsoft.Internal.GamesTest.Xbox.Input;
+    using Microsoft.Internal.GamesTest.Xbox.IO;
     using Microsoft.Internal.GamesTest.Xbox.Telemetry;
 
     /// <summary>
@@ -60,7 +61,7 @@ namespace Microsoft.Internal.GamesTest.Xbox
             }
 
             string[] splitString = this.SplitDefaultConsoleString(defaultConsole);
-            this.SystemIpAddressString = splitString[0];
+            this.SystemIpAddressString = this.GetIPAddressFromConnectionString(splitString[0]).ToString();
             this.OriginalConnectionString = defaultConsole;
 
             if (splitString.Length >= 2)
@@ -143,23 +144,8 @@ namespace Microsoft.Internal.GamesTest.Xbox
 
             this.Initialize();
 
-            IPAddress systemIpAddress = null;
-
-            if (!IPAddress.TryParse(connectionString, out systemIpAddress))
-            {
-                // Resolve IP address from host name if passed host name
-                systemIpAddress = Dns.GetHostAddresses(connectionString).FirstOrDefault(o => o.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork);
+            this.SystemIpAddressString = this.GetIPAddressFromConnectionString(connectionString).ToString();
             }
-
-            if (systemIpAddress == null)
-            {
-                throw new ArgumentException("Could not connect using IP address or host name passed in the connection string.", "connectionString");
-            }
-            else
-            {
-                this.SystemIpAddressString = systemIpAddress.ToString();
-            }
-        }
 
         /// <summary>
         /// Gets or sets the default console address.
@@ -200,7 +186,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
             get
             {
                 this.ThrowIfDisposed();
-
                 return IPAddress.Parse(this.SystemIpAddressString);
             }
         }
@@ -274,6 +259,66 @@ namespace Microsoft.Internal.GamesTest.Xbox
                 this.ThrowIfDisposed();
 
                 return new ReadOnlyXboxConfiguration(settingKey => this.Adapter.GetConfigValue(this.SystemIpAddressAndSessionKeyCombined, settingKey));
+            }
+        }
+
+        /// <summary>
+        /// Gets the ConsoleId of the console.
+        /// </summary>
+        public string ConsoleId
+        {
+            get
+            {
+                XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
+
+                this.ThrowIfDisposed();
+
+                return this.Adapter.GetConsoleInfo(this.SystemIpAddressAndSessionKeyCombined).ConsoleId;
+            }
+        }
+
+        /// <summary>
+        /// Gets the DeviceId of the console.
+        /// </summary>
+        public string DeviceId
+        {
+            get
+            {
+                XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
+
+                this.ThrowIfDisposed();
+
+                return this.Adapter.GetConsoleInfo(this.SystemIpAddressAndSessionKeyCombined).DeviceId;
+            }
+        }
+
+        /// <summary>
+        /// Gets the host name of the console.
+        /// </summary>
+        public string HostName
+        {
+            get
+            {
+                XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
+
+                this.ThrowIfDisposed();
+
+                return this.Adapter.GetConsoleInfo(this.SystemIpAddressAndSessionKeyCombined).HostName;
+            }
+        }
+
+        /// <summary>
+        /// Gets the CertType of the console.
+        /// </summary>
+        public XboxCertTypes CertType
+        {
+            get
+            {
+                XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
+
+                this.ThrowIfDisposed();
+
+                return this.Adapter.GetConsoleInfo(this.SystemIpAddressAndSessionKeyCombined).CertType;
             }
         }
 
@@ -491,7 +536,23 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// <returns>The task object representing the asynchronous operation whose result is the deployed package.</returns>
         public Task<XboxPackage> DeployPushAsync(string deployFilePath, bool removeExtraFiles)
         {
+            this.ThrowIfDisposed();
+
             return this.DeployPushAsync(deployFilePath, removeExtraFiles, null, null, null);
+        }
+
+        /// <summary>
+        /// Push deploys loose files to the console.
+        /// </summary>
+        /// <param name="deployFilePath">The path to the folder to deploy.</param>
+        /// <param name="removeExtraFiles"><c>true</c> to remove any extra files, <c>false</c> otherwise.</param>
+        /// <param name="cancellationToken">A CancellationToken to observe while waiting for the deployment to complete.</param>
+        /// <returns>The task object representing the asynchronous operation whose result is the deployed package.</returns>
+        public Task<XboxPackage> DeployPushAsync(string deployFilePath, bool removeExtraFiles, CancellationToken cancellationToken)
+        {
+            this.ThrowIfDisposed();
+
+            return this.DeployPushAsync(deployFilePath, removeExtraFiles, cancellationToken, null, null, null);
         }
 
         /// <summary>
@@ -506,6 +567,8 @@ namespace Microsoft.Internal.GamesTest.Xbox
         public async Task<XboxPackage> DeployPushAsync(string deployFilePath, bool removeExtraFiles, IProgress<XboxDeploymentMetric> progressMetric, IProgress<XboxDeploymentError> progressError, IProgress<XboxDeploymentExtraFile> progressExtraFile)
         {
             XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
+
+            this.ThrowIfDisposed();
 
             if (!Directory.Exists(deployFilePath))
             {
@@ -522,12 +585,78 @@ namespace Microsoft.Internal.GamesTest.Xbox
         }
 
         /// <summary>
+        /// Push deploys loose files to the console.
+        /// </summary>
+        /// <param name="deployFilePath">The path to the folder to deploy.</param>
+        /// <param name="removeExtraFiles"><c>true</c> to remove any extra files, <c>false</c> otherwise.</param>
+        /// <param name="cancellationToken">A CancellationToken to observe while waiting for the deployment to complete.</param>
+        /// <param name="progressMetric">The progress handler that the calling app uses to receive progress updates about metrics. This may be null.</param>
+        /// <param name="progressError">The progress handler that the calling app uses to receive progress updates about errors. This may be null.</param>
+        /// <param name="progressExtraFile">The progress handler that the calling app uses to receive progress updates about extra files. This may be null.</param>
+        /// <returns>The task object representing the asynchronous operation whose result is the deployed package.</returns>
+        public async Task<XboxPackage> DeployPushAsync(string deployFilePath, bool removeExtraFiles, CancellationToken cancellationToken, IProgress<XboxDeploymentMetric> progressMetric, IProgress<XboxDeploymentError> progressError, IProgress<XboxDeploymentExtraFile> progressExtraFile)
+        {
+            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
+
+            this.ThrowIfDisposed();
+
+            if (!Directory.Exists(deployFilePath))
+            {
+                throw new DirectoryNotFoundException(string.Format("Directory \"{0}\" does not exist.", deployFilePath));
+            }
+
+            var packageDefinition = await this.Adapter.DeployPushAsync(this.SystemIpAddressAndSessionKeyCombined, deployFilePath, removeExtraFiles, cancellationToken, progressMetric, progressError, progressExtraFile);
+            if (packageDefinition == null)
+            {
+                throw new XboxConsoleException("Adapter returned an unexpected value");
+            }
+
+            return new XboxPackage(packageDefinition, this);
+        }
+
+        /// <summary>
+        /// Registers a package located on the TitleScratch drive.
+        /// </summary>
+        /// <param name="scratchPath">Relative path to the package on the TitleScratch drive, omitting the root specification.</param>
+        /// <returns>An XboxPackage object that allows you to manipulate the package.</returns>
+        public XboxPackage RegisterPackage(XboxPath scratchPath)
+        {
+            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
+
+            this.ThrowIfDisposed();
+
+            if (scratchPath == null)
+            {
+                throw new ArgumentNullException("scratchPath");
+            }
+
+            return new XboxPackage(this.Adapter.RegisterPackage(this.SystemIpAddressAndSessionKeyCombined, scratchPath.FullName), this);
+        }
+
+        /// <summary>
+        /// Returns the amount of space in bytes available for installation of packages.
+        /// Currently specifying the storage device is not supported, future versions may add an overload with XboxPath.
+        /// </summary>
+        /// <returns>Space available in bytes.</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate", Justification = "A method is appropriate because the Xbox has to be queried every time.")]
+        public ulong GetAvailableSpaceForAppInstallation()
+        {
+            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
+
+            this.ThrowIfDisposed();
+
+            return this.Adapter.GetAvailableSpaceForAppInstallation(this.SystemIpAddressAndSessionKeyCombined, null);
+        }
+
+        /// <summary>
         /// Captures a screenshot from the frame buffer of the console.
         /// </summary>
         /// <returns>A BitmapSource containing the uncompressed frame buffer captured off the current console.</returns>
         public BitmapSource CaptureScreenshot()
         {
             XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
+
+            this.ThrowIfDisposed();
 
             IntPtr pointerToHBitmap = this.Adapter.CaptureScreenshot(this.SystemIpAddressAndSessionKeyCombined);
             BitmapSource managedBitmap = null;
@@ -551,6 +680,25 @@ namespace Microsoft.Internal.GamesTest.Xbox
         }
 
         /// <summary>
+        /// Captures an MP4 clip using the GameDVR service and writes to specified output path.
+        /// </summary>
+        /// <param name="outputPath">Full path of the MP4 file to create.</param>
+        /// <param name="captureSeconds">How many seconds to capture backward from current time (between 6 and 300).</param>
+        public void CaptureRecordedGameClip(string outputPath, uint captureSeconds)
+        {
+            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
+
+            this.ThrowIfDisposed();
+
+            if (string.IsNullOrEmpty(outputPath))
+            {
+                throw new ArgumentException("outputPath must not be null or empty.", "outputPath");
+            }
+
+            this.Adapter.CaptureRecordedGameClip(this.SystemIpAddressAndSessionKeyCombined, outputPath, captureSeconds);
+        }
+
+        /// <summary>
         /// Adds a user to the console.
         /// </summary>
         /// <param name="emailAddress">The email address of the user to add.</param>
@@ -558,6 +706,8 @@ namespace Microsoft.Internal.GamesTest.Xbox
         public XboxUser AddUser(string emailAddress)
         {
             XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
+
+            this.ThrowIfDisposed();
 
             var user = this.Adapter.AddUser(this.SystemIpAddressAndSessionKeyCombined, emailAddress);
 
@@ -577,6 +727,8 @@ namespace Microsoft.Internal.GamesTest.Xbox
         {
             XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
 
+            this.ThrowIfDisposed();
+
             return this.Adapter.AddGuestUser(this.SystemIpAddressAndSessionKeyCombined);
         }
 
@@ -587,6 +739,8 @@ namespace Microsoft.Internal.GamesTest.Xbox
         public void DeleteUser(XboxUser user)
         {
             XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
+
+            this.ThrowIfDisposed();
 
             if (user == null)
             {
@@ -602,6 +756,8 @@ namespace Microsoft.Internal.GamesTest.Xbox
         public void DeleteAllUsers()
         {
             XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
+
+            this.ThrowIfDisposed();
 
             this.Adapter.DeleteAllUsers(this.SystemIpAddressAndSessionKeyCombined);
         }
@@ -619,7 +775,7 @@ namespace Microsoft.Internal.GamesTest.Xbox
                 {
                     try
                     {
-                    gamepad.Disconnect();
+                        gamepad.Disconnect();
                     }
                     catch (XboxConsoleException ex)
                     {
@@ -640,8 +796,8 @@ namespace Microsoft.Internal.GamesTest.Xbox
 
             try
             {
-            this.Adapter.Dispose();
-        }
+                this.Adapter.Dispose();
+            }
             catch (XboxConsoleException ex)
             {
                 System.Diagnostics.Debug.WriteLine(ex);
@@ -673,15 +829,42 @@ namespace Microsoft.Internal.GamesTest.Xbox
             return defaultConsole.Split('+');
         }
 
+        /// <summary>
+        /// Attempts to get an IP address from its string representation or a host name.
+        /// </summary>
+        /// <param name="connectionString">IP address or host name to parse into an IPAddress object.</param>
+        /// <returns>Parsed IP address.</returns>
+        private IPAddress GetIPAddressFromConnectionString(string connectionString)
+        {
+            IPAddress systemIpAddress = null;
+
+            if (!IPAddress.TryParse(connectionString, out systemIpAddress))
+            {
+                // Resolve IP address from host name if passed host name
+                systemIpAddress = Dns.GetHostAddresses(connectionString).FirstOrDefault(o => o.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork);
+            }
+
+            if (systemIpAddress == null)
+            {
+                throw new ArgumentException("Could not connect using IP address or host name passed in the connection string.", "connectionString");
+            }
+
+            return systemIpAddress;
+        }
+
+        /// <summary>
+        /// Helper function to apply configuration before rebooting.
+        /// </summary>
+        /// <param name="configuration">Configuration to apply.</param>
         private void ApplyConfiguration(XboxConfiguration configuration)
         {
             configuration.SetSettingValues((key, value) =>
+            {
+                if (value != null)
                 {
-                    if (value != null)
-                    {
                     this.Adapter.SetConfigValue(this.SystemIpAddressAndSessionKeyCombined, key, value);
-                    }
-                });
+                }
+            });
 
             if (configuration.SessionKey != null)
             {

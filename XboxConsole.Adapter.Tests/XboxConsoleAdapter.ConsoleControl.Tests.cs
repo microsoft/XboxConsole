@@ -386,16 +386,138 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.Tests
             Assert.AreEqual(expectedIntPtr, actualIntPtr, "The returned value from CaptureScreenshot did not match expected value.");
         }
 
+        /// <summary>
+        /// Verifies that if the XDK's CaptureRecordedGameClip method throws a COMException, then the
+        /// XboxConsoleAdapter will wrap that into an XboxConsoleException with the COMException as its inner exception.
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2201:DoNotRaiseReservedExceptionTypes", Justification = "Need to simulate XDK")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Need to catch all exception types so that I can verify we capture the correct exception type.")]
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        [TestCategory(AdapterConsoleControlTestCategory)]
+        public void TestCaptureRecordedGameClipTurnsComExceptionIntoXboxConsoleException()
+        {
+            this.fakeXboxXdk.CaptureRecordedGameClipAction = (ipAddress, filePath, captureSeconds) =>
+            {
+                throw new COMException();
+            };
+
+            try
+            {
+                this.adapter.CaptureRecordedGameClip(ConsoleAddress, null, 10);
+            }
+            catch (Exception ex)
+            {
+                Assert.IsInstanceOfType(ex, typeof(XboxConsoleException), "The XboxConsole Adapter CaptureRecordedGameClip method did not convert a COMException into an XboxConsoleException.");
+                Assert.IsInstanceOfType(ex.InnerException, typeof(COMException), "The XboxConsole Adapter CaptureRecordedGameClip method did not include the COMException as the inner exception of the XboxConsoleException that it threw.");
+            }
+        }
+
+        /// <summary>
+        /// Verifies that an ObjectDisposedException is thrown if the CaptureRecordedGameClip()
+        /// method is called after the object has been disposed.
+        /// </summary>
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        [TestCategory(AdapterConsoleControlTestCategory)]
+        [ExpectedException(typeof(ObjectDisposedException))]
+        public void TestCaptureRecordedGameClipThrowsObjectDisposedException()
+        {
+            this.adapter.Dispose();
+            this.adapter.CaptureRecordedGameClip(ConsoleAddress, null, 10);
+        }
+
+        /// <summary>
+        /// Verifies that the adapter's CaptureRecordedGameClip() method
+        /// calls the XboxXdk's CaptureRecordedGameClip method.
+        /// </summary>
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        [TestCategory(AdapterConsoleControlTestCategory)]
+        public void TestCaptureRecordedGameClipCallsXdkCaptureRecordedGameClip()
+        {
+            bool isCorrectFunctionCalled = false;
+            this.fakeXboxXdk.CaptureRecordedGameClipAction = (ipAddress, filePath, captureSeconds) =>
+            {
+                isCorrectFunctionCalled = true;
+            };
+
+            try
+            {
+                this.adapter.CaptureRecordedGameClip(ConsoleAddress, null, 10);
+            }
+            catch (XboxConsoleException)
+            {
+            }
+
+            Assert.IsTrue(isCorrectFunctionCalled, "The adapter's CaptureRecordedGameClip function failed to call the XboxXdk's CaptureRecordedGameClip function.");
+
+            this.VerifyThrows<ArgumentNullException>(() => this.adapter.CaptureScreenshot(null));
+        }
+
+        /// <summary>
+        /// Verifies that the adapter correctly passes on the parameters.
+        /// </summary>
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        [TestCategory(AdapterConsoleControlTestCategory)]
+        public void TestCaptureRecordedGameClip()
+        {
+            string expectedFilePath = @"C:\";
+            uint expectedCaptureSeconds = 123;
+
+            this.fakeXboxXdk.CaptureRecordedGameClipAction = (ipAddress, filePath, captureSeconds) =>
+            {
+                Assert.AreEqual(ConsoleAddress, ipAddress, "The adapter did not pass the expected ipaddress to the XboxXdk level.");
+                Assert.AreEqual(expectedFilePath, filePath, "The adapter did not pass the expected file path to the XboxXdk level.");
+                Assert.AreEqual(expectedCaptureSeconds, captureSeconds, "The adapter did not pass the expected captureSeconds to the XboxXdk level.");
+            };
+
+            this.adapter.CaptureRecordedGameClip(ConsoleAddress, expectedFilePath, expectedCaptureSeconds);
+        }
+
+        /// <summary>
+        /// Verifies that the adapter throws an ArgumentException when called with number of seconds less than 6.
+        /// </summary>
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        [TestCategory(AdapterConsoleControlTestCategory)]
+        [ExpectedException(typeof(ArgumentOutOfRangeException))]
+        public void TestCaptureRecordedGameClipThrowsArgumentExceptionOnSecondsLessThanMin()
+        {
+            this.fakeXboxXdk.CaptureRecordedGameClipAction = (ipAddress, filePath, captureSeconds) =>
+            {
+            };
+
+            this.adapter.CaptureRecordedGameClip(ConsoleAddress, null, 4);
+        }
+
+        /// <summary>
+        /// Verifies that the adapter throws an ArgumentException when called with number of seconds greater than 300.
+        /// </summary>
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        [TestCategory(AdapterConsoleControlTestCategory)]
+        [ExpectedException(typeof(ArgumentOutOfRangeException))]
+        public void TestCaptureRecordedGameClipThrowsArgumentExceptionOnSecondsGreaterThanMax()
+        {
+            this.fakeXboxXdk.CaptureRecordedGameClipAction = (ipAddress, filePath, captureSeconds) =>
+            {
+            };
+
+            this.adapter.CaptureRecordedGameClip(ConsoleAddress, null, 356);
+        }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2201:DoNotRaiseReservedExceptionTypes", Justification = "Throwing COMExceptions to simulate the behavior of the XDK.")]
         private void TestReboot(TimeSpan timeout, int numTimesToBeResponsive, int numTimesToBeUnresponsive, int canConnectSleepTime = 0)
         {
             bool isRebootCalled = false;
             bool correctIpAddressPassedToReboot = false;
             this.fakeXboxXdk.RebootAction = ipAddress =>
-                {
-                    correctIpAddressPassedToReboot = ipAddress == XboxConsoleAdapterTests.ConsoleAddress;
-                    isRebootCalled = true;
-                };
+            {
+                correctIpAddressPassedToReboot = ipAddress == XboxConsoleAdapterTests.ConsoleAddress;
+                isRebootCalled = true;
+            };
 
             int numCanConnectCalls = 0;
             this.fakeXboxXdk.CanConnectFunc = _ =>
@@ -448,7 +570,7 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.Tests
 
             this.VerifyThrows<ArgumentNullException>(() => this.adapter.Reboot(null, timeout));
         }
-
+        
         private void TestShutdown(TimeSpan timeout, int numTimesToBeResponsive)
         {
             bool isShutdownCalled = false;

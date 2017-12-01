@@ -7,12 +7,13 @@
 namespace Microsoft.Internal.GamesTest.Xbox.Configuration
 {
     using System;
+    using System.Globalization;
 
     /// <summary>
     /// An explicit override of the XboxConfigurationSetting class meant to represent the use of the strings
-    /// "On" and "Off" to toggle the ProfilingMode configuration setting (see xbconfig command line utility).
+    /// "On", "Off", and "Legacy" to set the ProfilingMode configuration setting (see xbconfig command line utility).
     /// </summary>
-    internal class XboxProfilingModeConfigurationSetting : XboxConfigurationSetting<bool?>
+    internal class XboxProfilingModeConfigurationSetting : XboxConfigurationSetting<ProfilingModeType>
     {
         /// <summary>
         /// Initializes a new instance of the XboxProfilingModeConfigurationSetting class.
@@ -24,48 +25,38 @@ namespace Microsoft.Internal.GamesTest.Xbox.Configuration
         }
 
         /// <summary>
-        /// Converts a boolean value to either "On" or "Off".
+        /// Converts the enumeration value to either "On", "Off", or "Legacy".
         /// </summary>
-        /// <param name="profilingModeOn">The boolean value to be parsed.</param>
+        /// <param name="profilingMode">The enumeration value to be parsed.</param>
         /// <returns>The string value that corresponds to the specified boolean value.</returns>
-        protected override string GetStringValueFromValue(bool? profilingModeOn)
+        protected override string GetStringValueFromValue(ProfilingModeType profilingMode)
         {
-            if (!profilingModeOn.HasValue)
-            {
-                return null;
-            }
-
-            return profilingModeOn.Value ? "On" : "Off";
+            return profilingMode.ToString();
         }
 
         /// <summary>
-        /// Converts a string value into a boolean.
+        /// Converts a string value into the ProfilingModeType enumeration.
         /// </summary>
         /// <param name="stringVal">The string value.</param>
-        /// <returns>The list of CultureInfo classes that corresponds to the specified string value.</returns>
-        protected override bool? GetValueFromStringValue(string stringVal)
+        /// <returns>The enumeration constant that corresponds to the passed string value.</returns>
+        protected override ProfilingModeType GetValueFromStringValue(string stringVal)
         {
             if (stringVal == null)
             {
-                return null;
+                return ProfilingModeType.Off;
             }
 
-            // just in case, we'll accept "on"/"off", "true"/"false", or integer representations of boolean values
-            if (stringVal.Equals("1", StringComparison.OrdinalIgnoreCase) ||
-                stringVal.Equals("true", StringComparison.OrdinalIgnoreCase) ||
-                stringVal.Equals("on", StringComparison.OrdinalIgnoreCase))
+            switch (stringVal.ToUpper(CultureInfo.CurrentCulture))
             {
-                return true;
+                case "ON":
+                    return ProfilingModeType.On;
+                case "OFF":
+                    return ProfilingModeType.Off;
+                case "LEGACY":
+                    return ProfilingModeType.Legacy;
             }
 
-            if (stringVal.Equals("0", StringComparison.OrdinalIgnoreCase) ||
-                stringVal.Equals("false", StringComparison.OrdinalIgnoreCase) ||
-                stringVal.Equals("off", StringComparison.OrdinalIgnoreCase))
-            {
-                return false;
-            }
-
-            throw new ArgumentException("The provided string cannot be converted into a boolean value.", "stringVal");
+            throw new ArgumentException("The provided string cannot be converted into a ProfilingModeType value.", "stringVal");
         }
     }
 }

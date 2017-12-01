@@ -8,8 +8,10 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.Tests
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Runtime.InteropServices;
+    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.Internal.GamesTest.Xbox.Deployment;
     using Microsoft.Internal.GamesTest.Xbox.Tasks;
@@ -947,7 +949,7 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.Tests
         public async Task TestDeployPushAsyncCallsXdkDeployPushAsync()
         {
             bool isCorrectFunctionCalled = false;
-            this.fakeXboxXdk.DeployPushAsyncFunc = (ipAddress, deployPath, removeExtraFiles, progressMetric, progressError, progressExtraFile) =>
+            this.fakeXboxXdk.DeployPushAsyncFunc = (ipAddress, deployPath, removeExtraFiles, cancellationToken, progressMetric, progressError, progressExtraFile) =>
             {
                 isCorrectFunctionCalled = true;
                 return Task.FromResult(string.Empty);
@@ -957,6 +959,19 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.Tests
             try
             {
                 await this.adapter.DeployPushAsync(ConsoleAddress, string.Empty, true, null, null, null).WithTimeout(TimeSpan.FromSeconds(30));
+            }
+            catch (XboxConsoleException ex)
+            {
+                Assert.AreEqual(PackagesParsingExceptionMessage, ex.Message, "Empty string received from the XDK didn't throw an expected exception.");
+            }
+
+            Assert.IsTrue(isCorrectFunctionCalled, "The adapter's DeployPushAsync function failed to call the XboxXdk's DeployPushAsync function.");
+
+            isCorrectFunctionCalled = false;
+
+            try
+            {
+                await this.adapter.DeployPushAsync(ConsoleAddress, string.Empty, true, CancellationToken.None, null, null, null).WithTimeout(TimeSpan.FromSeconds(30));
             }
             catch (XboxConsoleException ex)
             {
@@ -976,7 +991,7 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.Tests
         [TestCategory(AdapterPackageManagementTestCategory)]
         public async Task TestDeployPushAsyncNullParameters()
         {
-            this.fakeXboxXdk.DeployPushAsyncFunc = (ipAddress, deployPath, removeExtraFiles, progressMetric, progressError, progressExtraFile) =>
+            this.fakeXboxXdk.DeployPushAsyncFunc = (ipAddress, deployPath, removeExtraFiles, cancellationToken, progressMetric, progressError, progressExtraFile) =>
             {
                 Assert.Fail("Should never have gotten to the XDK method");
                 return Task.FromResult<string>(null);
@@ -999,6 +1014,24 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.Tests
             catch (ArgumentNullException)
             {
             }
+
+            try
+            {
+                await this.adapter.DeployPushAsync(null, string.Empty, true, CancellationToken.None, null, null, null).WithTimeout(TimeSpan.FromSeconds(30));
+                Assert.Fail("ArgumentNullException should have been thrown");
+            }
+            catch (ArgumentNullException)
+            {
+            }
+
+            try
+            {
+                await this.adapter.DeployPushAsync(ConsoleAddress, null, true, CancellationToken.None, null, null, null).WithTimeout(TimeSpan.FromSeconds(30));
+                Assert.Fail("ArgumentNullException should have been thrown");
+            }
+            catch (ArgumentNullException)
+            {
+        }
         }
 
         /// <summary>
@@ -1010,7 +1043,7 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.Tests
         [TestCategory(AdapterPackageManagementTestCategory)]
         public async Task TestDeployPushAsyncThrowsWithNullOutput()
         {
-            this.fakeXboxXdk.DeployPushAsyncFunc = (ipAddress, deployPath, removeExtraFiles, progressMetric, progressError, progressExtraFile) =>
+            this.fakeXboxXdk.DeployPushAsyncFunc = (ipAddress, deployPath, removeExtraFiles, cancellationToken, progressMetric, progressError, progressExtraFile) =>
             {
                 return Task.FromResult<string>(null);
             };
@@ -1018,6 +1051,16 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.Tests
             try
             {
                 XboxPackageDefinition package = await this.adapter.DeployPushAsync(ConsoleAddress, string.Empty, true, null, null, null).WithTimeout(TimeSpan.FromSeconds(30));
+                Assert.Fail("Null received from the XDK didn't throw an expected exception.");
+            }
+            catch (XboxConsoleException ex)
+            {
+                Assert.AreEqual(PackagesParsingExceptionMessage, ex.Message, "Null received from the XDK didn't throw an expected exception.");
+            }
+
+            try
+            {
+                XboxPackageDefinition package = await this.adapter.DeployPushAsync(ConsoleAddress, string.Empty, true, CancellationToken.None, null, null, null).WithTimeout(TimeSpan.FromSeconds(30));
                 Assert.Fail("Null received from the XDK didn't throw an expected exception.");
             }
             catch (XboxConsoleException ex)
@@ -1035,7 +1078,7 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.Tests
         [TestCategory(AdapterPackageManagementTestCategory)]
         public async Task TestDeployPushAsyncThrowsWithEmptyStringOutput()
         {
-            this.fakeXboxXdk.DeployPushAsyncFunc = (ipAddress, deployPath, removeExtraFiles, progressMetric, progressError, progressExtraFile) =>
+            this.fakeXboxXdk.DeployPushAsyncFunc = (ipAddress, deployPath, removeExtraFiles, cancellationToken, progressMetric, progressError, progressExtraFile) =>
             {
                 return Task.FromResult(string.Empty);
             };
@@ -1045,6 +1088,16 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.Tests
                 XboxPackageDefinition package = await this.adapter.DeployPushAsync(ConsoleAddress, string.Empty, true, null, null, null).WithTimeout(TimeSpan.FromSeconds(30));
                 Assert.Fail("Empty string received from the XDK didn't throw an expected exception.");
             }
+            catch (XboxConsoleException ex)
+            {
+                Assert.AreEqual(PackagesParsingExceptionMessage, ex.Message, "Empty string received from the XDK didn't throw an expected exception.");
+            }
+
+            try
+            {
+                XboxPackageDefinition package = await this.adapter.DeployPushAsync(ConsoleAddress, string.Empty, true, CancellationToken.None, null, null, null).WithTimeout(TimeSpan.FromSeconds(30));
+                Assert.Fail("Empty string received from the XDK didn't throw an expected exception.");
+        }
             catch (XboxConsoleException ex)
             {
                 Assert.AreEqual(PackagesParsingExceptionMessage, ex.Message, "Empty string received from the XDK didn't throw an expected exception.");
@@ -1060,7 +1113,7 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.Tests
         [TestCategory(AdapterPackageManagementTestCategory)]
         public async Task TestDeployPushAsyncThrowsWithImproperlyFormattedOutput()
         {
-            this.fakeXboxXdk.DeployPushAsyncFunc = (ipAddress, deployPath, removeExtraFiles, progressMetric, progressError, progressExtraFile) =>
+            this.fakeXboxXdk.DeployPushAsyncFunc = (ipAddress, deployPath, removeExtraFiles, cancellationToken, progressMetric, progressError, progressExtraFile) =>
             {
                 return Task.FromResult("ImproperlyFormattedText");
             };
@@ -1068,6 +1121,16 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.Tests
             try
             {
                 XboxPackageDefinition package = await this.adapter.DeployPushAsync(ConsoleAddress, string.Empty, true, null, null, null).WithTimeout(TimeSpan.FromSeconds(30));
+                Assert.Fail("Incorrectly formatted text received from the XDK didn't throw an expected exception.");
+            }
+            catch (XboxConsoleException ex)
+            {
+                Assert.AreEqual(PackagesParsingExceptionMessage, ex.Message, "Incorrectly formatted text received from the XDK didn't throw an expected exception.");
+            }
+
+            try
+            {
+                XboxPackageDefinition package = await this.adapter.DeployPushAsync(ConsoleAddress, string.Empty, true, CancellationToken.None, null, null, null).WithTimeout(TimeSpan.FromSeconds(30));
                 Assert.Fail("Incorrectly formatted text received from the XDK didn't throw an expected exception.");
             }
             catch (XboxConsoleException ex)
@@ -1085,12 +1148,20 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.Tests
         [TestCategory(AdapterPackageManagementTestCategory)]
         public async Task TestDeployPushAsync()
         {
-            this.fakeXboxXdk.DeployPushAsyncFunc = (ipAddress, deployPath, removeExtraFiles, progressMetric, progressError, progressExtraFile) =>
+            this.fakeXboxXdk.DeployPushAsyncFunc = (ipAddress, deployPath, removeExtraFiles, cancellationToken, progressMetric, progressError, progressExtraFile) =>
             {
                 return Task.FromResult("{\"Applications\":[\"" + Aumid + "\"],\"Identity\":{\"FullName\":\"" + PackageFullName + "\"}}");
             };
 
             XboxPackageDefinition package = await this.adapter.DeployPushAsync(ConsoleAddress, string.Empty, true, null, null, null).WithTimeout(TimeSpan.FromSeconds(30));
+            Assert.IsNotNull(package, "DeployPushAsync returned a null value.");
+
+            Assert.AreEqual(PackageFamilyName, package.FamilyName, "Created package had the wrong Package Family Name.");
+            Assert.AreEqual(PackageFullName, package.FullName, "Created package had the wrong Package Full Name.");
+            Assert.AreEqual(1, package.ApplicationDefinitions.Count(), "Created package had the wrong number of ApplicationDefinitions");
+            Assert.AreEqual(ApplicationId, package.ApplicationDefinitions.First().ApplicationId, "Created package had the wrong Application Id.");
+
+            package = await this.adapter.DeployPushAsync(ConsoleAddress, string.Empty, true, CancellationToken.None, null, null, null).WithTimeout(TimeSpan.FromSeconds(30));
             Assert.IsNotNull(package, "DeployPushAsync returned a null value.");
 
             Assert.AreEqual(PackageFamilyName, package.FamilyName, "Created package had the wrong Package Family Name.");
@@ -1115,7 +1186,9 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.Tests
             bool expectedRemoveExtraFilesValue = false;
             string expectedDeployPathValue = "ExpectedDeployPathValue";
 
-            this.fakeXboxXdk.DeployPushAsyncFunc = (ipAddress, deployPath, removeExtraFiles, progressMetric, progressError, progressExtraFile) =>
+            CancellationToken expectedCancellationToken = CancellationToken.None;
+
+            this.fakeXboxXdk.DeployPushAsyncFunc = (ipAddress, deployPath, removeExtraFiles, cancellationToken, progressMetric, progressError, progressExtraFile) =>
             {
                 Assert.AreSame(progressMetricObject, progressMetric, "Adapter failed to pass in the same XboxDeploymentMetric object to the Xdk");
                 Assert.AreSame(progressErrorObject, progressError, "Adapter failed to pass in the same XboxDeploymentError object to the Xdk");
@@ -1123,6 +1196,8 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.Tests
 
                 Assert.AreEqual(expectedRemoveExtraFilesValue, removeExtraFiles, "Adapter failed to pass in the correct value for the removeExtraFiles parameter to the Xdk");
                 Assert.AreEqual(expectedDeployPathValue, deployPath, "Adapter failed to pass in the correct value for the deployPath parameter to the Xdk");
+
+                Assert.AreEqual(expectedCancellationToken, cancellationToken, "Adapter failed to pass in the same CancellationToken object to the Xdk");
 
                 return Task.FromResult("{\"Applications\":[\"" + Aumid + "\"],\"Identity\":{\"FullName\":\"" + PackageFullName + "\"}}");
             };
@@ -1144,7 +1219,92 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.Tests
                     progressMetricObject,
                     progressErrorObject,
                     progressExtraFileObject).WithTimeout(TimeSpan.FromSeconds(30));
+
+            expectedRemoveExtraFilesValue = false;
+            expectedCancellationToken = new CancellationToken();
+
+            await this.adapter.DeployPushAsync(
+                    ConsoleAddress,
+                    expectedDeployPathValue,
+                    expectedRemoveExtraFilesValue,
+                    expectedCancellationToken,
+                    progressMetricObject,
+                    progressErrorObject,
+                    progressExtraFileObject).WithTimeout(TimeSpan.FromSeconds(30));
+
+            expectedRemoveExtraFilesValue = true;
+
+            await this.adapter.DeployPushAsync(
+                    ConsoleAddress,
+                    expectedDeployPathValue,
+                    expectedRemoveExtraFilesValue,
+                    expectedCancellationToken,
+                    progressMetricObject,
+                    progressErrorObject,
+                    progressExtraFileObject).WithTimeout(TimeSpan.FromSeconds(30));
         }
+
+        /// <summary>
+        /// Verifies that the DeployPushAsync method turns the correct exceptions into XboxDeployExceptions.
+        /// </summary>
+        /// <returns>Returns a task for the running test.</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2201:DoNotRaiseReservedExceptionTypes", Justification = "Need to simulate XDK")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Need to catch all exception types so that I can verify we capture the correct exception type.")]
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        [TestCategory(AdapterPackageManagementTestCategory)]
+        public async Task TestDeployPushAsyncThrowsCorrectException()
+        {
+            this.fakeXboxXdk.DeployPushAsyncFunc = (ipAddress, deployPath, removeExtraFiles, cancellationToken, progressMetric, progressError, progressExtraFile) =>
+            {
+                throw new COMException();
+            };
+
+            try
+            {
+                XboxPackageDefinition package = await this.adapter.DeployPushAsync(ConsoleAddress, string.Empty, true, null, null, null).WithTimeout(TimeSpan.FromSeconds(30));
+            }
+            catch (Exception ex)
+            {
+                Assert.IsInstanceOfType(ex, typeof(XboxDeployException), "The XboxConsole DeployPushAsync method did not convert a COMException into an XboxDeployException.");
+                Assert.IsInstanceOfType(ex.InnerException, typeof(COMException), "The XboxConsole DeployPushAsync method did not include the COMException as the inner exception of the XboxDeployException that it threw.");
+            }
+
+            try
+            {
+                XboxPackageDefinition package = await this.adapter.DeployPushAsync(ConsoleAddress, string.Empty, true, CancellationToken.None, null, null, null).WithTimeout(TimeSpan.FromSeconds(30));
+            }
+            catch (Exception ex)
+            {
+                Assert.IsInstanceOfType(ex, typeof(XboxDeployException), "The XboxConsole DeployPushAsync method did not convert a COMException into an XboxDeployException.");
+                Assert.IsInstanceOfType(ex.InnerException, typeof(COMException), "The XboxConsole DeployPushAsync method did not include the COMException as the inner exception of the XboxDeployException that it threw.");
+            }
+
+            this.fakeXboxXdk.DeployPushAsyncFunc = (ipAddress, deployPath, removeExtraFiles, cancellationToken, progressMetric, progressError, progressExtraFile) =>
+            {
+                throw new FileLoadException();
+            };
+
+            try
+            {
+                XboxPackageDefinition package = await this.adapter.DeployPushAsync(ConsoleAddress, string.Empty, true, null, null, null).WithTimeout(TimeSpan.FromSeconds(30));
+            }
+            catch (Exception ex)
+            {
+                Assert.IsInstanceOfType(ex, typeof(XboxDeployException), "The XboxConsole DeployPushAsync method did not convert a FileLoadException into an XboxDeployException.");
+                Assert.IsInstanceOfType(ex.InnerException, typeof(FileLoadException), "The XboxConsole DeployPushAsync method did not include the FileLoadException as the inner exception of the XboxDeployException that it threw.");
+            }
+
+            try
+            {
+                XboxPackageDefinition package = await this.adapter.DeployPushAsync(ConsoleAddress, string.Empty, true, CancellationToken.None, null, null, null).WithTimeout(TimeSpan.FromSeconds(30));
+            }
+            catch (Exception ex)
+            {
+                Assert.IsInstanceOfType(ex, typeof(XboxDeployException), "The XboxConsole DeployPushAsync method did not convert a FileLoadException into an XboxDeployException.");
+                Assert.IsInstanceOfType(ex.InnerException, typeof(FileLoadException), "The XboxConsole DeployPushAsync method did not include the FileLoadException as the inner exception of the XboxDeployException that it threw.");
+            }
+        }        
 
         /// <summary>
         /// Verifies that the UninstallPackage(XboxPackageDefinition) method throws an ObjectDisposedException.
@@ -1219,6 +1379,221 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.Tests
         public void TestUninstallPackageThrowsNullArgumentException()
         {
             this.adapter.UninstallPackage(ConsoleAddress, null);
+        }
+
+        /// <summary>
+        /// Verifies that the RegisterPackage method turns COMExceptions into XboxConsoleExceptions.
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2201:DoNotRaiseReservedExceptionTypes", Justification = "Need to simulate XDK")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Need to catch all exception types so that I can verify we capture the correct exception type.")]
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        [TestCategory(AdapterPackageManagementTestCategory)]
+        public void TestRegisterPackageTurnsComExceptionIntoXboxConsoleException()
+        {
+            this.fakeXboxXdk.RegisterPackageFunc = (_, __) =>
+            {
+                throw new COMException();
+            };
+
+            try
+            {
+                this.adapter.RegisterPackage(ConsoleAddress, string.Empty);
+            }
+            catch (Exception ex)
+            {
+                Assert.IsInstanceOfType(ex, typeof(XboxConsoleException), "The XboxConsole RegisterPackage method did not convert a COMException into an XboxConsoleException.");
+                Assert.IsInstanceOfType(ex.InnerException, typeof(COMException), "The XboxConsole RegisterPackage method did not include the COMException as the inner exception of the XboxConsoleException that it threw.");
+            }
+        }
+
+        /// <summary>
+        /// Verifies that the RegisterPackage method throws an ObjectDisposedException.
+        /// </summary>
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        [TestCategory(AdapterPackageManagementTestCategory)]
+        [ExpectedException(typeof(ObjectDisposedException))]
+        public void TestRegisterPackageThrowsObjectDisposedException()
+        {
+            this.adapter.Dispose();
+            this.adapter.RegisterPackage(ConsoleAddress, null);
+        }
+
+        /// <summary>
+        /// Verifies that the RegisterPackage method calls the XDK's RegisterPackage method.
+        /// </summary>
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        [TestCategory(AdapterPackageManagementTestCategory)]
+        public void TestRegisterPackageCallsXdkRegisterPackage()
+        {
+            string expectedPackagePath = "ExpectedPackagePath";
+
+            bool isCorrectMethodCalled = false;
+            this.fakeXboxXdk.RegisterPackageFunc = (ipAddress, packagePath) =>
+            {
+                isCorrectMethodCalled = true;
+                Assert.AreEqual(expectedPackagePath, packagePath, "Package path passed to XDK was different than expected value.");
+                return null;
+            };
+
+            this.adapter.RegisterPackage(ConsoleAddress, expectedPackagePath);
+
+            Assert.IsTrue(isCorrectMethodCalled, "The Adapter did not call the XDK's RegisterPackage method.");
+
+            this.VerifyThrows<ArgumentNullException>(() => this.adapter.RegisterPackage(null, expectedPackagePath));
+        }
+
+        /// <summary>
+        /// Verifies that the RegisterPackage method throws an ArgumentNullException.
+        /// </summary>
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        [TestCategory(AdapterPackageManagementTestCategory)]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void TestRegisterPackageThrowsNullArgumentException()
+        {
+            this.adapter.RegisterPackage(ConsoleAddress, null);
+        }
+
+        /// <summary>
+        /// Verifies that the UnregisterPackage method turns COMExceptions into XboxConsoleExceptions.
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2201:DoNotRaiseReservedExceptionTypes", Justification = "Need to simulate XDK")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Need to catch all exception types so that I can verify we capture the correct exception type.")]
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        [TestCategory(AdapterPackageManagementTestCategory)]
+        public void TestUnregisterPackageTurnsComExceptionIntoXboxConsoleException()
+        {
+            this.fakeXboxXdk.UnregisterPackageAction = (_, __) =>
+            {
+                throw new COMException();
+            };
+
+            try
+            {
+                this.adapter.UnregisterPackage(ConsoleAddress, string.Empty);
+            }
+            catch (Exception ex)
+            {
+                Assert.IsInstanceOfType(ex, typeof(XboxConsoleException), "The XboxConsole UnregisterPackage method did not convert a COMException into an XboxConsoleException.");
+                Assert.IsInstanceOfType(ex.InnerException, typeof(COMException), "The XboxConsole UnregisterPackage method did not include the COMException as the inner exception of the XboxConsoleException that it threw.");
+            }
+        }
+
+        /// <summary>
+        /// Verifies that the UnregisterPackage method throws an ObjectDisposedException.
+        /// </summary>
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        [TestCategory(AdapterPackageManagementTestCategory)]
+        [ExpectedException(typeof(ObjectDisposedException))]
+        public void TestUnregisterPackageThrowsObjectDisposedException()
+        {
+            this.adapter.Dispose();
+            this.adapter.UnregisterPackage(ConsoleAddress, null);
+        }
+
+        /// <summary>
+        /// Verifies that the UnregisterPackage method calls the XDK's UnregisterPackage method.
+        /// </summary>
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        [TestCategory(AdapterPackageManagementTestCategory)]
+        public void TestUnregisterPackageCallsXdkUnregisterPackage()
+        {
+            string expectedPackageFullName = "ExpectedFullName";
+
+            bool isCorrectMethodCalled = false;
+            this.fakeXboxXdk.UnregisterPackageAction = (ipAddress, packageFullName) =>
+            {
+                isCorrectMethodCalled = true;
+                Assert.AreEqual(expectedPackageFullName, packageFullName, "Package full name passed to XDK was different than expected value.");
+            };
+
+            this.adapter.UnregisterPackage(ConsoleAddress, expectedPackageFullName);
+
+            Assert.IsTrue(isCorrectMethodCalled, "The Adapter did not call the XDK's UnregisterPackage method.");
+
+            this.VerifyThrows<ArgumentNullException>(() => this.adapter.UnregisterPackage(null, expectedPackageFullName));
+        }
+
+        /// <summary>
+        /// Verifies that the UnregisterPackage method throws an ArgumentNullException.
+        /// </summary>
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        [TestCategory(AdapterPackageManagementTestCategory)]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void TestUnregisterPackageThrowsNullArgumentException()
+        {
+            this.adapter.UnregisterPackage(ConsoleAddress, null);
+        }
+
+        /// <summary>
+        /// Verifies that the GetAvailableSpaceForAppInstallation method turns COMExceptions into XboxConsoleExceptions.
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2201:DoNotRaiseReservedExceptionTypes", Justification = "Need to simulate XDK")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Need to catch all exception types so that I can verify we capture the correct exception type.")]
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        [TestCategory(AdapterPackageManagementTestCategory)]
+        public void TestGetAvailableSpaceForAppInstallationTurnsComExceptionIntoXboxConsoleException()
+        {
+            this.fakeXboxXdk.GetAvailableSpaceForAppInstallationFunc = (_, __) =>
+            {
+                throw new COMException();
+            };
+
+            try
+            {
+                this.adapter.GetAvailableSpaceForAppInstallation(ConsoleAddress, null);
+            }
+            catch (Exception ex)
+            {
+                Assert.IsInstanceOfType(ex, typeof(XboxConsoleException), "The XboxConsole GetAvailableSpaceForAppInstallation method did not convert a COMException into an XboxConsoleException.");
+                Assert.IsInstanceOfType(ex.InnerException, typeof(COMException), "The XboxConsole GetAvailableSpaceForAppInstallation method did not include the COMException as the inner exception of the XboxConsoleException that it threw.");
+            }
+        }
+
+        /// <summary>
+        /// Verifies that the GetAvailableSpaceForAppInstallation method throws an ObjectDisposedException.
+        /// </summary>
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        [TestCategory(AdapterPackageManagementTestCategory)]
+        [ExpectedException(typeof(ObjectDisposedException))]
+        public void TestGetAvailableSpaceForAppInstallationThrowsObjectDisposedException()
+        {
+            this.adapter.Dispose();
+            this.adapter.GetAvailableSpaceForAppInstallation(ConsoleAddress, null);
+        }
+
+        /// <summary>
+        /// Verifies that the GetAvailableSpaceForAppInstallation method calls the XDK's GetAvailableSpaceForAppInstallation method.
+        /// </summary>
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        [TestCategory(AdapterPackageManagementTestCategory)]
+        public void TestGetAvailableSpaceForAppInstallationCallsXdkGetAvailableSpaceForAppInstallation()
+        {
+            string expectedStorageName = "ExpectedStorageName";
+
+            bool isCorrectMethodCalled = false;
+            this.fakeXboxXdk.GetAvailableSpaceForAppInstallationFunc = (ipAddress, storageName) =>
+            {
+                isCorrectMethodCalled = true;
+                Assert.AreEqual(expectedStorageName, storageName, "Storage name passed to XDK was different than expected value.");
+                return 0;
+            };
+
+            this.adapter.GetAvailableSpaceForAppInstallation(ConsoleAddress, expectedStorageName);
+
+            Assert.IsTrue(isCorrectMethodCalled, "The Adapter did not call the XDK's GetAvailableSpaceForAppInstallation method.");
+
+            this.VerifyThrows<ArgumentNullException>(() => this.adapter.GetAvailableSpaceForAppInstallation(null, expectedStorageName));
         }
 
         private XboxPackageDefinition CreateXboxPackageDefinition()
