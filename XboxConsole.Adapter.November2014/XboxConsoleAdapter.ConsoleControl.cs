@@ -172,7 +172,10 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.November2014
                     try
                     {
                         IEnumerable<XboxProcessDefinition> runningProcesses = this.XboxXdk.GetRunningProcesses(systemIpAddress, XboxOperatingSystem.System);
-                        return runningProcesses.Any(process => process.ImageFileName.IndexOf("Home.exe", StringComparison.OrdinalIgnoreCase) >= 0 || process.ImageFileName.IndexOf("oobe.exe", StringComparison.OrdinalIgnoreCase) >= 0);
+                        return runningProcesses.Any(
+                            process => process.ImageFileName.IndexOf("Home.exe", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                            process.ImageFileName.IndexOf("oobe.exe", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                            process.ImageFileName.IndexOf("wwahost.exe", StringComparison.OrdinalIgnoreCase) >= 0);
                     }
                     catch (COMException)
                     {
@@ -184,7 +187,7 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.November2014
 
             if (!success)
             {
-                throw new TimeoutException("Console failed to become unresponsive during the given timeout period.");
+                throw new TimeoutException("Console failed to reboot during the given timeout period.");
             }
         }
 
