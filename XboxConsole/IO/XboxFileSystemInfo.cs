@@ -13,7 +13,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.IO
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.Internal.GamesTest.Xbox.Telemetry;
 
     /// <summary>
     /// Represents a base Xbox FileSystem object.
@@ -191,8 +190,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.IO
         {
             get
             {
-                XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
                 string fullPath = this.FullName;
 
                 if (fullPath[fullPath.Length - 1] == Path.DirectorySeparatorChar)
@@ -218,8 +215,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.IO
         {
             get
             {
-                XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
                 if (this.definition == null)
                 {
                     lock (this.definitionLock)
@@ -259,8 +254,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.IO
         /// </summary>
         public void Refresh()
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             lock (this.definitionLock)
             {
                 try
@@ -280,8 +273,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.IO
         /// <param name="destinationPath">The path to move to.</param>
         public virtual void MoveTo(string destinationPath)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             this.Copy(destinationPath);
             this.Delete();
         }

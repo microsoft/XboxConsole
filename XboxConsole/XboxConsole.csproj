@@ -89,29 +89,9 @@
     </CodeAnalysisDictionary>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\XboxConsole.Adapter.April2014\XboxConsole.Adapter.April2014.csproj">
-      <Project>{5e7a10c7-20e2-4c7d-91b8-f744207eddcc}</Project>
-      <Name>XboxConsole.Adapter.April2014</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\XboxConsole.Adapter.August2014\XboxConsole.Adapter.August2014.csproj">
-      <Project>{8ef1c23a-85b2-4eff-aa17-19fed06f7bf6}</Project>
-      <Name>XboxConsole.Adapter.August2014</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\XboxConsole.Adapter.July2014\XboxConsole.Adapter.July2014.csproj">
-      <Project>{e842b4d7-58d2-4435-b876-004de9a45fbd}</Project>
-      <Name>XboxConsole.Adapter.July2014</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\XboxConsole.Adapter.May2014\XboxConsole.Adapter.May2014.csproj">
-      <Project>{7c44371f-e7ee-4a48-bdc8-54e69a4f7c0c}</Project>
-      <Name>XboxConsole.Adapter.May2014</Name>
-    </ProjectReference>
     <ProjectReference Include="..\XboxConsole.Adapter.November2014\XboxConsole.Adapter.November2014.csproj">
       <Project>{14889cb2-40c7-4f4f-a200-0a432d773a44}</Project>
       <Name>XboxConsole.Adapter.November2014</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\XboxConsole.Adapter.October2014\XboxConsole.Adapter.October2014.csproj">
-      <Project>{d97088c5-4bfb-4dfb-adde-4624d52fe670}</Project>
-      <Name>XboxConsole.Adapter.October2014</Name>
     </ProjectReference>
     <ProjectReference Include="..\XboxConsole.Infrastructure\XboxConsole.Infrastructure.csproj">
       <Project>{e0785338-9f71-4d35-95a8-6388bc7f5518}</Project>

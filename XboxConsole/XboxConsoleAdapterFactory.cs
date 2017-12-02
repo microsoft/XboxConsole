@@ -21,11 +21,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
     internal static class XboxConsoleAdapterFactory
     {
         private const int November2014XdkBuild = 11785;
-        private const int October2014XdkBuild = 11653;
-        private const int August2014XdkBuild = 11396;
-        private const int July2014XdkBuild = 11274;
-        private const int May2014XdkBuild = 10951;
-        private const int April2014XdkBuild = 10812;
 
         private static FileVersionInfo currentXdkVersion = null;
 
@@ -33,11 +28,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         // The adapters must be listed in the latest-to-oldest order. Please add new adapters at the beginning of the list.
         private static Tuple<int, Func<XboxConsoleAdapterBase>>[] adapterLookup = 
         {
-            new Tuple<int, Func<XboxConsoleAdapterBase>>(April2014XdkBuild, () => new Adapter.April2014.XboxConsoleAdapter()),
-            new Tuple<int, Func<XboxConsoleAdapterBase>>(May2014XdkBuild, () => new Adapter.May2014.XboxConsoleAdapter()),
-            new Tuple<int, Func<XboxConsoleAdapterBase>>(July2014XdkBuild, () => new Adapter.July2014.XboxConsoleAdapter()),
-            new Tuple<int, Func<XboxConsoleAdapterBase>>(August2014XdkBuild, () => new Adapter.August2014.XboxConsoleAdapter()),
-            new Tuple<int, Func<XboxConsoleAdapterBase>>(October2014XdkBuild, () => new Adapter.October2014.XboxConsoleAdapter()),
             new Tuple<int, Func<XboxConsoleAdapterBase>>(November2014XdkBuild, () => new Adapter.November2014.XboxConsoleAdapter()),
         };
 
@@ -46,11 +36,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// </summary>
         private static Dictionary<string, int> adapterBranchBases = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase) 
             {
-                { "xb_rel_1404", April2014XdkBuild },
-                { "xb_rel_1405", May2014XdkBuild },
-                { "xb_rel_1407", July2014XdkBuild },
-                { "xb_rel_1408", August2014XdkBuild },
-                { "xb_rel_1410", October2014XdkBuild },
                 { "xb_rel_1411", November2014XdkBuild }
             };
 
@@ -63,21 +48,20 @@ namespace Microsoft.Internal.GamesTest.Xbox
             {
                 if (currentXdkVersion == null)
                 {
-                    string xdkdir = Environment.GetEnvironmentVariable("DurangoXDK");
-
-                    if (xdkdir == null)
+                    string xdkDirectory = XboxXdkBase.GetXdkLocation();
+                    if (string.IsNullOrWhiteSpace(xdkDirectory))
                     {
-                        throw new XdkNotFoundException("The environment variable for XDK location is not found. Please make sure the XDK is installed.");
+                        throw new XdkNotFoundException("The registry key or the environment variable for XDK location is not found. Please make sure the XDK is installed.");
                     }
 
-                    string filePath = Directory.EnumerateFiles(Path.Combine(xdkdir, @"bin"), "xb*", SearchOption.TopDirectoryOnly).FirstOrDefault();
+                    string filePath = Directory.EnumerateFiles(Path.Combine(xdkDirectory, @"bin"), "xb*", SearchOption.TopDirectoryOnly).FirstOrDefault();
 
                     if (filePath == null)
                     {
                         throw new XboxConsoleException("Unable to find 'xb*' file to verify version of XDK installed");
                     }
 
-                    currentXdkVersion = FileVersionInfo.GetVersionInfo(filePath);                    
+                    currentXdkVersion = FileVersionInfo.GetVersionInfo(filePath);
                 }
 
                 return currentXdkVersion;
@@ -96,8 +80,8 @@ namespace Microsoft.Internal.GamesTest.Xbox
             // format: <version> (<branchName>.<timestamp>)
             // version: (standard) w.x.y.z
             // branchName example: xb_rel_1304
-            // timestamp: yymmdd-hhmm
-            Regex regex = new Regex(@"\d+\.\d+\.\d+\.\d+ \((?<branch>.+)\.\d{6}-\d{4}\)", RegexOptions.IgnoreCase);
+            // timestamp: yymmdd-hhmm or yymmdd.hhmm
+            Regex regex = new Regex(@"\d+\.\d+\.\d+\.\d+ \((?<branch>.+)\.\d{6}[-.]\d{4}\)", RegexOptions.IgnoreCase);
             Match match = regex.Match(fileVersionInfo.FileVersion);
             if (match.Success)
             {

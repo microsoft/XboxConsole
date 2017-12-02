@@ -189,6 +189,19 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// <returns>The contents of a directory on an Xbox.</returns>
         public IEnumerable<XboxFileSystemInfoDefinition> GetDirectoryContents(string systemIpAddress, XboxPath xboxDirectory)
         {
+            return this.GetDirectoryContents(systemIpAddress, xboxDirectory, "*", false);
+        }
+
+        /// <summary>
+        /// Retrieves the contents of a directory on an Xbox.
+        /// </summary>
+        /// <param name="systemIpAddress">The "System Ip" address of the Xbox kit.</param>
+        /// <param name="xboxDirectory">The complete path to the directory.</param>
+        /// <param name="searchPattern">Search pattern for files in the directory.</param>
+        /// <param name="recursive">True if search should check recursively through child folders.</param>
+        /// <returns>The contents of a directory on an Xbox.</returns>
+        public IEnumerable<XboxFileSystemInfoDefinition> GetDirectoryContents(string systemIpAddress, XboxPath xboxDirectory, string searchPattern, bool recursive)
+        {
             this.ThrowIfDisposed();
             this.ThrowIfInvalidSystemIpAddress(systemIpAddress);
 
@@ -197,9 +210,11 @@ namespace Microsoft.Internal.GamesTest.Xbox
                 throw new ArgumentNullException("xboxDirectory");
             }
 
+            int recursionLevel = recursive ? int.MaxValue : 0;
+
             return this.PerformXdkFunc(
                 systemIpAddress,
-                () => this.GetDirectoryContentsImpl(systemIpAddress, xboxDirectory),
+                () => this.GetDirectoryContentsImpl(systemIpAddress, xboxDirectory, searchPattern, recursionLevel),
                 string.Format(CultureInfo.InvariantCulture, "Failed to retrieve contents of directory '{0}'", xboxDirectory.FullName));
         }
 
@@ -333,8 +348,10 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// </summary>
         /// <param name="systemIpAddress">The "System Ip" address of the Xbox kit.</param>
         /// <param name="xboxDirectory">The complete path to the directory.</param>
+        /// <param name="searchPattern">Search pattern for files in the directory.</param>
+        /// <param name="recursionLevels">Number of levels of directory structure to recurse through while getting contents.</param>
         /// <returns>The contents of a directory on an Xbox.</returns>
-        protected virtual IEnumerable<XboxFileSystemInfoDefinition> GetDirectoryContentsImpl(string systemIpAddress, XboxPath xboxDirectory)
+        protected virtual IEnumerable<XboxFileSystemInfoDefinition> GetDirectoryContentsImpl(string systemIpAddress, XboxPath xboxDirectory, string searchPattern, int recursionLevels)
         {
             throw new XboxConsoleFeatureNotSupportedException(NotSupportedMessage);
         }

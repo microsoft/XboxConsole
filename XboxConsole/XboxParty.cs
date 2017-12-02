@@ -10,7 +10,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
     using System.Collections.Generic;
     using System.Linq;
     using Microsoft.Internal.GamesTest.Xbox.Input;
-    using Microsoft.Internal.GamesTest.Xbox.Telemetry;
 
     /// <summary>
     /// Represents a party started by a local user.
@@ -26,8 +25,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         internal XboxParty(XboxConsole console, uint titleId)
             : base(console)
         {
-            XboxConsoleEventSource.Logger.ObjectCreated(XboxConsoleEventSource.GetCurrentConstructor());
-
             this.TitleId = titleId;
         }
 
@@ -47,8 +44,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         {
             get
             {
-                XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
                 return Console.Adapter.GetPartyId(Console.SystemIpAddressAndSessionKeyCombined, this.TitleId);
             }
         }
@@ -60,8 +55,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         {
             get
             {
-                XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
                 string[] members = this.Console.Adapter.GetPartyMembers(this.Console.ConnectionString, this.TitleId);
 
                 XboxUser[] localUsers = this.Console.Users.ToArray();
@@ -95,8 +88,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// <returns>The party object which can be passed into other functions or for getting party members.</returns>
         public static XboxParty FromTitleId(XboxConsole console, uint titleId)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             return new XboxParty(console, titleId);
         }
     }

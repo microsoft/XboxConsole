@@ -25,7 +25,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
     using Microsoft.Internal.GamesTest.Xbox.Deployment;
     using Microsoft.Internal.GamesTest.Xbox.Input;
     using Microsoft.Internal.GamesTest.Xbox.IO;
-    using Microsoft.Internal.GamesTest.Xbox.Telemetry;
 
     /// <summary>
     /// Represents a Durango console.
@@ -38,51 +37,10 @@ namespace Microsoft.Internal.GamesTest.Xbox
         private static readonly string[] EmptyStringIfNullConfigurationKeys = { "SessionKey", "HttpProxyHost", "DefaultUser" };
 
         /// <summary>
-        /// Initializes static members of the XboxConsole class.
-        /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline", Justification = "Since this static constructor is doing more than initializing static fields, but is actually effecting global state, this rule is appropriate to suppress.")]
-        static XboxConsole()
-        {
-            TelemetrySink.StartTelemetry();
-            AppDomain.CurrentDomain.ProcessExit += (sender, args) =>
-            {
-                TelemetrySink.StopTelemetry();
-            };
-
-            try
-            {
-                var assemblyVersion = "0.0.0.0";
-
-                var assemblyLocation = typeof(XboxConsole).Assembly.Location;
-                if (!string.IsNullOrWhiteSpace(assemblyLocation))
-                {
-                    var assemblyVersionInfo = FileVersionInfo.GetVersionInfo(assemblyLocation);
-                    if (assemblyVersionInfo != null)
-                    {
-                        assemblyVersion = assemblyVersionInfo.FileVersion;
-                    }
-                }
-
-                XboxConsoleEventSource.Logger.ModuleLoaded(
-                    Process.GetCurrentProcess().ProcessName,
-                    WindowsIdentity.GetCurrent().Name,
-                    Dns.GetHostEntry("localhost").HostName,
-                    assemblyVersion);
-            }
-            catch
-            {
-                // This try-catch block is for logging telemetry. As such, we don't want any exceptions to affect customers.
-                // We are catching any exception and tossing it.
-            }
-        }
-
-        /// <summary>
         /// Initializes a new instance of the XboxConsole class with default console address.
         /// </summary>
         public XboxConsole()
         {
-            XboxConsoleEventSource.Logger.ObjectCreated(XboxConsoleEventSource.GetCurrentConstructor());
-
             string defaultConsole = DefaultConsole;
             if (defaultConsole == null)
             {
@@ -107,8 +65,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// <param name="systemIpAddress">The IP address of the Xbox kit.</param>
         public XboxConsole(IPAddress systemIpAddress)
         {
-            XboxConsoleEventSource.Logger.ObjectCreated(XboxConsoleEventSource.GetCurrentConstructor());
-
             if (systemIpAddress == null)
             {
                 throw new ArgumentNullException("systemIpAddress");
@@ -130,8 +86,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// </param>
         public XboxConsole(IPAddress systemIpAddress, string sessionKey)
         {
-            XboxConsoleEventSource.Logger.ObjectCreated(XboxConsoleEventSource.GetCurrentConstructor());
-
             if (systemIpAddress == null)
             {
                 throw new ArgumentNullException("systemIpAddress");
@@ -153,8 +107,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// </param>
         public XboxConsole(string connectionString)
         {
-            XboxConsoleEventSource.Logger.ObjectCreated(XboxConsoleEventSource.GetCurrentConstructor());
-
             if (connectionString == null)
             {
                 throw new ArgumentNullException("connectionString");
@@ -183,8 +135,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         {
             get
             {
-                XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
                 using (var adapter = XboxConsoleAdapterFactory.CreateAdapterForInstalledXdk())
                 {
                     return adapter.DefaultConsole;
@@ -193,8 +143,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
 
             set
             {
-                XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
                 if (string.IsNullOrWhiteSpace(value))
                 {
                     throw new ArgumentNullException("value");
@@ -265,8 +213,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         {
             get
             {
-                XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
                 this.ThrowIfDisposed();
 
                 return this.SessionKeyString;
@@ -294,8 +240,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         {
             get
             {
-                XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
                 this.ThrowIfDisposed();
 
                 return new ReadOnlyXboxConfiguration(settingKey => 
@@ -321,8 +265,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         {
             get
             {
-                XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
                 this.ThrowIfDisposed();
 
                 return this.Adapter.GetConsoleInfo(this.SystemIpAddressAndSessionKeyCombined).ConsoleId;
@@ -336,8 +278,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         {
             get
             {
-                XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
                 this.ThrowIfDisposed();
 
                 return this.Adapter.GetConsoleInfo(this.SystemIpAddressAndSessionKeyCombined).DeviceId;
@@ -351,8 +291,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         {
             get
             {
-                XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
                 this.ThrowIfDisposed();
 
                 return this.Adapter.GetConsoleInfo(this.SystemIpAddressAndSessionKeyCombined).HostName;
@@ -366,8 +304,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         {
             get
             {
-                XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
                 this.ThrowIfDisposed();
 
                 return this.Adapter.GetConsoleInfo(this.SystemIpAddressAndSessionKeyCombined).CertType;
@@ -381,8 +317,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         {
             get
             {
-                XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
                 this.ThrowIfDisposed();
 
                 IEnumerable<XboxPackageDefinition> packageDefinitions = this.Adapter.GetInstalledPackages(this.SystemIpAddressAndSessionKeyCombined);
@@ -403,8 +337,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         {
             get
             {
-                XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
                 this.ThrowIfDisposed();
 
                 var users = this.Adapter.GetUsers(this.SystemIpAddressAndSessionKeyCombined);
@@ -468,8 +400,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// <returns>The enumeration of XboxProcessInfo instances.</returns>
         public IEnumerable<XboxProcess> GetRunningProcesses(XboxOperatingSystem operatingSystem)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             this.ThrowIfDisposed();
 
             return this.Adapter.GetRunningProcesses(this.SystemIpAddressAndSessionKeyCombined, operatingSystem).Select(definition => new XboxProcess(definition, this));
@@ -481,8 +411,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// </summary>
         public void Reboot()
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             this.ThrowIfDisposed();
 
             this.Reboot(Timeout.InfiniteTimeSpan);
@@ -494,8 +422,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// <exception cref="System.TimeoutException">Thrown if the reboot operation does not complete within the given timeout period.</exception>
         public void Reboot(TimeSpan timeout)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             this.ThrowIfDisposed();
 
             this.Adapter.Reboot(this.SystemIpAddressAndSessionKeyCombined, timeout);
@@ -508,8 +434,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// <param name="configurationToApply">The configuration to apply to the console before it reboots.</param>
         public void Reboot(XboxConfiguration configurationToApply)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             this.ThrowIfDisposed();
 
             this.Reboot(configurationToApply, Timeout.InfiniteTimeSpan);
@@ -524,8 +448,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// <exception cref="System.TimeoutException">Thrown if the reboot operation does not complete within the given timeout period.</exception>
         public void Reboot(XboxConfiguration configurationToApply, TimeSpan timeout)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             this.ThrowIfDisposed();
 
             var originalIp = this.SystemIpAddressAndSessionKeyCombined;
@@ -539,8 +461,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// </summary>
         public void Shutdown()
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             this.ThrowIfDisposed();
 
             this.Shutdown(Timeout.InfiniteTimeSpan);
@@ -553,8 +473,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// <exception cref="System.TimeoutException">Thrown if the shutdown operation does not complete within the given timeout period.</exception>
         public void Shutdown(TimeSpan timeout)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             this.ThrowIfDisposed();
 
             this.Adapter.Shutdown(this.SystemIpAddressAndSessionKeyCombined, timeout);
@@ -570,8 +488,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// </remarks>
         public XboxGamepad CreateXboxGamepad()
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             this.ThrowIfDisposed();
 
             var gamepad = new XboxGamepad(this);
@@ -585,8 +501,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// </summary>
         public void DisconnectAllGamepads()
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             this.ThrowIfDisposed();
 
             this.Adapter.DisconnectAllXboxGamepads(this.SystemIpAddressAndSessionKeyCombined);
@@ -631,8 +545,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// <returns>The task object representing the asynchronous operation whose result is the deployed package.</returns>
         public async Task<XboxPackage> DeployPushAsync(string deployFilePath, bool removeExtraFiles, IProgress<XboxDeploymentMetric> progressMetric, IProgress<XboxDeploymentError> progressError, IProgress<XboxDeploymentExtraFile> progressExtraFile)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             this.ThrowIfDisposed();
 
             if (!Directory.Exists(deployFilePath))
@@ -661,8 +573,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// <returns>The task object representing the asynchronous operation whose result is the deployed package.</returns>
         public async Task<XboxPackage> DeployPushAsync(string deployFilePath, bool removeExtraFiles, CancellationToken cancellationToken, IProgress<XboxDeploymentMetric> progressMetric, IProgress<XboxDeploymentError> progressError, IProgress<XboxDeploymentExtraFile> progressExtraFile)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             this.ThrowIfDisposed();
 
             if (!Directory.Exists(deployFilePath))
@@ -686,8 +596,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// <returns>An XboxPackage object that allows you to manipulate the package.</returns>
         public XboxPackage RegisterPackage(XboxPath scratchPath)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             this.ThrowIfDisposed();
 
             if (scratchPath == null)
@@ -706,8 +614,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate", Justification = "A method is appropriate because the Xbox has to be queried every time.")]
         public ulong GetAvailableSpaceForAppInstallation()
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             this.ThrowIfDisposed();
 
             return this.Adapter.GetAvailableSpaceForAppInstallation(this.SystemIpAddressAndSessionKeyCombined, null);
@@ -719,8 +625,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// <returns>A BitmapSource containing the uncompressed frame buffer captured off the current console.</returns>
         public BitmapSource CaptureScreenshot()
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             this.ThrowIfDisposed();
 
             IntPtr pointerToHBitmap = this.Adapter.CaptureScreenshot(this.SystemIpAddressAndSessionKeyCombined);
@@ -751,8 +655,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// <param name="captureSeconds">How many seconds to capture backward from current time (between 6 and 300).</param>
         public void CaptureRecordedGameClip(string outputPath, uint captureSeconds)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             this.ThrowIfDisposed();
 
             if (string.IsNullOrEmpty(outputPath))
@@ -770,8 +672,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// <returns>An XboxUser representing the added user.</returns>
         public XboxUser AddUser(string emailAddress)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             this.ThrowIfDisposed();
 
             var user = this.Adapter.AddUser(this.SystemIpAddressAndSessionKeyCombined, emailAddress);
@@ -790,8 +690,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// <returns>The user id of the added guest user.</returns>
         public uint AddGuestUser()
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             this.ThrowIfDisposed();
 
             return this.Adapter.AddGuestUser(this.SystemIpAddressAndSessionKeyCombined);
@@ -803,8 +701,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// <param name="user">The user to delete.</param>
         public void DeleteUser(XboxUser user)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             this.ThrowIfDisposed();
 
             if (user == null)
@@ -820,8 +716,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// </summary>
         public void DeleteAllUsers()
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             this.ThrowIfDisposed();
 
             this.Adapter.DeleteAllUsers(this.SystemIpAddressAndSessionKeyCombined);

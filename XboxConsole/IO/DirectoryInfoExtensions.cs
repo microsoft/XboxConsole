@@ -9,7 +9,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.IO
     using System;
     using System.IO;
     using System.Linq;
-    using Microsoft.Internal.GamesTest.Xbox.Telemetry;
 
     /// <summary>
     /// Represents extension methods for the DirectoryInfo type.
@@ -25,8 +24,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.IO
         /// <returns>An XboxDirectoryInfo object pointing to the newly copied directory.</returns>
         public static XboxDirectoryInfo CopyTo(this DirectoryInfo directoryInfo, XboxPath xboxPath, XboxConsole console)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             return CopyTo(directoryInfo, xboxPath, console, null);
         }
 
@@ -40,8 +37,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.IO
         /// <returns>An XboxDirectoryInfo object pointing to the newly copied directory.</returns>
         public static XboxDirectoryInfo CopyTo(this DirectoryInfo directoryInfo, XboxPath xboxPath, XboxConsole console, IProgress<XboxFileTransferMetric> metrics)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             if (directoryInfo == null)
             {
                 throw new ArgumentNullException("directoryInfo");

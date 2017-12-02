@@ -9,7 +9,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
     using System;
     using System.Linq;
     using Microsoft.Internal.GamesTest.Xbox.Input;
-    using Microsoft.Internal.GamesTest.Xbox.Telemetry;
 
     /// <summary>
     /// The base class of virtual users.

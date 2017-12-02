@@ -8,7 +8,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.IO
 {
     using System;
     using System.IO;
-    using Microsoft.Internal.GamesTest.Xbox.Telemetry;
 
     /// <summary>
     /// Performs file input/output operations on an Xbox console.
@@ -24,8 +23,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.IO
         /// <exception cref="Microsoft.Internal.GamesTest.Xbox.XboxConsoleFeatureNotSupportedException">Thrown if the destination file is not a path with an Xbox origin.</exception>
         public static void Copy(string sourceFile, XboxPath destinationFile, XboxConsole console)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             Copy(sourceFile, destinationFile, console, null);
         }
 
@@ -39,8 +36,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.IO
         /// <exception cref="Microsoft.Internal.GamesTest.Xbox.XboxConsoleFeatureNotSupportedException">Thrown if the destination file is not a path with an Xbox origin.</exception>
         public static void Copy(string sourceFile, XboxPath destinationFile, XboxConsole console, IProgress<XboxFileTransferMetric> metrics)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             if (destinationFile == null)
             {
                 throw new ArgumentNullException("destinationFile");
@@ -65,8 +60,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.IO
         /// <exception cref="Microsoft.Internal.GamesTest.Xbox.XboxConsoleFeatureNotSupportedException">Thrown if the source file is not a path with an Xbox origin.</exception>
         public static void Copy(XboxPath sourceFile, string destinationFile, XboxConsole console)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             Copy(sourceFile, destinationFile, console, null);
         }
 
@@ -80,8 +73,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.IO
         /// <exception cref="Microsoft.Internal.GamesTest.Xbox.XboxConsoleFeatureNotSupportedException">Thrown if the source file is not a path with an Xbox origin.</exception>
         public static void Copy(XboxPath sourceFile, string destinationFile, XboxConsole console, IProgress<XboxFileTransferMetric> metrics)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             if (sourceFile == null)
             {
                 throw new ArgumentNullException("sourceFile");
@@ -104,8 +95,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.IO
         /// <param name="console">The Xbox that contains the file to delete.</param>
         public static void Delete(XboxPath file, XboxConsole console)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             new XboxFileInfo(file, console).Delete();
         }
 
@@ -117,8 +106,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.IO
         /// <returns>A value indicating whether the file exists on the console or not.</returns>
         public static bool Exists(XboxPath file, XboxConsole console)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             if (console == null)
             {
                 throw new ArgumentNullException("console");
@@ -135,8 +122,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.IO
         /// <param name="console">The console to move the file to.</param>
         public static void Move(string sourceFile, XboxPath destinationFile, XboxConsole console)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             Copy(sourceFile, destinationFile, console);
             new FileInfo(sourceFile).Delete();
         }
@@ -149,8 +134,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.IO
         /// <param name="console">The console to move the file from.</param>
         public static void Move(XboxPath sourceFile, string destinationFile, XboxConsole console)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             Copy(sourceFile, destinationFile, console);
             new XboxFileInfo(sourceFile, console).Delete();
         }

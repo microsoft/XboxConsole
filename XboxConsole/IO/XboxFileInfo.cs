@@ -8,7 +8,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.IO
 {
     using System;
     using System.IO;
-    using Microsoft.Internal.GamesTest.Xbox.Telemetry;
 
     /// <summary>
     /// Represents an Xbox file.
@@ -24,7 +23,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.IO
         public XboxFileInfo(string path, XboxOperatingSystem operatingSystem, XboxConsole console)
             : base(path, operatingSystem, console)
         {
-            XboxConsoleEventSource.Logger.ObjectCreated(XboxConsoleEventSource.GetCurrentConstructor());
         }
 
         /// <summary>
@@ -35,7 +33,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.IO
         public XboxFileInfo(XboxPath xboxPath, XboxConsole console)            
             : base(xboxPath, console)
         {
-            XboxConsoleEventSource.Logger.ObjectCreated(XboxConsoleEventSource.GetCurrentConstructor());
         }
 
         /// <summary>
@@ -60,8 +57,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.IO
         {
             get
             {
-                XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
                 string directoryName = this.DirectoryName;
 
                 if (directoryName == null)
@@ -105,8 +100,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.IO
         {
             get
             {
-                XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
                 return ExistsImpl(this.Console.SystemIpAddressAndSessionKeyCombined, this.XboxPath, this.Console.Adapter);
             }
         }
@@ -116,8 +109,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.IO
         /// </summary>
         public override void Delete()
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             if (this.Exists)
             {
                 this.Console.Adapter.DeleteFile(this.Console.SystemIpAddressAndSessionKeyCombined, this.XboxPath);
@@ -132,8 +123,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.IO
         /// <param name="localPath">The path on the local machine to copy to.</param>
         public override void Copy(string localPath)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             this.Copy(localPath, null);
         }
 
@@ -144,8 +133,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.IO
         /// <param name="metrics">The progress handler that the calling app uses to receive progress updates about metrics. This may be null.</param>
         public void Copy(string localPath, IProgress<XboxFileTransferMetric> metrics)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             this.Console.Adapter.ReceiveFile(this.Console.SystemIpAddressAndSessionKeyCombined, this.XboxPath, localPath, metrics);
         }
 

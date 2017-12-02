@@ -164,18 +164,7 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.November2014
                 throw new ArgumentNullException("directoryToDelete");
             }
 
-            if (recursive)
-            {
-                // For some reason, recursive directory deleting is completely broken in the January XDK.
-                // If you try to use the recursive deleting functionality exposed by the XDK to delete an empty directory
-                // then it will throw a "FileNotFoundException" even if the directory exists.  
-                // Therefore, we have to do the recursive delete ourselves.
-                this.DeleteDirectoryRecursive(systemIpAddress, directoryToDelete);
-            }
-            else
-            {
-                this.XboxXdk.RemoveDirectory(systemIpAddress, directoryToDelete.FullName, directoryToDelete.OperatingSystem, recursive);
-            }
+            this.XboxXdk.RemoveDirectory(systemIpAddress, directoryToDelete.FullName, directoryToDelete.OperatingSystem, recursive);
         }
 
         /// <summary>
@@ -240,59 +229,20 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.November2014
         /// </summary>
         /// <param name="systemIpAddress">The "System Ip" address of the Xbox kit.</param>
         /// <param name="xboxDirectory">The complete path to the directory.</param>
+        /// <param name="searchPattern">Search pattern for files in the directory.</param>
+        /// <param name="recursionLevels">Number of levels of directory structure to recurse through while getting contents.</param>
         /// <returns>
         /// The contents of a directory on an Xbox.
         /// </returns>
-        protected override IEnumerable<XboxFileSystemInfoDefinition> GetDirectoryContentsImpl(string systemIpAddress, XboxPath xboxDirectory)
+        protected override IEnumerable<XboxFileSystemInfoDefinition> GetDirectoryContentsImpl(string systemIpAddress, XboxPath xboxDirectory, string searchPattern, int recursionLevels)
         {
             if (xboxDirectory == null)
             {
                 throw new ArgumentNullException("xboxDirectory");
             }
 
-            string searchPattern = Path.Combine(xboxDirectory.FullName, "*");
-            return this.XboxXdk.FindFiles(systemIpAddress, searchPattern, xboxDirectory.OperatingSystem, 0);
-        }
-
-        /// <summary>
-        /// Recursively delete the given directory and all of its subdirectories.  Note all directories must already be empty.
-        /// </summary>
-        /// <param name="systemIpAddress">The "System Ip" address of the Xbox kit.</param>
-        /// <param name="directoryToDelete">The directory to delete.</param>
-        protected void DeleteDirectoryRecursive(string systemIpAddress, XboxPath directoryToDelete)
-        {
-            if (directoryToDelete == null)
-            {
-                throw new ArgumentNullException("directoryToDelete");
-            }
-
-            // The January XDK is kind of crazy.  If you try to enumerate a directory that
-            // exists, but is empty, then you will get a FileNotFoundException.  If that happens
-            // then we can just ignore it and try to delete the directory anyway.
-            IEnumerable<XboxFileSystemInfoDefinition> directoryContents = null;
-            try
-            {
-                directoryContents = this.GetDirectoryContents(systemIpAddress, directoryToDelete);
-            }
-            catch (FileNotFoundException)
-            {
-            }
-
-            if (directoryContents != null)
-            {
-                if (directoryContents.Any(f => !f.IsDirectory))
-                {
-                    string searchPattern = Path.Combine(directoryToDelete.FullName, "*");
-                    this.XboxXdk.DeleteFiles(systemIpAddress, searchPattern, directoryToDelete.OperatingSystem, 0);
-                }
-
-                foreach (XboxFileSystemInfoDefinition subdirectory in directoryContents.Where(f => f.IsDirectory))
-                {
-                    this.DeleteDirectoryRecursive(systemIpAddress, subdirectory.Path);
-                }
-            }
-
-            this.XboxXdk.RemoveDirectory(systemIpAddress, directoryToDelete.FullName, directoryToDelete.OperatingSystem, false);
+            string pattern = Path.Combine(xboxDirectory.FullName, searchPattern);
+            return this.XboxXdk.FindFiles(systemIpAddress, pattern, xboxDirectory.OperatingSystem, recursionLevels);
         }
 
         /// <summary>
@@ -338,7 +288,7 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.November2014
 
                 foreach (XboxFileSystemInfoDefinition subdirectory in contents.Where(f => f.IsDirectory))
                 {
-                    string directoryName = Path.Combine(destinationDirectory, Path.GetFileNameWithoutExtension(subdirectory.Path.FullName));
+                    string directoryName = Path.Combine(destinationDirectory, Path.GetFileName(subdirectory.Path.FullName));
                     this.ReceiveDirectoryRecursive(systemIpAddress, subdirectory.Path, directoryName, totalSizeOfFolder, newMetrics);
 
                     totalTransferred += tempTransferred;

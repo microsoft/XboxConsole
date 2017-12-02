@@ -9,7 +9,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
     using System;
     using System.Linq;
     using Microsoft.Internal.GamesTest.Xbox.Input;
-    using Microsoft.Internal.GamesTest.Xbox.Telemetry;
 
     /// <summary>
     /// Represents a party started on another console to which an invitation can be accepted or declined.
@@ -29,8 +28,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         internal XboxRemoteParty(XboxConsole console, string initPartyId)
             : base(console)
         {
-            XboxConsoleEventSource.Logger.ObjectCreated(XboxConsoleEventSource.GetCurrentConstructor());
-
             this.partyId = initPartyId;
         }
 
@@ -53,8 +50,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// <returns>The remote party object which can be passed into other functions.</returns>
         public static XboxRemoteParty FromPartyId(XboxConsole console, string partyId)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             return new XboxRemoteParty(console, partyId);
         }
     }

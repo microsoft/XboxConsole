@@ -12,7 +12,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.Internal.GamesTest.Xbox.Telemetry;
 
     /// <summary>
     /// Describes an application installed on an Xbox console.
@@ -80,8 +79,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// </summary>
         public void Launch()
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             this.Console.Adapter.LaunchApplication(this.Console.SystemIpAddressAndSessionKeyCombined, this.Definition);
         }
 
@@ -91,8 +88,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// <param name="arguments">Command-line arguments to launch with.</param>
         public void Launch(string arguments)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             this.Console.Adapter.LaunchApplication(this.Console.SystemIpAddressAndSessionKeyCombined, this.Definition, arguments);
         }
 
@@ -102,8 +97,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// <exception cref="XboxSnapException">Thrown when the application was unable to be snapped.</exception>
         public void Snap()
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             this.Console.Adapter.SnapApplication(this.Console.SystemIpAddressAndSessionKeyCombined, this.Definition);
         }
     }

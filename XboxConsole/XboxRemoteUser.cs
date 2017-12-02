@@ -8,7 +8,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
 {
     using System;
     using Microsoft.Internal.GamesTest.Xbox.Input;
-    using Microsoft.Internal.GamesTest.Xbox.Telemetry;
 
     /// <summary>
     /// A virtual user object referring to a user on another console.
@@ -28,8 +27,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         internal XboxRemoteUser(XboxConsole console, string xuid)
             : base(console)
         {
-            XboxConsoleEventSource.Logger.ObjectCreated(XboxConsoleEventSource.GetCurrentConstructor());
-
             this.userXuid = xuid;
         }
 
@@ -52,8 +49,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// <returns>A new instance of XboxRemoteUser.</returns>
         public static XboxRemoteUser FromXuid(XboxConsole console, string xuid)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             return new XboxRemoteUser(console, xuid);
         }
     }

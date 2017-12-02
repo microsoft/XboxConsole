@@ -39,23 +39,6 @@
     <DocumentationFile>bin\x64\Release\GamesTest.XboxConsole.Infrastructure.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Practices.EnterpriseLibrary.SemanticLogging, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\EnterpriseLibrary.SemanticLogging.2.0.1406.1\lib\net45\Microsoft.Practices.EnterpriseLibrary.SemanticLogging.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Practices.EnterpriseLibrary.SemanticLogging.Database, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\EnterpriseLibrary.SemanticLogging.Database.2.0.1406.1\lib\net45\Microsoft.Practices.EnterpriseLibrary.SemanticLogging.Database.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling">
-      <HintPath>..\packages\EnterpriseLibrary.TransientFaultHandling.6.0.1304.0\lib\portable-net45+win+wp8\Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling.Data">
-      <HintPath>..\packages\EnterpriseLibrary.TransientFaultHandling.Data.6.0.1304.1\lib\NET45\Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling.Data.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.5.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="sysglobl" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -100,7 +83,6 @@
     <Compile Include="Configuration\IdleShutdownTimeoutType.cs" />
     <Compile Include="Configuration\PowerModeType.cs" />
     <Compile Include="Configuration\XboxDimTimeoutConfigurationSetting.cs" />
-    <Compile Include="Configuration\XboxHttpProxyHostConfigurationSetting.cs" />
     <Compile Include="Configuration\XboxHostNameConfigurationSetting.cs" />
     <Compile Include="Configuration\XboxNonEmptyStringConfigurationSetting.cs" />
     <Compile Include="Configuration\IXboxConfiguration.cs" />
@@ -137,8 +119,6 @@
     <Compile Include="Deployment\XboxDeploymentExtraFile.cs" />
     <Compile Include="IO\XboxFileTransferMetric.cs" />
     <Compile Include="Tasks\TaskExtensions.cs" />
-    <Compile Include="Telemetry\TelemetrySink.cs" />
-    <Compile Include="Telemetry\XboxConsoleEventSource.cs" />
     <Compile Include="XboxApplicationDefinition.cs" />
     <Compile Include="XboxCertTypes.cs" />
     <Compile Include="XboxConsoleInfo.cs" />
@@ -167,9 +147,6 @@
     </CodeAnalysisDictionary>
   </ItemGroup>
   <ItemGroup />
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

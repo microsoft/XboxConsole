@@ -11,7 +11,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.IO
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Linq;
-    using Microsoft.Internal.GamesTest.Xbox.Telemetry;
 
     /// <summary>
     /// Represents an Xbox directory.
@@ -27,7 +26,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.IO
         public XboxDirectoryInfo(string path, XboxOperatingSystem operatingSystem, XboxConsole console)
             : base(path, operatingSystem, console)
         {
-            XboxConsoleEventSource.Logger.ObjectCreated(XboxConsoleEventSource.GetCurrentConstructor());
         }
 
         /// <summary>
@@ -38,7 +36,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.IO
         public XboxDirectoryInfo(XboxPath xboxPath, XboxConsole console)            
             : base(xboxPath, console)
         {
-            XboxConsoleEventSource.Logger.ObjectCreated(XboxConsoleEventSource.GetCurrentConstructor());
         }
 
         /// <summary>
@@ -58,8 +55,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.IO
         {
             get
             {
-                XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
                 if (XboxPath.IsRoot(this.FullName))
                 {
                     return null;
@@ -92,8 +87,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.IO
         {
             get
             {
-                XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
                 if (string.IsNullOrWhiteSpace(this.FullName))
                 {
                     return null;
@@ -119,8 +112,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.IO
         {
             get
             {
-                XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
                 return ExistsImpl(this.Console.SystemIpAddressAndSessionKeyCombined, this.XboxPath, this.Console.Adapter);
             }
         }
@@ -130,8 +121,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.IO
         /// </summary>
         public override void Delete()
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             this.Delete(false);
         }
 
@@ -142,8 +131,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.IO
         /// <exception cref="System.IO.IOException">Thrown if this object represents the root of the drive.</exception>
         public void Delete(bool recursive)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             if (XboxPath.IsRoot(this.FullName))
             {
                 throw new IOException("Cannot delete the drive root");
@@ -164,8 +151,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.IO
         /// <exception cref="System.IO.DirectoryNotFoundException">Thrown if the source directory does not exist at the path specified.</exception>
         public override void Copy(string localPath)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             this.Copy(localPath, true);
         }
 
@@ -177,8 +162,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.IO
         /// <exception cref="System.IO.DirectoryNotFoundException">Thrown if the source directory does not exist at the path specified.</exception>
         public void Copy(string localPath, IProgress<XboxFileTransferMetric> metrics)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             this.Copy(localPath, true, metrics);
         }
 
@@ -191,8 +174,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.IO
         /// <exception cref="Microsoft.Internal.GamesTest.Xbox.XboxConsoleFeatureNotSupportedException">Thrown if the localPath does not have an Xbox origin.</exception>
         public void Copy(string localPath, bool recursive)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             this.Copy(localPath, recursive, null);
         }
 
@@ -206,8 +187,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.IO
         /// <exception cref="Microsoft.Internal.GamesTest.Xbox.XboxConsoleFeatureNotSupportedException">Thrown if the localPath does not have an Xbox origin.</exception>
         public void Copy(string localPath, bool recursive, IProgress<XboxFileTransferMetric> metrics)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             if (!this.Exists)
             {
                 throw new DirectoryNotFoundException("Source directory does not exist at the path specified.");
@@ -231,8 +210,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.IO
         /// </summary>
         public void Create()
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             if (!this.Exists)
             {
                 this.Console.Adapter.CreateDirectory(this.Console.SystemIpAddressAndSessionKeyCombined, this.XboxPath);
@@ -245,8 +222,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.IO
         /// <param name="destinationPath">The path to move to.</param>
         public override void MoveTo(string destinationPath)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             this.Copy(destinationPath);
             this.Delete(true);
         }
@@ -258,8 +233,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.IO
         [SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate", Justification = "This is a potentially slow operation")]
         public IEnumerable<XboxDirectoryInfo> GetDirectories()
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             return this.GetFileSystemInfos().OfType<XboxDirectoryInfo>();
         }
 
@@ -270,8 +243,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.IO
         [SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate", Justification = "This is a potentially slow operation")]
         public IEnumerable<XboxFileInfo> GetFiles()
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             return this.GetFileSystemInfos().OfType<XboxFileInfo>();
         }
 
@@ -283,13 +254,23 @@ namespace Microsoft.Internal.GamesTest.Xbox.IO
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Infos", Justification = "Compatability with the .NET IO naming convention")]
         public IEnumerable<XboxFileSystemInfo> GetFileSystemInfos()
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
+            return this.GetFileSystemInfos("*", false);
+        }
 
-            List<XboxFileSystemInfoDefinition> definitionObjects = this.Console.Adapter.GetDirectoryContents(this.Console.SystemIpAddressAndSessionKeyCombined, this.XboxPath).ToList();
+        /// <summary>
+        /// Returns an IEnumerable of strongly typed XboxFileSystemInfo entries representing all the files and subdirectories in a directory.
+        /// </summary>
+        /// <param name="searchPattern">Search pattern for files in the directory.</param>
+        /// <param name="recursive">True if search should check recursively through child folders.</param>
+        /// <returns>An IEnumerable of strongly typed XboxFileSystemInfo entries.</returns>
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Infos", Justification = "Compatability with the .NET IO naming convention")]
+        public IEnumerable<XboxFileSystemInfo> GetFileSystemInfos(string searchPattern, bool recursive)
+        {
+            List<XboxFileSystemInfoDefinition> definitionObjects = this.Console.Adapter.GetDirectoryContents(this.Console.SystemIpAddressAndSessionKeyCombined, this.XboxPath, searchPattern, recursive).ToList();
 
             IEnumerable<XboxFileSystemInfo> directories = (from fileObject in definitionObjects
-                                                          where fileObject.IsDirectory
-                                                          select new XboxDirectoryInfo(fileObject, this.Console)).Cast<XboxFileSystemInfo>();
+                                                           where fileObject.IsDirectory
+                                                           select new XboxDirectoryInfo(fileObject, this.Console)).Cast<XboxFileSystemInfo>();
 
             IEnumerable<XboxFileSystemInfo> files = (from fileObject in definitionObjects
                                                      where !fileObject.IsDirectory

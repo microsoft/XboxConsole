@@ -12,7 +12,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.IO
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
-    using Microsoft.Internal.GamesTest.Xbox.Telemetry;
 
     /// <summary>
     /// Represents extension methods for the FileInfo type.
@@ -29,8 +28,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.IO
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters", Justification = "Maintains consistency with the original XboxConsole.")]
         public static XboxFileInfo CopyTo(this FileInfo fileInfo, XboxPath xboxPath, XboxConsole console)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             return CopyTo(fileInfo, xboxPath, console, null);
         }
 
@@ -45,8 +42,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.IO
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters", Justification = "Maintains consistency with the original XboxConsole.")]
         public static XboxFileInfo CopyTo(this FileInfo fileInfo, XboxPath xboxPath, XboxConsole console, IProgress<XboxFileTransferMetric> metrics)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             if (fileInfo == null)
             {
                 throw new ArgumentNullException("fileInfo");

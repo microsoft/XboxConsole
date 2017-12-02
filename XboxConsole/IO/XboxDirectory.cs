@@ -11,7 +11,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.IO
     using System.IO;
     using System.Linq;
     using System.Text;
-    using Microsoft.Internal.GamesTest.Xbox.Telemetry;
 
     /// <summary>
     /// Performs directory input/output operations on an Xbox console.
@@ -27,8 +26,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.IO
         /// <exception cref="Microsoft.Internal.GamesTest.Xbox.XboxConsoleFeatureNotSupportedException">Thrown if the destination directory is not a path with an Xbox origin.</exception>
         public static void Copy(string sourceDirectory, XboxPath destinationDirectory, XboxConsole console)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             Copy(sourceDirectory, destinationDirectory, console, null);
         }
 
@@ -42,8 +39,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.IO
         /// <exception cref="Microsoft.Internal.GamesTest.Xbox.XboxConsoleFeatureNotSupportedException">Thrown if the destination directory is not a path with an Xbox origin.</exception>
         public static void Copy(string sourceDirectory, XboxPath destinationDirectory, XboxConsole console, IProgress<XboxFileTransferMetric> metrics)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             if (destinationDirectory == null)
             {
                 throw new ArgumentNullException("destinationDirectory");
@@ -68,8 +63,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.IO
         /// <exception cref="Microsoft.Internal.GamesTest.Xbox.XboxConsoleFeatureNotSupportedException">Thrown if the source directory is not a path with an Xbox origin.</exception>
         public static void Copy(XboxPath sourceDirectory, string destinationDirectory, XboxConsole console)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             Copy(sourceDirectory, destinationDirectory, console, null);
         }
 
@@ -83,8 +76,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.IO
         /// <exception cref="Microsoft.Internal.GamesTest.Xbox.XboxConsoleFeatureNotSupportedException">Thrown if the source directory is not a path with an Xbox origin.</exception>
         public static void Copy(XboxPath sourceDirectory, string destinationDirectory, XboxConsole console, IProgress<XboxFileTransferMetric> metrics)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             if (sourceDirectory == null)
             {
                 throw new ArgumentNullException("sourceDirectory");
@@ -107,8 +98,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.IO
         /// <param name="console">The Xbox console to create the directory on.</param>
         public static void Create(XboxPath directory, XboxConsole console)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             new XboxDirectoryInfo(directory, console).Create();
         }
 
@@ -119,8 +108,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.IO
         /// <param name="console">The Xbox that contains the directory.</param>
         public static void Delete(XboxPath directory, XboxConsole console)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             new XboxDirectoryInfo(directory, console).Delete();
         }
 
@@ -132,8 +119,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.IO
         /// <param name="console">The Xbox that contains the directory.</param>
         public static void Delete(XboxPath directory, bool recursive, XboxConsole console)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             new XboxDirectoryInfo(directory, console).Delete(recursive);
         }
 
@@ -145,8 +130,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.IO
         /// <returns>A value indicating whether the directory exists on the console or not.</returns>
         public static bool Exists(XboxPath directory, XboxConsole console)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             if (console == null)
             {
                 throw new ArgumentNullException("console");
@@ -163,8 +146,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.IO
         /// <param name="console">The console to move the directory to.</param>
         public static void Move(string sourceDirectory, XboxPath destinationDirectory, XboxConsole console)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             Copy(sourceDirectory, destinationDirectory, console);
             new DirectoryInfo(sourceDirectory).Delete(true);
         }
@@ -177,8 +158,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.IO
         /// <param name="console">The console to move the directory from.</param>
         public static void Move(XboxPath sourceDirectory, string destinationDirectory, XboxConsole console)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             Copy(sourceDirectory, destinationDirectory, console);
             new XboxDirectoryInfo(sourceDirectory, console).Delete(true);
         }

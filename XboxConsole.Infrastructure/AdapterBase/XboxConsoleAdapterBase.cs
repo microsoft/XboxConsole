@@ -78,7 +78,7 @@ namespace Microsoft.Internal.GamesTest.Xbox
         {
             get 
             {
-                return Environment.GetEnvironmentVariable("DurangoXdk");
+                return XboxXdkBase.GetXdkLocation();
             }
         }
 

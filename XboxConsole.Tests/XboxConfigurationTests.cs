@@ -748,6 +748,18 @@ namespace Microsoft.Internal.GamesTest.Xbox.Tests
     }
 
     /// <summary>
+    /// Verifies that the HttpProxyHost property can be set properly (to any string value).
+    /// </summary>
+    [TestMethod]
+    [TestCategory("UnitTest")]
+    [TestCategory(XboxConfigurationTestCategory)]
+    public void TestXboxConfigurationSetHttpProxy()
+    {
+        const string TestProxy = "testproxy";
+        this.TestSetter<string>(config => config.HttpProxyHost = TestProxy, TestProxy, "HttpProxyHost");
+    }
+
+    /// <summary>
     /// Verifies that the MACAddress property throws exceptions on invalid values.
     /// Special case for read-only property.
     /// </summary>

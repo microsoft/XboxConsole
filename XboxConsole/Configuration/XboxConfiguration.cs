@@ -11,7 +11,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.Configuration
     using System.Linq;
     using System.Xml;
     using Microsoft.Internal.GamesTest.Xbox.Exceptions;
-    using Microsoft.Internal.GamesTest.Xbox.Telemetry;
 
     /// <summary>
     /// The set of settings in Xbox configuration (see xbconfig command line utility).
@@ -32,7 +31,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.Configuration
         /// </summary>
         public XboxConfiguration()
         {
-            XboxConsoleEventSource.Logger.ObjectCreated(XboxConsoleEventSource.GetCurrentConstructor());
         }
 
         /// <summary>
@@ -41,8 +39,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.Configuration
         /// <param name="source">The source configuration used to initialize the settings in this class.</param>
         public XboxConfiguration(IXboxConfiguration source)
         {
-            XboxConsoleEventSource.Logger.ObjectCreated(XboxConsoleEventSource.GetCurrentConstructor());
-
             if (source == null)
             {
                 throw new ArgumentNullException("source");
@@ -636,15 +632,21 @@ namespace Microsoft.Internal.GamesTest.Xbox.Configuration
             doc.Load(path);
 
             // Validate
-            if (doc.DocumentElement.Name != BaseXboxConfiguration.SettingsKey ||
-                !doc.DocumentElement.HasAttribute(BaseXboxConfiguration.XdkVersionAttribute))
+            if (doc.DocumentElement == null ||
+                doc.DocumentElement.Name != BaseXboxConfiguration.SettingsKey)
             {
                 throw new FormatException("The document is not a valid configuration settings file.");
             }
 
-            if (doc.DocumentElement.Attributes[BaseXboxConfiguration.XdkVersionAttribute].Value != XboxConsole.XdkVersion)
+            if (doc.DocumentElement.HasAttribute(BaseXboxConfiguration.XdkVersionAttribute))
             {
-                throw new XdkVersionMismatchException("Attempted to load Xbox Configuration saved on another XDK version.");
+                var fileVersion = new Version(doc.DocumentElement.Attributes[BaseXboxConfiguration.XdkVersionAttribute].Value);
+                var xdkVersion = new Version(XboxConsole.XdkVersion);
+
+                if (fileVersion > xdkVersion)
+                {
+                    throw new XdkVersionMismatchException("Attempted to load Xbox Configuration saved on a newer XDK version.");
+                }
             }
 
             System.Collections.Generic.List<System.Xml.Schema.ValidationEventArgs> validationErrors = new System.Collections.Generic.List<System.Xml.Schema.ValidationEventArgs>();

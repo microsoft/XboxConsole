@@ -50,28 +50,34 @@ namespace Microsoft.Internal.GamesTest.Xbox
                 throw new ArgumentNullException("innerException");
             }
 
-            // We need to wrap a special COM exception into a FileNotFoundException: if the drive does not exist.
-
-            bool isComException = innerException is COMException;
-            if (isComException && innerException.HResult == SystemCannotFindDriveSpecifiedCOMExceptionHResult)
+            try
             {
-                return new FileNotFoundException("The system cannot find the drive specified", innerException);
-            }
-
-            string errorMessage = string.Format(CultureInfo.InvariantCulture, "{0}.  Reason: {1}", message, GetWin32ErrorMessage(innerException.ErrorCode));
-
-            if (string.IsNullOrEmpty(xboxName))
-            {
-                return new XboxException(errorMessage, innerException);
-            }
-            else
-            {
-                if (isComException && innerException.HResult == SessionKeyIncorrectCOMExceptionHResult)
+                // We need to wrap a special COM exception into a FileNotFoundException: if the drive does not exist.
+                bool isComException = innerException is COMException;
+                if (isComException && innerException.HResult == SystemCannotFindDriveSpecifiedCOMExceptionHResult)
                 {
-                    return new XboxSessionKeyException(errorMessage, innerException, xboxName);
+                    return new FileNotFoundException("The system cannot find the drive specified", innerException);
                 }
 
-                return new XboxConsoleException(errorMessage, innerException, xboxName);
+                string errorMessage = string.Format(CultureInfo.InvariantCulture, "{0}.  Reason: {1}", message, GetWin32ErrorMessage(innerException.ErrorCode));
+
+                if (string.IsNullOrEmpty(xboxName))
+                {
+                    return new XboxException(errorMessage, innerException);
+                }
+                else
+                {
+                    if (isComException && innerException.HResult == SessionKeyIncorrectCOMExceptionHResult)
+                    {
+                        return new XboxSessionKeyException(errorMessage, innerException, xboxName);
+                    }
+
+                    return new XboxConsoleException(errorMessage, innerException, xboxName);
+                }
+            }
+            catch (AccessViolationException av)
+            {
+                return new XboxConsoleException("Access Violation occured attempting to translate native exception.", av);
             }
         }
 

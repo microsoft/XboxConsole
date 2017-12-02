@@ -16,6 +16,7 @@ namespace Microsoft.Internal.GamesTest.Xbox
     using Microsoft.Internal.GamesTest.Xbox.Deployment;
     using Microsoft.Internal.GamesTest.Xbox.Input;
     using Microsoft.Internal.GamesTest.Xbox.IO;
+    using Microsoft.Win32;
 
     /// <summary>
     /// Functional facade of interop assemblies of XDK (XTF).
@@ -24,6 +25,10 @@ namespace Microsoft.Internal.GamesTest.Xbox
     {
         protected const string NotSupportedMessage = "The method is not supported for this XDK.";
 
+        private const string XdkOverrideEnvironmentVariable = "XboxConsoleXdkOverridePath";
+        private const string XdkRegistryKeyPath = "Software\\Microsoft\\Durango XDK";
+        private const string XdkRegistryKeyName = "InstallPath";
+        private const string XdkEnvironmentVariableName = "DurangoXDK";
         private static readonly object staticInitializationLock = new object();
         private static bool isStaticInitialized = false;
 
@@ -69,7 +74,7 @@ namespace Microsoft.Internal.GamesTest.Xbox
         {
             get
             {
-                return Path.Combine(Environment.GetEnvironmentVariable("DurangoXdk"), "bin");
+                return Path.Combine(GetXdkLocation(), "bin");
             }
         }
 
@@ -618,6 +623,42 @@ namespace Microsoft.Internal.GamesTest.Xbox
         public virtual ulong GetAvailableSpaceForAppInstallation(string ipAddress, string storageName)
         {
             throw new XboxConsoleFeatureNotSupportedException(NotSupportedMessage);
+        }
+
+        /// <summary>
+        /// Get the location of the installed XDK. Returns null if the XDK is not installed.
+        /// Uses the registry key to find the XDK location. If the registry key is not set, 
+        /// uses the environment variable to get the location. 
+        /// </summary>
+        /// <returns>The location of the installed XDK. Null if XDK is not installed.</returns>
+        internal static string GetXdkLocation()
+        {
+            string xdkDirectory = null;
+
+            // first attempt to read a per-process environment variable.
+            string pathFromEnvVar = Environment.GetEnvironmentVariable(XdkOverrideEnvironmentVariable);
+            if (!string.IsNullOrEmpty(pathFromEnvVar))
+            {
+                return pathFromEnvVar;
+            }
+
+            // Next try to get the XDK location from the Durango XDK registry key
+            using (RegistryKey baseRegistryKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32))
+            using (RegistryKey registryKey = baseRegistryKey.OpenSubKey(XdkRegistryKeyPath))
+            {
+                if (registryKey != null)
+                {
+                    xdkDirectory = (string)registryKey.GetValue(XdkRegistryKeyName);
+                }
+            }
+
+            // If empty, fallback to trying to get it from the environment variable
+            if (string.IsNullOrWhiteSpace(xdkDirectory))
+            {
+                xdkDirectory = Environment.GetEnvironmentVariable(XdkEnvironmentVariableName);
+            }
+
+            return xdkDirectory;
         }
 
         private static byte[] CreateRawAssembly(Stream streamFromResources)

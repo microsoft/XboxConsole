@@ -8,7 +8,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.Input
 {
     using System;
     using System.Threading;
-    using Microsoft.Internal.GamesTest.Xbox.Telemetry;
 
     /// <summary>
     /// A virtual gamepad.
@@ -60,8 +59,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.Input
         /// </summary>
         public void Connect()
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             this.ThrowIfConnected();
 
             this.Id = this.Console.Adapter.ConnectXboxGamepad(this.Console.SystemIpAddressAndSessionKeyCombined);
@@ -72,8 +69,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.Input
         /// </summary>
         public void Disconnect()
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             this.ThrowIfNotConnected();
 
             this.Console.Adapter.DisconnectXboxGamepad(this.Console.SystemIpAddressAndSessionKeyCombined, this.Id.Value);
@@ -87,8 +82,6 @@ namespace Microsoft.Internal.GamesTest.Xbox.Input
         /// <param name="state">The state to set the XboxGamepad to.</param>
         public void SetXboxGamepadState(XboxGamepadState state)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             if (state == null)
             {
                 throw new ArgumentNullException("state");

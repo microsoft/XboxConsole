@@ -11,7 +11,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
     using System.Globalization;
     using System.Linq;
     using Microsoft.Internal.GamesTest.Xbox.Input;
-    using Microsoft.Internal.GamesTest.Xbox.Telemetry;
 
     /// <summary>
     /// A virtual user.
@@ -31,8 +30,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         internal XboxUser(XboxConsole console, uint userId, string emailAddress, string gamertag, bool signedin, bool autoSignIn, string xuid)
             : base(console)
         {
-            XboxConsoleEventSource.Logger.ObjectCreated(XboxConsoleEventSource.GetCurrentConstructor());
-
             this.Definition = new XboxUserDefinition(userId, emailAddress, gamertag, signedin, autoSignIn, xuid);
         }
 
@@ -47,7 +44,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         internal XboxUser(XboxConsole console, uint userId, string emailAddress, string gamertag, bool signedin)
             : this(console, userId, emailAddress, gamertag, signedin, false, null)
         {
-            XboxConsoleEventSource.Logger.ObjectCreated(XboxConsoleEventSource.GetCurrentConstructor());
         }
 
         /// <summary>
@@ -58,8 +54,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         internal XboxUser(XboxConsole console, XboxUserDefinition userData)
             : base(console)
         {
-            XboxConsoleEventSource.Logger.ObjectCreated(XboxConsoleEventSource.GetCurrentConstructor());
-
             if (userData == null)
             {
                 throw new ArgumentNullException("userData", "userData can't be null");
@@ -107,8 +101,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         {
             get
             {
-                XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
                 return this.Definition.AutoSignIn;
             }
         }
@@ -121,8 +113,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         {
             get
             {
-                XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
                 if (string.IsNullOrEmpty(this.Definition.Xuid))
                 {
                     throw new XboxUserNotSignedInException(string.Format(CultureInfo.CurrentCulture, "Could not retrieve XUID for {0} because this user is not signed in.", this.Definition.EmailAddress));
@@ -146,8 +136,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// <param name="gamepad">The virtual gamepad with which the user will be paired.</param>
         public void PairWithVirtualController(XboxGamepad gamepad)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             if (gamepad == null)
             {
                 throw new ArgumentNullException("gamepad", "gamepad cannot be null.");
@@ -167,8 +155,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// <param name="gamepad">The virtual gamepad with which the user will be paired.</param>
         public void PairWithVirtualControllerExclusive(XboxGamepad gamepad)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             if (gamepad == null)
             {
                 throw new ArgumentNullException("gamepad", "gamepad cannot be null.");
@@ -188,8 +174,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// <param name="controllerId">The physical controller with which the user will be paired.</param>
         public void PairWithPhysicalController(ulong controllerId)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             this.Console.Adapter.PairGamepadToUser(this.Console.SystemIpAddressAndSessionKeyCombined, controllerId, this.UserId);
         }
 
@@ -206,8 +190,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// </remarks>
         public void SignIn(string password, bool storePassword)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             var newDefinition = this.Console.Adapter.SignInUser(this.Console.SystemIpAddressAndSessionKeyCombined, this.Definition, password, storePassword);
 
             if (newDefinition == null || newDefinition.EmailAddress != this.EmailAddress)
@@ -223,8 +205,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// </summary>
         public void SignOut()
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             var newDefinition = this.Console.Adapter.SignOutUser(this.Console.SystemIpAddressAndSessionKeyCombined, this.Definition);
 
             if (newDefinition == null || newDefinition.EmailAddress != this.EmailAddress)
@@ -242,8 +222,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// <param name="localUsersToAdd">Users to add to the party.</param>
         public void AddLocalUsersToParty(XboxParty party, XboxUser[] localUsersToAdd)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             if (party == null)
             {
                 throw new ArgumentNullException("party");
@@ -264,8 +242,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// <param name="remoteUsersToInvite">Remote users to invite to the party.</param>
         public void InviteToParty(XboxParty party, IEnumerable<XboxRemoteUser> remoteUsersToInvite)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             if (party == null)
             {
                 throw new ArgumentNullException("party");
@@ -286,8 +262,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// <param name="localUsersToRemove">Local users to remove from the party.</param>
         public void RemoveLocalUsersFromParty(XboxParty party, IEnumerable<XboxUser> localUsersToRemove)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             if (party == null)
             {
                 throw new ArgumentNullException("party");
@@ -308,8 +282,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters", Justification = "Specific type used to communicate that party invites can only be declined to remote parties.")]
         public void AcceptInviteToParty(XboxRemoteParty party)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             if (party == null)
             {
                 throw new ArgumentNullException("party");
@@ -325,8 +297,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters", Justification = "Specific type used to communicate that party invites can only be declined to remote parties.")]
         public void DeclineInviteToParty(XboxRemoteParty party)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             if (party == null)
             {
                 throw new ArgumentNullException("party");

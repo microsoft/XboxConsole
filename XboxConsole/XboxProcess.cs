@@ -7,7 +7,6 @@
 namespace Microsoft.Internal.GamesTest.Xbox
 {
     using System;
-    using Microsoft.Internal.GamesTest.Xbox.Telemetry;
 
     /// <summary>
     /// Represents a process on an Xbox console.
@@ -97,8 +96,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// <param name="operatingSystem">The <see cref="Microsoft.Internal.GamesTest.Xbox.XboxOperatingSystem"/> to run the application on.</param>
         public static void Run(XboxConsole console, string fileName, string arguments, XboxOperatingSystem operatingSystem)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             Run(console, fileName, arguments, operatingSystem, null);
         }
 
@@ -112,8 +109,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// <param name="outputReceivedCallback">A callback method that will be called when there is output from the process.</param>
         public static void Run(XboxConsole console, string fileName, string arguments, XboxOperatingSystem operatingSystem, Action<string> outputReceivedCallback)
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             if (console == null)
             {
                 throw new ArgumentNullException("console");

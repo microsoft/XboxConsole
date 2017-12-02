@@ -81,7 +81,7 @@ namespace Microsoft.Internal.GamesTest.Xbox.Configuration
             this.PowerModeSetting = new XboxConfigurationSetting<PowerModeType>(PowerModeKey);
             this.IdleShutdownTimeoutSetting = new XboxIdleShutdownTimeoutConfigurationSetting(IdleShutdownTimeoutKey);
             this.DimTimeoutSetting = new XboxDimTimeoutConfigurationSetting(DimTimeoutKey);
-            this.HttpProxyHostSetting = new XboxHttpProxyHostConfigurationSetting(HttpProxyHostKey);
+            this.HttpProxyHostSetting = new XboxConfigurationSetting<string>(HttpProxyHostKey);
             this.DisplayResolutionSetting = new XboxDisplayResolutionConfigurationSetting(DisplayResolutionKey);
             this.ColorSpaceSetting = new XboxConfigurationSetting<ColorSpaceType>(ColorSpaceKey);
             this.ColorDepthSetting = new XboxColorDepthConfigurationSetting(ColorDepthKey);
@@ -180,7 +180,7 @@ namespace Microsoft.Internal.GamesTest.Xbox.Configuration
         /// <summary>
         /// Gets the HttpProxyHost setting.
         /// </summary>
-        internal XboxHttpProxyHostConfigurationSetting HttpProxyHostSetting { get; private set; }
+        internal XboxConfigurationSetting<string> HttpProxyHostSetting { get; private set; }
 
         /// <summary>
         /// Gets the DisplayResolution setting.

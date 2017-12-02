@@ -12,7 +12,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
     using System.Runtime.InteropServices;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.Internal.GamesTest.Xbox.Telemetry;
 
     /// <summary>
     /// Describes a package installed on an Xbox console.
@@ -111,8 +110,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         {
             get
             {
-                XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
                 return this.Console.Adapter.QueryPackageExecutionState(this.Console.SystemIpAddressAndSessionKeyCombined, this.Definition);
             }
         }
@@ -140,8 +137,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// </summary>
         public void Resume()
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             this.Console.Adapter.ResumePackage(this.Console.SystemIpAddressAndSessionKeyCombined, this.Definition);
         }
 
@@ -150,8 +145,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// </summary>
         public void Suspend()
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             this.Console.Adapter.SuspendPackage(this.Console.SystemIpAddressAndSessionKeyCombined, this.Definition);
         }
 
@@ -160,8 +153,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// </summary>
         public void Terminate()
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             this.Console.Adapter.TerminatePackage(this.Console.SystemIpAddressAndSessionKeyCombined, this.Definition);
         }
 
@@ -170,8 +161,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// </summary>
         public void Constrain()
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             this.Console.Adapter.ConstrainPackage(this.Console.SystemIpAddressAndSessionKeyCombined, this.Definition);
         }
 
@@ -180,8 +169,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// </summary>
         public void Unconstrain()
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             this.Console.Adapter.UnconstrainPackage(this.Console.SystemIpAddressAndSessionKeyCombined, this.Definition);
         }
 
@@ -190,8 +177,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// </summary>
         public void Unsnap()
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             this.Console.Adapter.UnsnapApplication(this.Console.SystemIpAddressAndSessionKeyCombined);
         }
 
@@ -200,8 +185,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// </summary>
         public void Uninstall()
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             this.Console.Adapter.UninstallPackage(this.Console.SystemIpAddressAndSessionKeyCombined, this.Definition);
         }
 
@@ -210,8 +193,6 @@ namespace Microsoft.Internal.GamesTest.Xbox
         /// </summary>
         public void Unregister()
         {
-            XboxConsoleEventSource.Logger.MethodCalled(XboxConsoleEventSource.GetCurrentMethod());
-
             this.Console.Adapter.UnregisterPackage(this.Console.SystemIpAddressAndSessionKeyCombined, this.Definition.FullName);
         }
 

@@ -15,6 +15,8 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.Tests
     using Microsoft.Internal.GamesTest.Xbox.Fakes;
     using Microsoft.QualityTools.Testing.Fakes;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Microsoft.Win32;
+    using Microsoft.Win32.Fakes;
 
     /// <summary>
     /// Represents tests for the XboxConsole adapter types.
@@ -70,7 +72,16 @@ namespace Microsoft.Internal.GamesTest.Xbox.Adapter.Tests
         public void TestConstructorThrowsXdkNotFoundExceptionXdkDirectoryIsNotSet()
         {
             string storeValue = Environment.GetEnvironmentVariable("DurangoXdk");
+            const string ExpectedXdkRegistryKeyName = "InstallPath";
+
             Environment.SetEnvironmentVariable("DurangoXdk", null);
+
+            ShimRegistryKey.AllInstances.GetValueString = (instance, xdkRegistryKeyName) =>
+            {
+                Assert.IsTrue(ExpectedXdkRegistryKeyName.Equals(xdkRegistryKeyName, StringComparison.InvariantCultureIgnoreCase));
+                return null;
+            };
+
             try
             {
                 ShimXboxConsoleAdapterBase.ConstructorXboxXdkBase = null;
